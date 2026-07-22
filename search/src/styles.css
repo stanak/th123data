@@ -189,6 +189,16 @@ body {
   align-items: center;
 }
 
+.lang-toggle {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.lang-toggle .preset-btn {
+  flex: 1;
+}
+
 .condition-row {
   display: flex;
   flex-wrap: wrap;

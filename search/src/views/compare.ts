@@ -5,7 +5,8 @@ import {
   advantagePresetCondition,
   matchedAdvantageLabel,
 } from '../query';
-import { COMPARE_COLUMNS, FILTER_EXTRA, sortRows, renderDataTable } from '../table';
+import { t } from '../i18n';
+import { getCompareColumns, getFilterExtraColumn, sortRows, renderDataTable } from '../table';
 
 export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] {
   let rows = index.rows.filter(
@@ -60,31 +61,31 @@ export function renderCompareView(
   header.className = 'view-header';
   const title = document.createElement('h2');
   title.textContent = state.moveName.trim()
-    ? `技名比較: ${state.moveName}${state.partialMove ? ' (部分一致)' : ''}`
-    : '技名比較';
+    ? t('compareTitleNamed', { move: state.moveName }) + (state.partialMove ? t('partialSuffix') : '')
+    : t('compareTitle');
   header.appendChild(title);
   const count = document.createElement('span');
   count.className = 'result-count';
-  count.textContent = `${rows.length}件`;
+  count.textContent = t('resultCount', { count: rows.length });
   header.appendChild(count);
   container.appendChild(header);
 
   if (!state.moveName.trim()) {
     const hint = document.createElement('p');
     hint.className = 'hint-msg';
-    hint.textContent = 'サイドバーで技名を入力してください（例: 4A）';
+    hint.textContent = t('compareHint');
     container.appendChild(hint);
     return;
   }
 
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
-  renderDataTable(tableHost, rows, COMPARE_COLUMNS, {
+  renderDataTable(tableHost, rows, getCompareColumns(), {
     sortColumn: state.sortColumn,
     sortAsc: state.sortAsc,
     onSort,
     onMoveClick,
-    emptyMessage: '該当する技がありません',
+    emptyMessage: t('emptyResults'),
     getExtraCell: (row, col) => {
       if (row.id.startsWith('missing-') && col.key !== 'character' && col.key !== 'moveName') {
         return '—';
@@ -120,18 +121,18 @@ export function renderFilterView(
   const header = document.createElement('div');
   header.className = 'view-header';
   const title = document.createElement('h2');
-  title.textContent = '条件検索';
+  title.textContent = t('filterTitle');
   header.appendChild(title);
   const count = document.createElement('span');
   count.className = 'result-count';
-  count.textContent = `${rows.length}件 / 全${index.rowCount}行`;
+  count.textContent = t('resultCountTotal', { count: rows.length, total: index.rowCount });
   header.appendChild(count);
   container.appendChild(header);
 
   const filterCols = [
-    ...COMPARE_COLUMNS.filter((c) => !['advTsujo', 'advSeig'].includes(c.key)),
+    ...getCompareColumns().filter((c) => !['adv通常', 'adv正G'].includes(c.key)),
     {
-      ...FILTER_EXTRA,
+      ...getFilterExtraColumn(),
       get: (row: IndexRow) =>
         state.advantagePreset != null
           ? matchedAdvantageLabel(row, state.advantagePreset)

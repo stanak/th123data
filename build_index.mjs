@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { CHARACTER_ORDER } from './characters.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRAME_DATA = path.join(__dirname, 'frame_data.json');
@@ -72,7 +73,7 @@ function parseAdvantage(adv) {
 
 function buildIndex() {
   const data = JSON.parse(fs.readFileSync(FRAME_DATA, 'utf8'));
-  const characters = Object.keys(data.characters).sort();
+  const characters = CHARACTER_ORDER.filter((name) => data.characters[name]);
   const footnotes = {};
   const rows = [];
   let id = 0;

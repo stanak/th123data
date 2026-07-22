@@ -1,5 +1,7 @@
 import type { AppState } from './types';
 import { createDefaultState } from './types';
+import type { Locale } from './i18n';
+import { detectLocale } from './i18n';
 
 function setsEqual(a: Set<string>, b: Set<string>): boolean {
   if (a.size !== b.size) return false;
@@ -24,7 +26,9 @@ function parseConditions(p: URLSearchParams): AppState['conditions'] {
 export function stateFromUrl(characters: string[]): AppState {
   const defaults = createDefaultState(characters);
   const p = new URLSearchParams(location.search);
-  if (!p.toString()) return defaults;
+  if (!p.toString()) {
+    return { ...defaults, locale: detectLocale() };
+  }
 
   const mode = p.get('mode');
   const charsStr = p.get('chars');
@@ -34,6 +38,7 @@ export function stateFromUrl(characters: string[]): AppState {
   return {
     mode:
       mode === 'compare' || mode === 'filter' || mode === 'character' ? mode : defaults.mode,
+    locale: (p.get('lang') === 'en' ? 'en' : 'ja') as Locale,
     moveName: p.get('move') ?? '',
     partialMove: p.get('partial') === '1',
     categories: catStr ? new Set(catStr.split(',').filter(Boolean)) : new Set(defaults.categories),
@@ -61,11 +66,16 @@ export function stateToUrl(state: AppState, characters: string[]): string {
     state.conditions.length === 0 &&
     state.advantagePreset === null &&
     !state.showMissingCompare &&
-    state.sortColumn === null;
-
-  if (isHome) return location.pathname;
+    state.sortColumn === null &&
+    state.locale === defaults.locale;
 
   const p = new URLSearchParams();
+  if (state.locale !== 'ja') p.set('lang', state.locale);
+  if (isHome) {
+    const qs = p.toString();
+    return qs ? `${location.pathname}?${qs}` : location.pathname;
+  }
+
   p.set('mode', state.mode);
   if (state.moveName) p.set('move', state.moveName);
   if (state.partialMove) p.set('partial', '1');

@@ -1,4 +1,5 @@
 import type { Condition, IndexRow } from './types';
+import { formatMatchedAdvantage, type AdvantageKey } from './i18n';
 
 export function getStat(row: IndexRow, path: string): unknown {
   if (path === '技名') return row.moveName;
@@ -91,23 +92,23 @@ export function advantagePresetCondition(threshold: number): Condition {
 
 export function matchedAdvantageLabel(row: IndexRow, threshold?: number): string {
   const adv = row.parsed.advantage;
-  const parts: string[] = [];
-  const entries: [string, number | null][] = [
+  const parts: { key: AdvantageKey; raw: string }[] = [];
+  const entries: [AdvantageKey, number | null][] = [
     ['正G', adv.seig],
     ['誤G', adv.goG],
     ['通常', adv.tsujo],
     ['CH', adv.ch],
   ];
-  for (const [label, num] of entries) {
-    const raw = adv.raws[label];
+  for (const [key, num] of entries) {
+    const raw = adv.raws[key];
     if (raw == null) continue;
     if (threshold != null && num != null && num <= threshold) {
-      parts.push(`${label}:${raw}`);
+      parts.push({ key, raw });
     } else if (threshold == null) {
-      parts.push(`${label}:${raw}`);
+      parts.push({ key, raw });
     }
   }
-  return parts.join(' ');
+  return formatMatchedAdvantage(parts);
 }
 
 export function filterByMoveName(

@@ -1,6 +1,7 @@
 import type { SearchIndex } from './types';
 import { createDefaultState, applyDefaultState, applyState } from './types';
 import { stateFromUrl, updateHistory, type HistoryMode } from './url';
+import { initLocale, setLocale, t, detectLocale, type Locale } from './i18n';
 import { renderSidebar } from './views/sidebar';
 import { renderCompareView } from './views/compare';
 import { renderFilterView } from './views/compare';
@@ -8,7 +9,7 @@ import { renderCharacterView } from './views/character';
 
 async function loadIndex(): Promise<SearchIndex> {
   const res = await fetch(`${import.meta.env.BASE_URL}search_index.json`);
-  if (!res.ok) throw new Error('search_index.json の読み込みに失敗しました');
+  if (!res.ok) throw new Error(t('loadError'));
   return res.json();
 }
 
@@ -23,9 +24,12 @@ async function main() {
   app.appendChild(sidebarEl);
   app.appendChild(mainEl);
 
+  initLocale(detectLocale());
+
   const index = await loadIndex();
   const state = createDefaultState(index.characters);
   applyState(state, stateFromUrl(index.characters));
+  setLocale(state.locale);
 
   function onMoveClick(moveName: string) {
     state.mode = 'compare';
@@ -46,8 +50,17 @@ async function main() {
   }
 
   function resetToHome() {
+    const locale = state.locale;
     applyDefaultState(state, index.characters);
+    state.locale = locale;
+    setLocale(locale);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    render('push');
+  }
+
+  function onLocaleChange(locale: Locale) {
+    state.locale = locale;
+    setLocale(locale);
     render('push');
   }
 
@@ -56,6 +69,7 @@ async function main() {
     renderSidebar(sidebarEl, index, state, {
       onChange: (h = 'push') => render(h),
       onHome: resetToHome,
+      onLocaleChange,
     });
 
     if (state.mode === 'compare') {
@@ -72,6 +86,7 @@ async function main() {
 
   window.addEventListener('popstate', () => {
     applyState(state, stateFromUrl(index.characters));
+    setLocale(state.locale);
     render('none');
   });
 
@@ -81,6 +96,6 @@ async function main() {
 main().catch((err) => {
   const app = document.getElementById('app');
   if (app) {
-    app.textContent = `エラー: ${err.message}`;
+    app.textContent = String(err.message);
   }
 });

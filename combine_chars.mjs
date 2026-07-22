@@ -3,16 +3,20 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { flattenCharacter } from './flatten_frame_data.mjs';
+import { CHARACTER_ORDER } from './characters.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CHAR_DIR = path.join(__dirname, 'chars');
 const OUT = path.join(__dirname, 'frame_data.json');
 
-const files = fs.readdirSync(CHAR_DIR).filter((f) => f.endsWith('.json'));
 const characters = {};
-for (const file of files.sort()) {
-  const name = file.replace(/\.json$/, '');
-  const raw = JSON.parse(fs.readFileSync(path.join(CHAR_DIR, file), 'utf8'));
+for (const name of CHARACTER_ORDER) {
+  const file = path.join(CHAR_DIR, `${name}.json`);
+  if (!fs.existsSync(file)) {
+    console.warn('missing char file:', name);
+    continue;
+  }
+  const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
   characters[name] = flattenCharacter(raw);
 }
 

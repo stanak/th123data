@@ -44,8 +44,11 @@ export interface Condition {
   value: string;
 }
 
+import type { Locale } from './i18n';
+
 export interface AppState {
   mode: AppMode;
+  locale: Locale;
   moveName: string;
   partialMove: boolean;
   categories: Set<string>;
@@ -64,6 +67,7 @@ export const DEFAULT_CATEGORIES = ['通常技', '射撃技', '必殺技', 'ス�
 export function createDefaultState(characters: string[]): AppState {
   return {
     mode: 'character',
+    locale: 'ja',
     moveName: '',
     partialMove: false,
     categories: new Set(['通常技']),
@@ -80,6 +84,7 @@ export function createDefaultState(characters: string[]): AppState {
 
 export function applyState(target: AppState, source: AppState): void {
   target.mode = source.mode;
+  target.locale = source.locale;
   target.moveName = source.moveName;
   target.partialMove = source.partialMove;
   target.categories = new Set(source.categories);

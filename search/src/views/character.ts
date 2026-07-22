@@ -4,7 +4,9 @@ import {
   filterByMoveName,
   advantagePresetCondition,
 } from '../query';
-import { COMPARE_COLUMNS, sortRows, renderDataTable } from '../table';
+import { t, categoryLabel, getLocale } from '../i18n';
+import { characterLabel } from '../characters';
+import { getCompareColumns, sortRows, renderDataTable } from '../table';
 
 export function getCharacterRows(index: SearchIndex, state: AppState): IndexRow[] {
   let rows = index.rows.filter(
@@ -45,11 +47,11 @@ export function renderCharacterView(
   const header = document.createElement('div');
   header.className = 'view-header';
   const title = document.createElement('h2');
-  title.textContent = `${state.selectedCharacter} — フレームデータ`;
+  title.textContent = t('characterFrameData', { name: characterLabel(state.selectedCharacter, getLocale()) });
   header.appendChild(title);
   const count = document.createElement('span');
   count.className = 'result-count';
-  count.textContent = `${rows.length}件`;
+  count.textContent = t('resultCount', { count: rows.length });
   header.appendChild(count);
   container.appendChild(header);
 
@@ -59,7 +61,7 @@ export function renderCharacterView(
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'tab-btn' + (cat === state.characterCategory ? ' active' : '');
-    btn.textContent = `${cat} (${counts[cat] ?? 0})`;
+    btn.textContent = `${categoryLabel(cat)} (${counts[cat] ?? 0})`;
     btn.addEventListener('click', () => onCategoryChange(cat));
     tabs.appendChild(btn);
   }
@@ -71,7 +73,7 @@ export function renderCharacterView(
     fnBox.className = 'footnotes-box';
     fnBox.open = false;
     const summary = document.createElement('summary');
-    summary.textContent = '脚注';
+    summary.textContent = t('footnotes');
     fnBox.appendChild(summary);
     const list = document.createElement('div');
     list.className = 'footnotes-list';
@@ -84,7 +86,7 @@ export function renderCharacterView(
     container.appendChild(fnBox);
   }
 
-  const charCols = COMPARE_COLUMNS.filter((c) => c.key !== 'character' && c.key !== 'category');
+  const charCols = getCompareColumns().filter((c) => c.key !== 'character' && c.key !== 'category');
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
 
@@ -93,6 +95,6 @@ export function renderCharacterView(
     sortAsc: state.sortAsc,
     onSort,
     onMoveClick,
-    emptyMessage: 'このカテゴリに該当する技がありません',
+    emptyMessage: t('emptyCategory'),
   });
 }
