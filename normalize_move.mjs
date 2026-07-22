@@ -9,6 +9,9 @@ export function joinCellLines(text) {
     .join('。');
 }
 
+/** B系- / ホールドC系- などの系統プレフィックス */
+const SERIES_PREFIX = /^(?:ホールド)?(?:J2C|\d+[BC]|[BC])系-/;
+
 /** BR で区切られた複数技名、または旧スクレイプの連結名を分割 */
 export function splitConcatenatedMoveName(name) {
   if (!name || typeof name !== 'string') return [name];
@@ -87,6 +90,8 @@ export function normalizeMoveName(name) {
   name = name.replace(/Dh(?=[ABC])/g, 'D');
   name = name.replace(/(\d)\+([ABC])/g, '$1$2');
   name = name.replace(/Jp/g, 'J');
+  name = name.replace(SERIES_PREFIX, '');
+  name = name.replace(/立(?=[A-Z0-9])/g, '');
   return name;
 }
 
@@ -192,4 +197,23 @@ export function walkAndNormalize(node) {
   for (const value of Object.values(node)) {
     if (value && typeof value === 'object') walkAndNormalize(value);
   }
+}
+
+function normalizeRowMoveName(row) {
+  if (typeof row['技名'] === 'string') {
+    row['技名'] = normalizeMoveName(row['技名']);
+  }
+}
+
+export function normalizeCharacterMoveNames(char) {
+  const frame = char.frameData?.['フレームデータ'];
+  if (!frame) return char;
+
+  for (const section of Object.values(frame)) {
+    if (!section?.rows) continue;
+    for (const row of section.rows) {
+      normalizeRowMoveName(row);
+    }
+  }
+  return char;
 }

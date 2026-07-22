@@ -4,6 +4,7 @@
 import { mergeCharacterBulletSummaries } from './merge_bullet_summaries.mjs';
 import { nestCharacterMoveStates } from './nest_move_states.mjs';
 import { dedupeCharacterRows } from './dedupe_rows.mjs';
+import { normalizeCharacterMoveNames } from './normalize_move.mjs';
 
 const SKIP_KEYS = new Set([
   'tables', 'subsections', 'pages', 'notes', 'content', 'footnotes',
@@ -93,7 +94,9 @@ export function flattenCharacter(char) {
     }
   }
   if (Object.keys(frameData).length > 0) out.frameData = frameData;
-  return dedupeCharacterRows(nestCharacterMoveStates(mergeCharacterBulletSummaries(out)));
+  return dedupeCharacterRows(
+    nestCharacterMoveStates(normalizeCharacterMoveNames(mergeCharacterBulletSummaries(out))),
+  );
 }
 
 export function flattenFrameData(input) {
