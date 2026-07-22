@@ -48,6 +48,8 @@ body {
   max-height: 100vh;
   position: sticky;
   top: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar h1,
@@ -66,6 +68,7 @@ body {
   font: inherit;
   text-align: left;
   cursor: pointer;
+  margin-bottom: 0.75rem;
 }
 
 .site-title:hover {
@@ -95,6 +98,43 @@ body {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.35rem;
+}
+
+.search-group {
+  margin-bottom: 1rem;
+}
+
+.search-row {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.search-row .text-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.clear-btn {
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  border-radius: var(--radius);
+  padding: 0.45rem 0.55rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.clear-btn:not(:disabled):hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.clear-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .text-input {
@@ -192,7 +232,14 @@ body {
 .lang-toggle {
   display: flex;
   gap: 0.35rem;
-  margin-bottom: 0.75rem;
+  margin-top: auto;
+  margin-bottom: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-footer {
+  margin-bottom: 0;
 }
 
 .lang-toggle .preset-btn {
@@ -218,7 +265,8 @@ body {
 .meta-info {
   font-size: 0.75rem;
   color: var(--muted);
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
 }
 
 .view-header {

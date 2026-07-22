@@ -2,11 +2,10 @@ import type { AppState, IndexRow, SearchIndex } from '../types';
 import {
   applyConditions,
   filterByMoveName,
-  advantagePresetCondition,
 } from '../query';
 import { t, categoryLabel, getLocale } from '../i18n';
 import { characterLabel } from '../characters';
-import { getCompareColumns, sortRows, renderDataTable } from '../table';
+import { getCompareColumns, sortRows, renderDataTable, columnOptionsFromCategory } from '../table';
 
 export function getCharacterRows(index: SearchIndex, state: AppState): IndexRow[] {
   let rows = index.rows.filter(
@@ -15,12 +14,8 @@ export function getCharacterRows(index: SearchIndex, state: AppState): IndexRow[
       r.category === state.characterCategory,
   );
   rows = filterByMoveName(rows, state.moveName, state.partialMove);
-  const conditions = [...state.conditions];
-  if (state.advantagePreset != null) {
-    conditions.push(advantagePresetCondition(state.advantagePreset));
-  }
-  rows = applyConditions(rows, conditions);
-  return sortRows(rows, state.sortColumn, state.sortAsc);
+  rows = applyConditions(rows, state.conditions);
+  return sortRows(rows, state.sortColumn, state.sortAsc, columnOptionsFromCategory(state.characterCategory));
 }
 
 export function countByCategory(index: SearchIndex, character: string): Record<string, number> {
@@ -86,7 +81,8 @@ export function renderCharacterView(
     container.appendChild(fnBox);
   }
 
-  const charCols = getCompareColumns().filter((c) => c.key !== 'character' && c.key !== 'category');
+  const columnOptions = columnOptionsFromCategory(state.characterCategory);
+  const charCols = getCompareColumns(columnOptions).filter((c) => c.key !== 'character' && c.key !== 'category');
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
 

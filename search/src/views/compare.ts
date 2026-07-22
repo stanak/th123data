@@ -2,18 +2,19 @@ import type { AppState, IndexRow, SearchIndex } from '../types';
 import {
   applyConditions,
   filterByMoveName,
-  advantagePresetCondition,
   matchedAdvantageLabel,
 } from '../query';
 import { t } from '../i18n';
-import { getCompareColumns, getFilterExtraColumn, sortRows, renderDataTable } from '../table';
+import { getCompareColumns, getFilterExtraColumn, sortRows, renderDataTable, columnOptionsFromCategories } from '../table';
+import { sortCharacters } from '../characters';
 
 export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] {
   let rows = index.rows.filter(
     (r) => state.categories.has(r.category) && state.characters.has(r.character),
   );
   rows = filterByMoveName(rows, state.moveName, state.partialMove);
-  rows = sortRows(rows, state.sortColumn, state.sortAsc);
+  const columnOptions = columnOptionsFromCategories(state.categories);
+  rows = sortRows(rows, state.sortColumn, state.sortAsc, columnOptions);
 
   if (!state.showMissingCompare && state.moveName.trim()) {
     return rows;
@@ -25,7 +26,7 @@ export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] 
 
   const found = new Set(rows.map((r) => r.character));
   const placeholders: IndexRow[] = [];
-  for (const character of index.characters) {
+  for (const character of sortCharacters(index.characters)) {
     if (!state.characters.has(character)) continue;
     if (found.has(character)) continue;
     placeholders.push({
@@ -40,11 +41,14 @@ export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] 
         startup: null,
         total: null,
         active: null,
+        blackout: null,
+        cancelUpper: null,
+        cancelMove: null,
         advantage: { seig: null, goG: null, tsujo: null, ch: null, min: null, max: null, raws: {} },
       },
     });
   }
-  return sortRows([...rows, ...placeholders], state.sortColumn, state.sortAsc);
+  return sortRows([...rows, ...placeholders], state.sortColumn, state.sortAsc, columnOptions);
 }
 
 export function renderCompareView(
@@ -78,9 +82,10 @@ export function renderCompareView(
     return;
   }
 
+  const columnOptions = columnOptionsFromCategories(state.categories);
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
-  renderDataTable(tableHost, rows, getCompareColumns(), {
+  renderDataTable(tableHost, rows, getCompareColumns(columnOptions), {
     sortColumn: state.sortColumn,
     sortAsc: state.sortAsc,
     onSort,
@@ -100,12 +105,9 @@ export function getFilterRows(index: SearchIndex, state: AppState): IndexRow[] {
     (r) => state.categories.has(r.category) && state.characters.has(r.character),
   );
   rows = filterByMoveName(rows, state.moveName, state.partialMove);
-  const conditions = [...state.conditions];
-  if (state.advantagePreset != null) {
-    conditions.push(advantagePresetCondition(state.advantagePreset));
-  }
-  rows = applyConditions(rows, conditions);
-  return sortRows(rows, state.sortColumn, state.sortAsc);
+  rows = applyConditions(rows, state.conditions);
+  const columnOptions = columnOptionsFromCategories(state.categories);
+  return sortRows(rows, state.sortColumn, state.sortAsc, columnOptions);
 }
 
 export function renderFilterView(
@@ -129,14 +131,12 @@ export function renderFilterView(
   header.appendChild(count);
   container.appendChild(header);
 
+  const columnOptions = columnOptionsFromCategories(state.categories);
   const filterCols = [
-    ...getCompareColumns().filter((c) => !['adv通常', 'adv正G'].includes(c.key)),
+    ...getCompareColumns(columnOptions).filter((c) => !['adv通常', 'adv正G'].includes(c.key)),
     {
       ...getFilterExtraColumn(),
-      get: (row: IndexRow) =>
-        state.advantagePreset != null
-          ? matchedAdvantageLabel(row, state.advantagePreset)
-          : matchedAdvantageLabel(row),
+      get: (row: IndexRow) => matchedAdvantageLabel(row),
     },
   ];
   const tableHost = document.createElement('div');

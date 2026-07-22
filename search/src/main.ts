@@ -6,6 +6,7 @@ import { renderSidebar } from './views/sidebar';
 import { renderCompareView } from './views/compare';
 import { renderFilterView } from './views/compare';
 import { renderCharacterView } from './views/character';
+import { sortCharacters } from './characters';
 
 async function loadIndex(): Promise<SearchIndex> {
   const res = await fetch(`${import.meta.env.BASE_URL}search_index.json`);
@@ -27,8 +28,9 @@ async function main() {
   initLocale(detectLocale());
 
   const index = await loadIndex();
-  const state = createDefaultState(index.characters);
-  applyState(state, stateFromUrl(index.characters));
+  const characters = sortCharacters(index.characters);
+  const state = createDefaultState(characters);
+  applyState(state, stateFromUrl(characters));
   setLocale(state.locale);
 
   function onMoveClick(moveName: string) {
@@ -51,7 +53,7 @@ async function main() {
 
   function resetToHome() {
     const locale = state.locale;
-    applyDefaultState(state, index.characters);
+    applyDefaultState(state, characters);
     state.locale = locale;
     setLocale(locale);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -65,7 +67,7 @@ async function main() {
   }
 
   function render(history: HistoryMode = 'push') {
-    updateHistory(state, history, index.characters);
+    updateHistory(state, history, characters);
     renderSidebar(sidebarEl, index, state, {
       onChange: (h = 'push') => render(h),
       onHome: resetToHome,
@@ -85,7 +87,7 @@ async function main() {
   }
 
   window.addEventListener('popstate', () => {
-    applyState(state, stateFromUrl(index.characters));
+    applyState(state, stateFromUrl(characters));
     setLocale(state.locale);
     render('none');
   });

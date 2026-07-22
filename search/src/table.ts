@@ -1,7 +1,7 @@
 import type { IndexRow } from './types';
 import { getStat } from './query';
 import { t, displayCellValue, advantageColumnLabel, categoryLabel, getLocale } from './i18n';
-import { characterLabel } from './characters';
+import { characterLabel, characterSortIndex } from './characters';
 import type { AdvantageKey } from './i18n';
 
 export interface TableColumn {
@@ -11,9 +11,82 @@ export interface TableColumn {
   sortValue?: (row: IndexRow) => number | string | null;
 }
 
-export function getCompareColumns(): TableColumn[] {
+export interface ColumnOptions {
+  /** Single category (character view). */
+  category?: string;
+  /** Selected categories (compare/filter). */
+  categories?: Set<string>;
+}
+
+function selectedCategories(options?: ColumnOptions): string[] {
+  if (options?.category) return [options.category];
+  if (options?.categories?.size) return [...options.categories];
+  return [];
+}
+
+function statColumn(
+  key: string,
+  label: string,
+  path: string,
+  parsedKey: keyof IndexRow['parsed'],
+): TableColumn {
+  return {
+    key,
+    label,
+    get: (r) => String(getStat(r, path) ?? ''),
+    sortValue: (r) => {
+      const v = r.parsed[parsedKey];
+      return typeof v === 'number' ? v : null;
+    },
+  };
+}
+
+function motionColumns(options?: ColumnOptions): TableColumn[] {
+  const cats = selectedCategories(options);
+  const onlySpell = cats.length === 1 && cats[0] === 'スペルカード';
+  const hasCancel = cats.some((c) => c === '射撃技' || c === '必殺技');
+  const hasSpell = cats.includes('スペルカード');
+
+  if (onlySpell) {
+    return [
+      statColumn('total', t('colTotal'), '動作.全体', 'total'),
+      statColumn('active', t('colActive'), '動作.持続', 'active'),
+      statColumn('blackout', t('colBlackout'), '動作.暗転', 'blackout'),
+      statColumn('startup', t('colStartup'), '動作.発生', 'startup'),
+    ];
+  }
+
+  const cols: TableColumn[] = [
+    statColumn('startup', t('colStartup'), '動作.発生', 'startup'),
+    statColumn('active', t('colActive'), '動作.持続', 'active'),
+    statColumn('total', t('colTotal'), '動作.全体', 'total'),
+  ];
+
+  if (hasCancel) {
+    cols.push(
+      statColumn('cancelUpper', t('colCancelUpper'), 'キャンセル.上位', 'cancelUpper'),
+      statColumn('cancelMove', t('colCancelMove'), 'キャンセル.移動', 'cancelMove'),
+    );
+  }
+
+  if (hasSpell) {
+    cols.push(statColumn('blackout', t('colBlackout'), '動作.暗転', 'blackout'));
+  }
+
+  return cols;
+}
+
+export function columnOptionsFromCategory(category: string): ColumnOptions {
+  return { category };
+}
+
+export function columnOptionsFromCategories(categories: Set<string>): ColumnOptions {
+  return { categories };
+}
+
+export function getCompareColumns(options?: ColumnOptions): TableColumn[] {
   return [
-    { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => r.character },
+    { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => characterSortIndex(r.character) },
     {
       key: 'category',
       label: t('colCategory'),
@@ -23,18 +96,7 @@ export function getCompareColumns(): TableColumn[] {
     { key: 'moveName', label: t('colMoveName'), get: (r) => r.moveName, sortValue: (r) => r.moveName },
     { key: 'command', label: t('colCommand'), get: (r) => r.command ?? '', sortValue: (r) => r.command ?? '' },
     { key: 'lv', label: t('colLv'), get: (r) => r.lv ?? '', sortValue: (r) => r.lv ?? '' },
-    {
-      key: 'startup',
-      label: t('colStartup'),
-      get: (r) => String(getStat(r, '動作.発生') ?? ''),
-      sortValue: (r) => r.parsed.startup,
-    },
-    {
-      key: 'total',
-      label: t('colTotal'),
-      get: (r) => String(getStat(r, '動作.全体') ?? ''),
-      sortValue: (r) => r.parsed.total,
-    },
+    ...motionColumns(options),
     ...(['通常', '正G', '誤G', 'CH'] as AdvantageKey[]).map((advKey) => ({
       key: `adv${advKey}`,
       label: advantageColumnLabel(advKey),
@@ -78,9 +140,14 @@ export function getFilterExtraColumn(): TableColumn {
   };
 }
 
-export function sortRows(rows: IndexRow[], column: string | null, asc: boolean): IndexRow[] {
+export function sortRows(
+  rows: IndexRow[],
+  column: string | null,
+  asc: boolean,
+  options?: ColumnOptions,
+): IndexRow[] {
   if (!column) return rows;
-  const col = getCompareColumns().find((c) => c.key === column);
+  const col = getCompareColumns(options).find((c) => c.key === column);
   if (!col?.sortValue) return rows;
   const sorted = [...rows].sort((a, b) => {
     const av = col.sortValue!(a);

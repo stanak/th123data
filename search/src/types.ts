@@ -22,6 +22,9 @@ export interface IndexRow {
     startup: number | null;
     total: number | null;
     active: number | null;
+    blackout: number | null;
+    cancelUpper: number | null;
+    cancelMove: number | null;
     advantage: ParsedAdvantage;
   };
 }
@@ -45,6 +48,7 @@ export interface Condition {
 }
 
 import type { Locale } from './i18n';
+import { sortCharacters } from './characters';
 
 export interface AppState {
   mode: AppMode;
@@ -56,7 +60,6 @@ export interface AppState {
   selectedCharacter: string;
   characterCategory: string;
   conditions: Condition[];
-  advantagePreset: number | null;
   showMissingCompare: boolean;
   sortColumn: string | null;
   sortAsc: boolean;
@@ -65,17 +68,17 @@ export interface AppState {
 export const DEFAULT_CATEGORIES = ['通常技', '射撃技', '必殺技', 'スペルカード'];
 
 export function createDefaultState(characters: string[]): AppState {
+  const ordered = sortCharacters(characters);
   return {
     mode: 'character',
     locale: 'ja',
     moveName: '',
     partialMove: false,
     categories: new Set(['通常技']),
-    characters: new Set(characters),
-    selectedCharacter: characters[0] ?? '',
+    characters: new Set(ordered),
+    selectedCharacter: ordered[0] ?? '',
     characterCategory: '通常技',
     conditions: [],
-    advantagePreset: null,
     showMissingCompare: false,
     sortColumn: null,
     sortAsc: true,
@@ -92,7 +95,6 @@ export function applyState(target: AppState, source: AppState): void {
   target.selectedCharacter = source.selectedCharacter;
   target.characterCategory = source.characterCategory;
   target.conditions = source.conditions.map((c) => ({ ...c }));
-  target.advantagePreset = source.advantagePreset;
   target.showMissingCompare = source.showMissingCompare;
   target.sortColumn = source.sortColumn;
   target.sortAsc = source.sortAsc;
