@@ -1,14 +1,16 @@
 {
-  "name": "bulletaction-frame-data",
+  "name": "th123data",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:index": "node build_index.mjs",
+    "build:search": "npm run build:index && cd search && npm run build",
+    "dev:search": "npm run build:index && cd search && npm run dev"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "playwright": "^1.61.1"
   }

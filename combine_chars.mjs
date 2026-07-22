@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { flattenCharacter } from './flatten_frame_data.mjs';
 
-const CHAR_DIR = '/home/starnak/bulletaction-frame-data/chars';
-const OUT = '/home/starnak/bulletaction-frame-data/frame_data.json';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const CHAR_DIR = path.join(__dirname, 'chars');
+const OUT = path.join(__dirname, 'frame_data.json');
 
 const files = fs.readdirSync(CHAR_DIR).filter((f) => f.endsWith('.json'));
 const characters = {};

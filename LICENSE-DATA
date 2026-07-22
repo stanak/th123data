@@ -1,0 +1,27 @@
+# Data License — CC0 1.0 Universal
+
+To the extent possible under law, the contributor has waived all copyright
+and related or neighboring rights to the processed frame data in this
+repository.
+
+## 対象ファイル
+
+- `frame_data.json`
+- `chars/*.json`
+- `search/public/search_index.json`
+- `docs/search_index.json`
+- 上記から生成・派生した JSON データ
+
+## 利用
+
+これらのファイルは **CC0 1.0**（パブリックドメイン相当）として提供されます。
+表示義務・改変禁止・非商用などの条件なく、自由に利用・改変・再配布できます（商用利用を含む）。
+
+## 出典
+
+データの原本は [細々と東方非想天則を攻略するwiki](https://w.atwiki.jp/bulletaction/) から、
+運営者の許可を得て抽出・加工したものです。
+
+## 全文
+
+https://creativecommons.org/publicdomain/zero/1.0/

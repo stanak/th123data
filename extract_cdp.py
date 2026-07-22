@@ -6,7 +6,7 @@ import sys
 import os
 
 LOG_DIR = '/mnt/c/Users/stip/.cursor/browser-logs'
-OUT_DIR = '/home/starnak/bulletaction-frame-data/chars'
+OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chars')
 
 def extract_from_cdp_file(path):
     with open(path, 'r', encoding='utf-8') as f:

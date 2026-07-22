@@ -4,7 +4,7 @@ import json
 import os
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-ROOT = '/home/starnak/bulletaction-frame-data'
+ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(ROOT, 'chars')
 SCRAPER = os.path.join(ROOT, 'scrape_one.min.js')
 

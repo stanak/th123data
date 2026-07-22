@@ -1,5 +1,9 @@
 import { chromium } from 'playwright';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const CHARACTERS = [
   { name: '早苗', pageId: 157 },
@@ -490,7 +494,7 @@ async function main() {
 
   await browser.close();
 
-  const outPath = '/home/starnak/bulletaction-frame-data/frame_data.json';
+  const outPath = path.join(__dirname, 'frame_data.json');
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2), 'utf8');
   console.error(`Written to ${outPath}`);
   console.log(outPath);

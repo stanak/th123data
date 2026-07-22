@@ -5,7 +5,7 @@ import glob
 import os
 
 LOG_DIR = '/mnt/c/Users/stip/.cursor/browser-logs'
-OUT_DIR = '/home/starnak/bulletaction-frame-data/chars'
+OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chars')
 os.makedirs(OUT_DIR, exist_ok=True)
 
 best = {}
