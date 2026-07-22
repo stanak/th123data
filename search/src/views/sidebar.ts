@@ -8,7 +8,7 @@ import {
   getLocale,
   type Locale,
 } from '../i18n';
-import { characterLabel } from '../characters';
+import { characterLabel, sortCharacters } from '../characters';
 
 export interface SidebarHandlers {
   onChange: (history?: HistoryMode) => void;
@@ -31,7 +31,7 @@ export function renderSidebar(
   title.addEventListener('click', handlers.onHome);
   root.appendChild(title);
 
-  root.appendChild(langToggle(handlers));
+  root.appendChild(moveNameField(state, handlers));
 
   const modeGroup = document.createElement('div');
   modeGroup.className = 'field-group';
@@ -63,17 +63,11 @@ export function renderSidebar(
     root.appendChild(categoryCheckboxes(index, state, handlers));
   }
 
-  root.appendChild(moveNameField(state, handlers));
-
   if (state.mode === 'compare') {
     root.appendChild(checkboxField(t('showMissingChars'), state.showMissingCompare, (v) => {
       state.showMissingCompare = v;
       handlers.onChange();
     }));
-  }
-
-  if (state.mode === 'filter' || state.mode === 'character') {
-    root.appendChild(advantagePreset(state, handlers));
   }
 
   if (state.mode === 'filter') {
@@ -84,11 +78,13 @@ export function renderSidebar(
   meta.className = 'meta-info';
   meta.textContent = t('metaInfo', { chars: index.characterCount, rows: index.rowCount });
   root.appendChild(meta);
+
+  root.appendChild(langToggle(handlers));
 }
 
 function langToggle(handlers: SidebarHandlers): HTMLElement {
   const g = document.createElement('div');
-  g.className = 'field-group lang-toggle';
+  g.className = 'field-group lang-toggle sidebar-footer';
   for (const loc of ['ja', 'en'] as Locale[]) {
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -115,7 +111,7 @@ function charSelect(index: SearchIndex, state: AppState, handlers: SidebarHandle
   g.appendChild(label(t('character')));
   const sel = document.createElement('select');
   sel.className = 'char-select';
-  for (const c of index.characters) {
+  for (const c of sortCharacters(index.characters)) {
     const opt = document.createElement('option');
     opt.value = c;
     opt.textContent = characterLabel(c, getLocale());
@@ -157,7 +153,7 @@ function charCheckboxes(index: SearchIndex, state: AppState, handlers: SidebarHa
   g.appendChild(hdr);
   const grid = document.createElement('div');
   grid.className = 'char-grid';
-  for (const c of index.characters) {
+  for (const c of sortCharacters(index.characters)) {
     const lbl = document.createElement('label');
     lbl.className = 'check-label';
     const cb = document.createElement('input');
@@ -204,56 +200,47 @@ function categoryCheckboxes(index: SearchIndex, state: AppState, handlers: Sideb
 
 function moveNameField(state: AppState, handlers: SidebarHandlers): HTMLElement {
   const g = document.createElement('div');
-  g.className = 'field-group';
+  g.className = 'field-group search-group';
   g.appendChild(label(t('moveName')));
+
+  const row = document.createElement('div');
+  row.className = 'search-row';
+
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'text-input';
   input.placeholder = t('moveNamePlaceholder');
   input.value = state.moveName;
+
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'clear-btn';
+  clearBtn.textContent = t('clear');
+  clearBtn.disabled = !state.moveName;
+
   input.addEventListener('input', () => {
     state.moveName = input.value;
+    clearBtn.disabled = !input.value;
     handlers.onChange('replace');
   });
   input.addEventListener('blur', () => {
     handlers.onChange('push');
   });
-  g.appendChild(input);
+  clearBtn.addEventListener('click', () => {
+    state.moveName = '';
+    input.value = '';
+    clearBtn.disabled = true;
+    input.focus();
+    handlers.onChange('push');
+  });
+
+  row.appendChild(input);
+  row.appendChild(clearBtn);
+  g.appendChild(row);
   g.appendChild(checkboxField(t('partialMatch'), state.partialMove, (v) => {
     state.partialMove = v;
     handlers.onChange('push');
   }));
-  return g;
-}
-
-function advantagePreset(state: AppState, handlers: SidebarHandlers): HTMLElement {
-  const g = document.createElement('div');
-  g.className = 'field-group';
-  g.appendChild(label(t('advantagePreset')));
-  const row = document.createElement('div');
-  row.className = 'preset-row';
-  const presets = [-5, -10, -15];
-  for (const n of presets) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'preset-btn' + (state.advantagePreset === n ? ' active' : '');
-    btn.textContent = `<= ${n}`;
-    btn.addEventListener('click', () => {
-      state.advantagePreset = state.advantagePreset === n ? null : n;
-      handlers.onChange();
-    });
-    row.appendChild(btn);
-  }
-  const clear = document.createElement('button');
-  clear.type = 'button';
-  clear.className = 'link-btn';
-  clear.textContent = t('clear');
-  clear.addEventListener('click', () => {
-    state.advantagePreset = null;
-    handlers.onChange();
-  });
-  row.appendChild(clear);
-  g.appendChild(row);
   return g;
 }
 
@@ -264,7 +251,7 @@ function customCondition(state: AppState, handlers: SidebarHandlers): HTMLElemen
   const row = document.createElement('div');
   row.className = 'condition-row';
   const field = document.createElement('select');
-  for (const f of ['有利差.*', '動作.発生', '動作.全体', '技名', 'コマンド', '攻撃Lv']) {
+  for (const f of ['有利差.*', '動作.発生', '動作.全体', '動作.持続', '動作.暗転', 'キャンセル.上位', 'キャンセル.移動', '技名', 'コマンド', '攻撃Lv']) {
     const opt = document.createElement('option');
     opt.value = f;
     opt.textContent = fieldPathLabel(f);

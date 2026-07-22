@@ -88,6 +88,7 @@ function buildIndex() {
       for (const row of section.rows) {
         const moveName = row['技名'] ?? row['行動の種類'] ?? '';
         const dousa = row['動作'] || {};
+        const cancel = row['キャンセル'] || {};
         rows.push({
           id: String(id++),
           character,
@@ -100,6 +101,9 @@ function buildIndex() {
             startup: parseFrameValue(dousa['発生']),
             total: parseFrameValue(dousa['全体']),
             active: parseFrameValue(dousa['持続']),
+            blackout: parseFrameValue(dousa['暗転']),
+            cancelUpper: parseFrameValue(cancel['上位']),
+            cancelMove: parseFrameValue(cancel['移動']),
             advantage: parseAdvantage(row['有利差']),
           },
         });

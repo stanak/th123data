@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /** Flatten nested frame data: drop headers/metadata, merge rows, add コマンド. */
 
+import { mergeCharacterBulletSummaries } from './merge_bullet_summaries.mjs';
+
 const SKIP_KEYS = new Set([
   'tables', 'subsections', 'pages', 'notes', 'content', 'footnotes',
   'url', 'title', 'error', 'headers', 'rows', 'name', 'pageUrl', 'frameData',
@@ -89,7 +91,7 @@ export function flattenCharacter(char) {
     }
   }
   if (Object.keys(frameData).length > 0) out.frameData = frameData;
-  return out;
+  return mergeCharacterBulletSummaries(out);
 }
 
 export function flattenFrameData(input) {

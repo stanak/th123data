@@ -2,6 +2,7 @@ import type { AppState } from './types';
 import { createDefaultState } from './types';
 import type { Locale } from './i18n';
 import { detectLocale } from './i18n';
+import { sortCharacters } from './characters';
 
 function setsEqual(a: Set<string>, b: Set<string>): boolean {
   if (a.size !== b.size) return false;
@@ -24,7 +25,8 @@ function parseConditions(p: URLSearchParams): AppState['conditions'] {
 }
 
 export function stateFromUrl(characters: string[]): AppState {
-  const defaults = createDefaultState(characters);
+  const orderedCharacters = sortCharacters(characters);
+  const defaults = createDefaultState(orderedCharacters);
   const p = new URLSearchParams(location.search);
   if (!p.toString()) {
     return { ...defaults, locale: detectLocale() };
@@ -33,7 +35,6 @@ export function stateFromUrl(characters: string[]): AppState {
   const mode = p.get('mode');
   const charsStr = p.get('chars');
   const catStr = p.get('cat');
-  const adv = p.get('adv');
 
   return {
     mode:
@@ -42,11 +43,12 @@ export function stateFromUrl(characters: string[]): AppState {
     moveName: p.get('move') ?? '',
     partialMove: p.get('partial') === '1',
     categories: catStr ? new Set(catStr.split(',').filter(Boolean)) : new Set(defaults.categories),
-    characters: charsStr ? new Set(charsStr.split(',').filter(Boolean)) : new Set(characters),
+    characters: charsStr
+      ? new Set(sortCharacters(charsStr.split(',').filter(Boolean)))
+      : new Set(orderedCharacters),
     selectedCharacter: p.get('char') ?? defaults.selectedCharacter,
     characterCategory: p.get('charCat') ?? defaults.characterCategory,
     conditions: parseConditions(p),
-    advantagePreset: adv != null && adv !== '' ? Number(adv) : null,
     showMissingCompare: p.get('missing') === '1',
     sortColumn: p.get('sort'),
     sortAsc: p.get('asc') !== '0',
@@ -54,7 +56,8 @@ export function stateFromUrl(characters: string[]): AppState {
 }
 
 export function stateToUrl(state: AppState, characters: string[]): string {
-  const defaults = createDefaultState(characters);
+  const orderedCharacters = sortCharacters(characters);
+  const defaults = createDefaultState(orderedCharacters);
   const isHome =
     state.mode === defaults.mode &&
     state.moveName === '' &&
@@ -64,7 +67,6 @@ export function stateToUrl(state: AppState, characters: string[]): string {
     state.selectedCharacter === defaults.selectedCharacter &&
     state.characterCategory === defaults.characterCategory &&
     state.conditions.length === 0 &&
-    state.advantagePreset === null &&
     !state.showMissingCompare &&
     state.sortColumn === null &&
     state.locale === defaults.locale;
@@ -81,11 +83,10 @@ export function stateToUrl(state: AppState, characters: string[]): string {
   if (state.partialMove) p.set('partial', '1');
   if (state.categories.size) p.set('cat', [...state.categories].join(','));
   if (state.mode !== 'character' && state.characters.size) {
-    p.set('chars', [...state.characters].join(','));
+    p.set('chars', sortCharacters(state.characters).join(','));
   }
   if (state.selectedCharacter) p.set('char', state.selectedCharacter);
   if (state.characterCategory) p.set('charCat', state.characterCategory);
-  if (state.advantagePreset != null) p.set('adv', String(state.advantagePreset));
   if (state.showMissingCompare) p.set('missing', '1');
   if (state.sortColumn) {
     p.set('sort', state.sortColumn);

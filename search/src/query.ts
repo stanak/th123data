@@ -10,6 +10,9 @@ export function getStat(row: IndexRow, path: string): unknown {
   if (path === '動作.発生') return (row.stats['動作'] as Record<string, string> | undefined)?.['発生'];
   if (path === '動作.全体') return (row.stats['動作'] as Record<string, string> | undefined)?.['全体'];
   if (path === '動作.持続') return (row.stats['動作'] as Record<string, string> | undefined)?.['持続'];
+  if (path === '動作.暗転') return (row.stats['動作'] as Record<string, string> | undefined)?.['暗転'];
+  if (path === 'キャンセル.上位') return (row.stats['キャンセル'] as Record<string, string> | undefined)?.['上位'];
+  if (path === 'キャンセル.移動') return (row.stats['キャンセル'] as Record<string, string> | undefined)?.['移動'];
   if (path === '受身不能') return row.stats['受身不能'];
   if (path === '攻撃Lv') return row.stats['攻撃Lv'];
   if (path === '攻撃分類') return row.stats['攻撃分類'];
@@ -25,6 +28,9 @@ export function getNumeric(row: IndexRow, path: string): number | null {
   if (path === '動作.発生') return row.parsed.startup;
   if (path === '動作.全体') return row.parsed.total;
   if (path === '動作.持続') return row.parsed.active;
+  if (path === '動作.暗転') return row.parsed.blackout;
+  if (path === 'キャンセル.上位') return row.parsed.cancelUpper;
+  if (path === 'キャンセル.移動') return row.parsed.cancelMove;
   if (path === '有利差.min') return row.parsed.advantage.min;
   if (path === '有利差.max') return row.parsed.advantage.max;
   if (path.startsWith('有利差.')) {
