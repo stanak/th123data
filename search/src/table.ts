@@ -140,7 +140,11 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
   cols.push({
     key: 'moveName',
     label: t('colMoveName'),
-    get: (r) => (hasStates && r.stateName ? '' : r.moveName),
+    get: (r) => {
+      const display = r as DisplayRow;
+      if (hasStates && r.stateName && display.showMoveName === false) return '';
+      return r.moveName;
+    },
     sortValue: (r) => r.moveName,
   });
 
@@ -277,32 +281,18 @@ export function renderDataTable(
 
   const tbody = document.createElement('tbody');
   for (const row of displayRows) {
-    if (hasStates && row.showMoveName && row.stateName) {
-      const headerTr = document.createElement('tr');
-      headerTr.className = 'move-group-row';
-      const headerTd = document.createElement('td');
-      headerTd.colSpan = columns.length;
-      if (options.onMoveClick) {
-        const a = document.createElement('a');
-        a.href = '#';
-        a.className = 'move-link move-group-link';
-        a.textContent = row.moveName;
-        a.addEventListener('click', (e) => {
-          e.preventDefault();
-          options.onMoveClick!(row.moveName);
-        });
-        headerTd.appendChild(a);
-      } else {
-        headerTd.textContent = row.moveName;
-      }
-      headerTr.appendChild(headerTd);
-      tbody.appendChild(headerTr);
-    }
-
     const tr = document.createElement('tr');
     tr.dataset.id = row.id;
     for (const col of columns) {
+      if (col.key === 'moveName' && hasStates && row.stateName && !row.showMoveName) {
+        continue;
+      }
+
       const td = document.createElement('td');
+      if (col.key === 'moveName' && row.moveRowSpan > 1 && row.showMoveName) {
+        td.rowSpan = row.moveRowSpan;
+      }
+
       const extra = options.getExtraCell?.(row, col);
       if (extra instanceof HTMLElement) {
         td.appendChild(extra);
@@ -312,7 +302,7 @@ export function renderDataTable(
         col.key === 'moveName' &&
         options.onMoveClick &&
         row.moveName &&
-        !row.stateName
+        (!row.stateName || row.showMoveName)
       ) {
         const a = document.createElement('a');
         a.href = '#';

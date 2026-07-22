@@ -372,19 +372,3 @@ body {
   color: var(--accent);
   text-decoration: none;
 }
-
-.move-group-row td {
-  background: var(--surface2);
-  font-weight: 600;
-  color: var(--accent);
-  border-bottom: none;
-  padding-top: 0.65rem;
-}
-
-.move-group-row + tr td {
-  border-top: none;
-}
-
-.move-group-link {
-  font-weight: 600;
-}
