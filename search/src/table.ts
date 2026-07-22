@@ -18,6 +18,11 @@ export interface ColumnOptions {
   categories?: Set<string>;
 }
 
+export interface DisplayRow extends IndexRow {
+  moveRowSpan: number;
+  showMoveName: boolean;
+}
+
 function selectedCategories(options?: ColumnOptions): string[] {
   if (options?.category) return [options.category];
   if (options?.categories?.size) return [...options.categories];
@@ -76,6 +81,42 @@ function motionColumns(options?: ColumnOptions): TableColumn[] {
   return cols;
 }
 
+export function rowsHaveStates(rows: IndexRow[]): boolean {
+  return rows.some((r) => r.stateName);
+}
+
+export function prepareDisplayRows(rows: IndexRow[]): DisplayRow[] {
+  const out: DisplayRow[] = [];
+  let i = 0;
+  while (i < rows.length) {
+    const row = rows[i];
+    const key = `${row.character}\0${row.moveName}`;
+
+    if (!row.stateName) {
+      out.push({ ...row, moveRowSpan: 1, showMoveName: true });
+      i++;
+      continue;
+    }
+
+    let j = i;
+    while (j < rows.length) {
+      const r = rows[j];
+      if (`${r.character}\0${r.moveName}` !== key || !r.stateName) break;
+      j++;
+    }
+    const span = j - i;
+    for (let k = i; k < j; k++) {
+      out.push({
+        ...rows[k],
+        moveRowSpan: k === i ? span : 0,
+        showMoveName: k === i,
+      });
+    }
+    i = j;
+  }
+  return out;
+}
+
 export function columnOptionsFromCategory(category: string): ColumnOptions {
   return { category };
 }
@@ -84,8 +125,9 @@ export function columnOptionsFromCategories(categories: Set<string>): ColumnOpti
   return { categories };
 }
 
-export function getCompareColumns(options?: ColumnOptions): TableColumn[] {
-  return [
+export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): TableColumn[] {
+  const hasStates = rows ? rowsHaveStates(rows) : false;
+  const cols: TableColumn[] = [
     { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => characterSortIndex(r.character) },
     {
       key: 'category',
@@ -93,7 +135,25 @@ export function getCompareColumns(options?: ColumnOptions): TableColumn[] {
       get: (r) => categoryLabel(r.category),
       sortValue: (r) => r.category,
     },
-    { key: 'moveName', label: t('colMoveName'), get: (r) => r.moveName, sortValue: (r) => r.moveName },
+  ];
+
+  if (hasStates) {
+    cols.push({
+      key: 'stateName',
+      label: t('colState'),
+      get: (r) => r.stateName ?? '',
+      sortValue: (r) => r.stateName ?? '',
+    });
+  } else {
+    cols.push({
+      key: 'moveName',
+      label: t('colMoveName'),
+      get: (r) => r.moveName,
+      sortValue: (r) => r.moveName,
+    });
+  }
+
+  cols.push(
     { key: 'command', label: t('colCommand'), get: (r) => r.command ?? '', sortValue: (r) => r.command ?? '' },
     { key: 'lv', label: t('colLv'), get: (r) => r.lv ?? '', sortValue: (r) => r.lv ?? '' },
     ...motionColumns(options),
@@ -129,7 +189,9 @@ export function getCompareColumns(options?: ColumnOptions): TableColumn[] {
       get: (r) => String(getStat(r, '備考') ?? ''),
       sortValue: (r) => String(getStat(r, '備考') ?? ''),
     },
-  ];
+  );
+
+  return cols;
 }
 
 export function getFilterExtraColumn(): TableColumn {
@@ -147,9 +209,14 @@ export function sortRows(
   options?: ColumnOptions,
 ): IndexRow[] {
   if (!column) return rows;
-  const col = getCompareColumns(options).find((c) => c.key === column);
+  const col = getCompareColumns(options, rows).find((c) => c.key === column);
   if (!col?.sortValue) return rows;
   const sorted = [...rows].sort((a, b) => {
+    if (column === 'stateName' || column === 'moveName') {
+      const moveCmp = a.moveName.localeCompare(b.moveName, 'ja');
+      if (moveCmp !== 0) return moveCmp;
+      return String(a.stateName ?? '').localeCompare(String(b.stateName ?? ''), 'ja', { numeric: true });
+    }
     const av = col.sortValue!(a);
     const bv = col.sortValue!(b);
     if (av == null && bv == null) return 0;
@@ -183,6 +250,9 @@ export function renderDataTable(
     return;
   }
 
+  const hasStates = rowsHaveStates(rows);
+  const displayRows = hasStates ? prepareDisplayRows(rows) : rows.map((r) => ({ ...r, moveRowSpan: 1, showMoveName: true }));
+
   const wrap = document.createElement('div');
   wrap.className = 'table-wrap';
   const table = document.createElement('table');
@@ -206,9 +276,34 @@ export function renderDataTable(
   table.appendChild(thead);
 
   const tbody = document.createElement('tbody');
-  for (const row of rows) {
+  for (const row of displayRows) {
+    if (hasStates && row.showMoveName) {
+      const headerTr = document.createElement('tr');
+      headerTr.className = 'move-group-row';
+      const headerTd = document.createElement('td');
+      headerTd.colSpan = columns.length;
+      if (options.onMoveClick) {
+        const a = document.createElement('a');
+        a.href = '#';
+        a.className = 'move-link move-group-link';
+        a.textContent = row.moveName;
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          options.onMoveClick!(row.moveName);
+        });
+        headerTd.appendChild(a);
+      } else {
+        headerTd.textContent = row.moveName;
+      }
+      headerTr.appendChild(headerTd);
+      tbody.appendChild(headerTr);
+    }
+
     const tr = document.createElement('tr');
     tr.dataset.id = row.id;
+    if (hasStates && !row.stateName) {
+      tr.classList.add('move-flat-row');
+    }
     for (const col of columns) {
       const td = document.createElement('td');
       const extra = options.getExtraCell?.(row, col);

@@ -34,6 +34,7 @@ export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] 
       character,
       category: [...state.categories][0] ?? '',
       moveName: state.moveName,
+      stateName: null,
       command: null,
       lv: null,
       stats: {},
@@ -85,7 +86,7 @@ export function renderCompareView(
   const columnOptions = columnOptionsFromCategories(state.categories);
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
-  renderDataTable(tableHost, rows, getCompareColumns(columnOptions), {
+  renderDataTable(tableHost, rows, getCompareColumns(columnOptions, rows), {
     sortColumn: state.sortColumn,
     sortAsc: state.sortAsc,
     onSort,
@@ -133,7 +134,7 @@ export function renderFilterView(
 
   const columnOptions = columnOptionsFromCategories(state.categories);
   const filterCols = [
-    ...getCompareColumns(columnOptions).filter((c) => !['adv通常', 'adv正G'].includes(c.key)),
+    ...getCompareColumns(columnOptions, rows).filter((c) => !['adv通常', 'adv正G'].includes(c.key)),
     {
       ...getFilterExtraColumn(),
       get: (row: IndexRow) => matchedAdvantageLabel(row),

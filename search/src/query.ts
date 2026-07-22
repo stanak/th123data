@@ -2,7 +2,8 @@ import type { Condition, IndexRow } from './types';
 import { formatMatchedAdvantage, type AdvantageKey } from './i18n';
 
 export function getStat(row: IndexRow, path: string): unknown {
-  if (path === '技名') return row.moveName;
+  if (path === '技名') return row.stateName ? row.moveName : row.moveName;
+  if (path === '状態') return row.stateName;
   if (path === 'コマンド') return row.command;
   if (path === 'Lv') return row.lv;
   if (path === 'キャラ') return row.character;
@@ -124,6 +125,23 @@ export function filterByMoveName(
 ): IndexRow[] {
   const q = moveName.trim();
   if (!q) return rows;
-  if (partial) return rows.filter((r) => r.moveName.includes(q));
-  return rows.filter((r) => r.moveName === q);
+
+  const fullName = (r: IndexRow) =>
+    r.stateName ? `${r.moveName}-${r.stateName}` : r.moveName;
+
+  if (partial) {
+    return rows.filter(
+      (r) =>
+        r.moveName.includes(q) ||
+        fullName(r).includes(q) ||
+        (r.stateName?.includes(q) ?? false),
+    );
+  }
+
+  return rows.filter((r) => {
+    if (fullName(r) === q) return true;
+    if (!r.stateName && r.moveName === q) return true;
+    if (r.stateName && r.moveName === q) return true;
+    return false;
+  });
 }

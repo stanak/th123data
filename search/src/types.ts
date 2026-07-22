@@ -15,6 +15,7 @@ export interface IndexRow {
   character: string;
   category: string;
   moveName: string;
+  stateName: string | null;
   command: string | null;
   lv: string | null;
   stats: Record<string, unknown>;

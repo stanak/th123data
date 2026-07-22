@@ -82,7 +82,7 @@ export function renderCharacterView(
   }
 
   const columnOptions = columnOptionsFromCategory(state.characterCategory);
-  const charCols = getCompareColumns(columnOptions).filter((c) => c.key !== 'character' && c.key !== 'category');
+  const charCols = getCompareColumns(columnOptions, rows).filter((c) => c.key !== 'character' && c.key !== 'category');
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
 

@@ -71,42 +71,61 @@ function parseAdvantage(adv) {
   return out;
 }
 
+function buildParsed(stats) {
+  const dousa = stats['動作'] || {};
+  const cancel = stats['キャンセル'] || {};
+  return {
+    startup: parseFrameValue(dousa['発生']),
+    total: parseFrameValue(dousa['全体']),
+    active: parseFrameValue(dousa['持続']),
+    blackout: parseFrameValue(dousa['暗転']),
+    cancelUpper: parseFrameValue(cancel['上位']),
+    cancelMove: parseFrameValue(cancel['移動']),
+    advantage: parseAdvantage(stats['有利差']),
+  };
+}
+
+function pushIndexRow(rows, ctx, parentRow, stats, moveName, stateName) {
+  rows.push({
+    id: String(ctx.id++),
+    character: ctx.character,
+    category: ctx.category,
+    moveName,
+    stateName,
+    command: parentRow['コマンド'] ?? stats['コマンド'] ?? null,
+    lv: parentRow['Lv'] ?? stats['Lv'] ?? null,
+    stats,
+    parsed: buildParsed(stats),
+  });
+}
+
 function buildIndex() {
   const data = JSON.parse(fs.readFileSync(FRAME_DATA, 'utf8'));
   const characters = CHARACTER_ORDER.filter((name) => data.characters[name]);
   const footnotes = {};
   const rows = [];
-  let id = 0;
+  const ctx = { id: 0, character: '', category: '' };
 
   for (const character of characters) {
+    ctx.character = character;
     const charData = data.characters[character];
     if (charData.footnotes) footnotes[character] = charData.footnotes;
     const sections = charData.frameData?.['フレームデータ'] || {};
     for (const category of CATEGORIES) {
+      ctx.category = category;
       const section = sections[category];
       if (!section?.rows) continue;
       for (const row of section.rows) {
+        const states = row['状態'];
+        if (Array.isArray(states) && states.length) {
+          const moveName = String(row['技名'] ?? '');
+          for (const state of states) {
+            pushIndexRow(rows, ctx, row, state, moveName, String(state['技名'] ?? ''));
+          }
+          continue;
+        }
         const moveName = row['技名'] ?? row['行動の種類'] ?? '';
-        const dousa = row['動作'] || {};
-        const cancel = row['キャンセル'] || {};
-        rows.push({
-          id: String(id++),
-          character,
-          category,
-          moveName: String(moveName),
-          command: row['コマンド'] ?? null,
-          lv: row['Lv'] ?? null,
-          stats: row,
-          parsed: {
-            startup: parseFrameValue(dousa['発生']),
-            total: parseFrameValue(dousa['全体']),
-            active: parseFrameValue(dousa['持続']),
-            blackout: parseFrameValue(dousa['暗転']),
-            cancelUpper: parseFrameValue(cancel['上位']),
-            cancelMove: parseFrameValue(cancel['移動']),
-            advantage: parseAdvantage(row['有利差']),
-          },
-        });
+        pushIndexRow(rows, ctx, row, row, String(moveName), null);
       }
     }
   }

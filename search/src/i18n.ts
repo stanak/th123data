@@ -40,6 +40,7 @@ const FIELD_PATH_EN: Record<string, string> = {
   'キャンセル.上位': 'cancel (higher)',
   'キャンセル.移動': 'cancel (move)',
   '技名': 'move',
+  '状態': 'state',
   'コマンド': 'command',
   '攻撃Lv': 'attack Lv',
 };
@@ -80,6 +81,7 @@ const JA = {
   colCharacter: 'キャラ',
   colCategory: 'カテゴリ',
   colMoveName: '技名',
+  colState: '状態',
   colCommand: 'コマンド',
   colLv: 'Lv',
   colStartup: '発生',
@@ -140,6 +142,7 @@ const EN: Record<MessageKey, string> = {
   colCharacter: 'Character',
   colCategory: 'Category',
   colMoveName: 'Move',
+  colState: 'state',
   colCommand: 'Command',
   colLv: 'Lv',
   colStartup: 'startup',
