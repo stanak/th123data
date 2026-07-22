@@ -12,19 +12,44 @@ function splitConcatenatedDigits(token) {
   return parts.join(',');
 }
 
+function expandFrameTokenList(part) {
+  return part
+    .split(/[、,]/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .map((t) => splitConcatenatedDigits(t))
+    .join(',');
+}
+
+function normalizeEllipsisFrameValue(raw) {
+  const idx = raw.indexOf('…');
+  const before = raw.slice(0, idx);
+  const after = raw.slice(idx + 1);
+
+  const beforePart = expandFrameTokenList(before);
+  if (!after.trim()) {
+    return beforePart ? `${beforePart},...` : '...';
+  }
+
+  const afterPart = expandFrameTokenList(after);
+  return `${beforePart},...,${afterPart}`;
+}
+
 export function normalizeFrameListValue(raw) {
   if (raw == null || typeof raw !== 'string') return raw;
 
   const s = raw.trim();
-  if (!s || !/\d{4,}/.test(s)) return raw;
-  if (s === 'down' || s === '備考' || s.includes('有利') || s.includes('…')) return raw;
+  if (!s) return raw;
+  if (s === 'down' || s === '備考' || s.includes('有利')) return raw;
+
+  if (s.includes('…')) {
+    return normalizeEllipsisFrameValue(s);
+  }
+
+  if (!/\d{4,}/.test(s)) return raw;
 
   if (/[、,]/.test(s)) {
-    return s
-      .split(/[、,]/)
-      .map((part) => splitConcatenatedDigits(part.trim()))
-      .filter(Boolean)
-      .join(',');
+    return expandFrameTokenList(s);
   }
 
   return splitConcatenatedDigits(s);

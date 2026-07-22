@@ -14,6 +14,10 @@ assert.equal(normalizeFrameListValue('12151821'), '12,15,18,21');
 assert.equal(normalizeFrameListValue('13'), '13');
 assert.equal(normalizeFrameListValue('404754'), '40,47,54');
 assert.equal(normalizeFrameListValue('備考'), '備考');
+assert.equal(normalizeFrameListValue('152025…'), '15,20,25,...');
+assert.equal(normalizeFrameListValue('3942…57'), '39,42,...,57');
+assert.equal(normalizeFrameListValue('2025…65'), '20,25,...,65');
+assert.equal(normalizeFrameListValue('42、4548、51…66、69'), '42,45,48,51,...,66,69');
 
 const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
@@ -21,7 +25,13 @@ const reimu = flattenCharacter(
 const spell = reimu.frameData['フレームデータ']['スペルカード'].rows[0];
 assert.equal(spell['動作']['発生'], '27,33,39');
 
-const bullet = reimu.frameData['フレームデータ']['射撃技'].rows.find((r) => r['技名'] === 'JB');
-assert.equal(bullet['動作']['発生'], '15,18,21,24,27');
+const bullet = reimu.frameData['フレームデータ']['射撃技'].rows.find((r) => r['技名'] === '2C');
+assert.equal(bullet['動作']['発生'], '15,20,25,...');
+
+const sakuya = flattenCharacter(
+  JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/咲夜.json'), 'utf8')),
+);
+const hb = sakuya.frameData['フレームデータ']['射撃技'].rows.find((r) => r['技名'] === 'HB');
+assert.equal(hb['動作']['発生'], '39,42,...,57');
 
 console.log(JSON.stringify({ ok: true }, null, 2));
