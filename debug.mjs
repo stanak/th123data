@@ -1,0 +1,10 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage();
+await page.goto('https://w.atwiki.jp/bulletaction/pages/253.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
+await page.waitForTimeout(3000);
+const title = await page.title();
+const hasWiki = await page.locator('#wikibody').count();
+const bodySnippet = await page.evaluate(() => document.body.innerText.slice(0, 300));
+console.log(JSON.stringify({ title, hasWiki, bodySnippet }, null, 2));
+await browser.close();

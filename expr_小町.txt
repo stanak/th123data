@@ -1,0 +1,192 @@
+async function scrapeCharacter(charName, pageId) {
+  const BASE = 'https://w.atwiki.jp/bulletaction/pages';
+  const cache = new Map();
+  function clean(text) { return (text || '').replace(/\s+/g, ' ').trim(); }
+  function isSkip(title) { return ['更新履歴', '修正履歴', 'Menu'].includes(title); }
+  async function fetchHtml(url) {
+    if (cache.has(url)) return cache.get(url);
+    const res = await fetch(url, { credentials: 'include' });
+    const html = await res.text();
+    cache.set(url, html);
+    await new Promise(r => setTimeout(r, 200));
+    return html;
+  }
+  function parseTable(table) {
+    const grid = [];
+    table.querySelectorAll('tr').forEach((tr, rowIdx) => {
+      if (!grid[rowIdx]) grid[rowIdx] = [];
+      let colIdx = 0;
+      tr.querySelectorAll('th, td').forEach(cell => {
+        while (grid[rowIdx][colIdx] !== undefined) colIdx++;
+        const text = clean(cell.textContent);
+        const rowspan = parseInt(cell.getAttribute('rowspan') || '1', 10);
+        const colspan = parseInt(cell.getAttribute('colspan') || '1', 10);
+        for (let r = 0; r < rowspan; r++) for (let c = 0; c < colspan; c++) {
+          const tr_ = rowIdx + r, tc = colIdx + c;
+          if (!grid[tr_]) grid[tr_] = [];
+          grid[tr_][tc] = text;
+        }
+        colIdx += colspan;
+      });
+    });
+    if (!grid.length) return { headers: [], rows: [] };
+    let headerRowCount = 1;
+    if (grid.length > 1) {
+      const r0 = grid[0], r1 = grid[1];
+      if (r1.some((c, i) => c && r0[i] && c !== r0[i]) || r0.filter(c => !c).length > 0) headerRowCount = 2;
+    }
+    function buildHeaders(headerRows) {
+      const maxCols = Math.max(...headerRows.map(r => r.length));
+      const cols = [];
+      for (let col = 0; col < maxCols; col++) {
+        const parts = [];
+        for (const row of headerRows) {
+          const val = row[col] || '';
+          if (val && parts[parts.length - 1] !== val) parts.push(val);
+        }
+        if (parts.length <= 1) cols.push(parts[0] || '');
+        else {
+          let node = {}, cur = node;
+          for (let i = 0; i < parts.length - 1; i++) { cur[parts[i]] = {}; cur = cur[parts[i]]; }
+          cur[parts[parts.length - 1]] = null;
+          cols.push(node);
+        }
+      }
+      return cols;
+    }
+    const headers = buildHeaders(grid.slice(0, headerRowCount));
+    function setNested(obj, header, value) {
+      if (!value) return;
+      if (typeof header === 'string') {
+        if (header) obj[header] = value;
+        else obj['_col' + Object.keys(obj).length] = value;
+      } else {
+        const k = Object.keys(header)[0];
+        if (!obj[k] || typeof obj[k] !== 'object') obj[k] = {};
+        if (header[k] === null) obj[k] = value;
+        else setNested(obj[k], header[k], value);
+      }
+    }
+    function merge(a, b) {
+      for (const [k, v] of Object.entries(b)) {
+        if (v && typeof v === 'object' && a[k] && typeof a[k] === 'object') merge(a[k], v);
+        else if (v) a[k] = v;
+      }
+    }
+    const rows = [], carry = {};
+    for (let r = headerRowCount; r < grid.length; r++) {
+      const row = grid[r], obj = {};
+      let has = false;
+      row.forEach((cell, i) => {
+        const val = cell || '';
+        if (val) { has = true; setNested(obj, headers[i], val); carry[i] = val; }
+        else if (carry[i]) setNested(obj, headers[i], carry[i]);
+      });
+      if (!has) continue;
+      const prev = rows[rows.length - 1];
+      if (prev && !obj['技名'] && Object.keys(obj).some(k => k !== '備考' && !k.startsWith('_col'))) merge(prev, obj);
+      else rows.push(obj);
+    }
+    return { headers, rows };
+  }
+  function parseHtml(html, url) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const main = doc.querySelector('#wikibody');
+    const result = { title: clean(doc.querySelector('h1')?.textContent), url, sections: [], footnotes: {}, subpageLinks: [] };
+    let h2 = null, h3 = null, h4 = null;
+    if (!main) return result;
+    main.querySelectorAll('h2,h3,h4,h5,table,ul,p').forEach(node => {
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'h2') {
+        const t = clean(node.textContent);
+        if (isSkip(t)) { h2 = h3 = h4 = null; return; }
+        h2 = { title: t, subsections: [], notes: [] };
+        result.sections.push(h2); h3 = h4 = null;
+      } else if (tag === 'h3' && h2) {
+        h3 = { title: clean(node.textContent), subsections: [], tables: [], notes: [] };
+        h2.subsections.push(h3); h4 = null;
+      } else if (tag === 'h4' && h3) {
+        h4 = { title: clean(node.textContent), tables: [], notes: [] };
+        h3.subsections.push(h4);
+      } else if (tag === 'h5' && h4) {
+        h4.subsections = h4.subsections || [];
+        h4.subsections.push({ title: clean(node.textContent), tables: [], notes: [] });
+      } else if (tag === 'table') {
+        const t = parseTable(node);
+        const target = (h4?.subsections?.length ? h4.subsections[h4.subsections.length - 1] : h4) || h3 || h2;
+        if (target) (target.tables = target.tables || []).push(t);
+      } else if (tag === 'ul') {
+        const items = [...node.querySelectorAll(':scope > li')].map(li => clean(li.textContent)).filter(Boolean);
+        if (!items.length) return;
+        const target = h4 || h3 || h2;
+        if (target) (target.notes = target.notes || []).push({ type: 'list', items });
+      } else if (tag === 'p') {
+        const text = clean(node.textContent);
+        if (!text) return;
+        const target = h4 || h3 || h2;
+        if (target) (target.notes = target.notes || []).push({ type: 'paragraph', text });
+      }
+    });
+    main.querySelectorAll('h3').forEach(el => {
+      if (clean(el.textContent) !== '必殺技') return;
+      let sib = el.nextElementSibling;
+      while (sib && !['H2','H3'].includes(sib.tagName)) {
+        sib.querySelectorAll('a[href*="/pages/"]').forEach(a => {
+          const text = clean(a.textContent);
+          const href = a.getAttribute('href');
+          if (text && !text.startsWith('*') && href) {
+            result.subpageLinks.push({ text, url: href.startsWith('http') ? href : 'https://w.atwiki.jp' + href });
+          }
+        });
+        sib = sib.nextElementSibling;
+      }
+    });
+    const fnText = doc.body?.innerText?.split('注釈').pop() || '';
+    fnText.split('\n').forEach(line => {
+      const m = line.trim().match(/^(\*\d+)\s*(.*)/);
+      if (m) result.footnotes[m[1]] = m[2];
+    });
+    return result;
+  }
+  function sectionToObj(section) {
+    const obj = {};
+    if (section.tables?.length) obj.tables = section.tables;
+    if (section.notes?.length) obj.notes = section.notes;
+    if (section.subsections?.length) {
+      obj.subsections = {};
+      for (const sub of section.subsections) obj.subsections[sub.title] = sectionToObj(sub);
+    }
+    return obj;
+  }
+  const url = BASE + '/' + pageId + '.html';
+  const html = await fetchHtml(url);
+  const parsed = parseHtml(html, url);
+  const charData = { name: charName, pageUrl: url, title: parsed.title, frameData: {}, footnotes: parsed.footnotes };
+  for (const sec of parsed.sections) {
+    if (!sec.subsections?.length) continue;
+    const key = sec.title.includes('フレームデータ') ? 'フレームデータ' : sec.title;
+    charData.frameData[key] = charData.frameData[key] || {};
+    for (const h3 of sec.subsections) {
+      charData.frameData[key][h3.title] = sectionToObj(h3);
+      if (h3.title === '必殺技' && parsed.subpageLinks.length) {
+        charData.frameData[key][h3.title].pages = {};
+        for (const link of parsed.subpageLinks) {
+          const subHtml = await fetchHtml(link.url);
+          const subParsed = parseHtml(subHtml, link.url);
+          const content = {};
+          for (const s of subParsed.sections) {
+            if (isSkip(s.title)) continue;
+            content[s.title] = {};
+            for (const sub of s.subsections || []) content[s.title][sub.title] = sectionToObj(sub);
+          }
+          charData.frameData[key][h3.title].pages[link.text] = {
+            url: link.url, title: subParsed.title, content, footnotes: subParsed.footnotes,
+          };
+        }
+      }
+    }
+  }
+  return charData;
+}
+
+return scrapeCharacter("小町",167);
