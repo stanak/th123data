@@ -137,19 +137,19 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
     },
   ];
 
+  cols.push({
+    key: 'moveName',
+    label: t('colMoveName'),
+    get: (r) => (hasStates && r.stateName ? '' : r.moveName),
+    sortValue: (r) => r.moveName,
+  });
+
   if (hasStates) {
     cols.push({
       key: 'stateName',
       label: t('colState'),
       get: (r) => r.stateName ?? '',
       sortValue: (r) => r.stateName ?? '',
-    });
-  } else {
-    cols.push({
-      key: 'moveName',
-      label: t('colMoveName'),
-      get: (r) => r.moveName,
-      sortValue: (r) => r.moveName,
     });
   }
 
@@ -277,7 +277,7 @@ export function renderDataTable(
 
   const tbody = document.createElement('tbody');
   for (const row of displayRows) {
-    if (hasStates && row.showMoveName) {
+    if (hasStates && row.showMoveName && row.stateName) {
       const headerTr = document.createElement('tr');
       headerTr.className = 'move-group-row';
       const headerTd = document.createElement('td');
@@ -301,9 +301,6 @@ export function renderDataTable(
 
     const tr = document.createElement('tr');
     tr.dataset.id = row.id;
-    if (hasStates && !row.stateName) {
-      tr.classList.add('move-flat-row');
-    }
     for (const col of columns) {
       const td = document.createElement('td');
       const extra = options.getExtraCell?.(row, col);
@@ -311,7 +308,12 @@ export function renderDataTable(
         td.appendChild(extra);
       } else if (extra != null) {
         td.textContent = extra;
-      } else if (col.key === 'moveName' && options.onMoveClick && row.moveName) {
+      } else if (
+        col.key === 'moveName' &&
+        options.onMoveClick &&
+        row.moveName &&
+        !row.stateName
+      ) {
         const a = document.createElement('a');
         a.href = '#';
         a.className = 'move-link';
