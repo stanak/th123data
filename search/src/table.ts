@@ -21,6 +21,14 @@ export interface ColumnOptions {
 export interface DisplayRow extends IndexRow {
   moveRowSpan: number;
   showMoveName: boolean;
+  isParentSummary?: boolean;
+}
+
+function rowHasParentSummary(row: IndexRow): row is IndexRow & {
+  parentStats: Record<string, unknown>;
+  parentParsed: IndexRow['parsed'];
+} {
+  return !!row.parentStats && !!row.parentParsed;
 }
 
 function selectedCategories(options?: ColumnOptions): string[] {
@@ -105,11 +113,24 @@ export function prepareDisplayRows(rows: IndexRow[]): DisplayRow[] {
       j++;
     }
     const span = j - i;
+    const hasParentSummary = rowHasParentSummary(row);
+    if (hasParentSummary) {
+      out.push({
+        ...row,
+        id: `parent-${row.id}`,
+        isParentSummary: true,
+        moveRowSpan: span + 1,
+        showMoveName: true,
+        stateName: null,
+        stats: row.parentStats,
+        parsed: row.parentParsed,
+      });
+    }
     for (let k = i; k < j; k++) {
       out.push({
         ...rows[k],
-        moveRowSpan: k === i ? span : 0,
-        showMoveName: k === i,
+        moveRowSpan: 0,
+        showMoveName: !hasParentSummary && k === i,
       });
     }
     i = j;
@@ -255,7 +276,9 @@ export function renderDataTable(
   }
 
   const hasStates = rowsHaveStates(rows);
-  const displayRows = hasStates ? prepareDisplayRows(rows) : rows.map((r) => ({ ...r, moveRowSpan: 1, showMoveName: true }));
+  const displayRows: DisplayRow[] = hasStates
+    ? prepareDisplayRows(rows)
+    : rows.map((r) => ({ ...r, moveRowSpan: 1, showMoveName: true }));
 
   const wrap = document.createElement('div');
   wrap.className = 'table-wrap';
@@ -283,8 +306,14 @@ export function renderDataTable(
   for (const row of displayRows) {
     const tr = document.createElement('tr');
     tr.dataset.id = row.id;
+    if (row.isParentSummary) tr.classList.add('move-parent-row');
     for (const col of columns) {
       if (col.key === 'moveName' && hasStates && row.stateName && !row.showMoveName) {
+        continue;
+      }
+      if (col.key === 'stateName' && row.isParentSummary) {
+        const td = document.createElement('td');
+        tr.appendChild(td);
         continue;
       }
 

@@ -85,8 +85,22 @@ function buildParsed(stats) {
   };
 }
 
-function pushIndexRow(rows, ctx, parentRow, stats, moveName, stateName) {
-  rows.push({
+function hasDisplayableValue(value) {
+  if (value == null || value === '' || value === '-') return false;
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return Object.values(value).some((v) => hasDisplayableValue(v));
+  }
+  return true;
+}
+
+export function extractParentStats(row) {
+  const { 技名, 状態, ...rest } = row;
+  if (!hasDisplayableValue(rest)) return null;
+  return rest;
+}
+
+function pushIndexRow(rows, ctx, parentRow, stats, moveName, stateName, parentStats = null) {
+  const entry = {
     id: String(ctx.id++),
     character: ctx.character,
     category: ctx.category,
@@ -96,7 +110,12 @@ function pushIndexRow(rows, ctx, parentRow, stats, moveName, stateName) {
     lv: parentRow['Lv'] ?? stats['Lv'] ?? null,
     stats,
     parsed: buildParsed(stats),
-  });
+  };
+  if (parentStats) {
+    entry.parentStats = parentStats;
+    entry.parentParsed = buildParsed(parentStats);
+  }
+  rows.push(entry);
 }
 
 function buildIndex() {
@@ -119,8 +138,9 @@ function buildIndex() {
         const states = row['状態'];
         if (Array.isArray(states) && states.length) {
           const moveName = String(row['技名'] ?? '');
+          const parentStats = extractParentStats(row);
           for (const state of states) {
-            pushIndexRow(rows, ctx, row, state, moveName, String(state['技名'] ?? ''));
+            pushIndexRow(rows, ctx, row, state, moveName, String(state['技名'] ?? ''), parentStats);
           }
           continue;
         }

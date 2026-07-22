@@ -28,6 +28,8 @@ export interface IndexRow {
     cancelMove: number | null;
     advantage: ParsedAdvantage;
   };
+  parentStats?: Record<string, unknown>;
+  parentParsed?: IndexRow['parsed'];
 }
 
 export interface SearchIndex {
