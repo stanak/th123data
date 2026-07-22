@@ -39,6 +39,12 @@ export const COMPARE_COLUMNS: TableColumn[] = [
     sortValue: (r) => r.parsed.advantage.seig,
   },
   {
+    key: 'advGoG',
+    label: '有利差(誤G)',
+    get: (r) => String(r.parsed.advantage.raws['誤G'] ?? ''),
+    sortValue: (r) => r.parsed.advantage.goG,
+  },
+  {
     key: 'attackLv',
     label: '攻撃Lv',
     get: (r) => String(getStat(r, '攻撃Lv') ?? ''),
@@ -72,28 +78,6 @@ export function sortRows(rows: IndexRow[], column: string | null, asc: boolean):
     return String(av).localeCompare(String(bv), 'ja');
   });
   return asc ? sorted : sorted.reverse();
-}
-
-export function rowsToCsv(rows: IndexRow[], columns: TableColumn[]): string {
-  const header = columns.map((c) => c.label).join(',');
-  const body = rows.map((row) =>
-    columns
-      .map((c) => {
-        const v = c.get(row).replace(/"/g, '""');
-        return `"${v}"`;
-      })
-      .join(','),
-  );
-  return [header, ...body].join('\n');
-}
-
-export function downloadCsv(filename: string, content: string) {
-  const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
 }
 
 export function renderDataTable(

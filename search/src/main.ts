@@ -1,37 +1,15 @@
-import type { AppState, SearchIndex } from './types';
-import { createDefaultState } from './types';
-import { urlToState, syncUrl } from './url';
+import type { SearchIndex } from './types';
+import { createDefaultState, applyDefaultState, applyState } from './types';
+import { stateFromUrl, updateHistory, type HistoryMode } from './url';
 import { renderSidebar } from './views/sidebar';
-import { renderCompareView, getCompareRows, getFilterRows } from './views/compare';
+import { renderCompareView } from './views/compare';
 import { renderFilterView } from './views/compare';
-import { renderCharacterView, getCharacterRows } from './views/character';
-import { COMPARE_COLUMNS, rowsToCsv, downloadCsv } from './table';
+import { renderCharacterView } from './views/character';
 
 async function loadIndex(): Promise<SearchIndex> {
   const res = await fetch(`${import.meta.env.BASE_URL}search_index.json`);
   if (!res.ok) throw new Error('search_index.json の読み込みに失敗しました');
   return res.json();
-}
-
-function mergeUrlState(state: AppState, partial: Partial<AppState>) {
-  if (partial.mode) state.mode = partial.mode;
-  if (partial.moveName != null) state.moveName = partial.moveName;
-  if (partial.partialMove != null) state.partialMove = partial.partialMove;
-  if (partial.categories) state.categories = partial.categories;
-  if (partial.characters) state.characters = partial.characters;
-  if (partial.selectedCharacter) state.selectedCharacter = partial.selectedCharacter;
-  if (partial.characterCategory) state.characterCategory = partial.characterCategory;
-  if (partial.advantagePreset !== undefined) state.advantagePreset = partial.advantagePreset;
-  if (partial.showMissingCompare != null) state.showMissingCompare = partial.showMissingCompare;
-  if (partial.sortColumn !== undefined) state.sortColumn = partial.sortColumn;
-  if (partial.sortAsc != null) state.sortAsc = partial.sortAsc;
-  if (partial.conditions) state.conditions = partial.conditions;
-}
-
-function getCurrentRows(index: SearchIndex, state: AppState) {
-  if (state.mode === 'compare') return getCompareRows(index, state);
-  if (state.mode === 'filter') return getFilterRows(index, state);
-  return getCharacterRows(index, state);
 }
 
 async function main() {
@@ -47,14 +25,14 @@ async function main() {
 
   const index = await loadIndex();
   const state = createDefaultState(index.characters);
-  mergeUrlState(state, urlToState(index.characters));
+  applyState(state, stateFromUrl(index.characters));
 
   function onMoveClick(moveName: string) {
     state.mode = 'compare';
     state.moveName = moveName;
     state.partialMove = false;
-    state.categories = new Set(['通常技', '射撃技', '必殺技', 'スペルカード', '基本動作']);
-    render();
+    state.categories = new Set(['通常技', '射撃技', '必殺技', 'スペルカード']);
+    render('push');
   }
 
   function onSort(key: string) {
@@ -64,22 +42,21 @@ async function main() {
       state.sortColumn = key;
       state.sortAsc = true;
     }
-    render();
+    render('push');
   }
 
-  function onExport() {
-    const rows = getCurrentRows(index, state);
-    let columns = COMPARE_COLUMNS;
-    if (state.mode === 'character') {
-      columns = COMPARE_COLUMNS.filter((c) => c.key !== 'character' && c.key !== 'category');
-    }
-    const csv = rowsToCsv(rows, columns);
-    downloadCsv(`th123_${state.mode}.csv`, csv);
+  function resetToHome() {
+    applyDefaultState(state, index.characters);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    render('push');
   }
 
-  function render() {
-    syncUrl(state);
-    renderSidebar(sidebarEl, index, state, { onChange: render, onExport });
+  function render(history: HistoryMode = 'push') {
+    updateHistory(state, history, index.characters);
+    renderSidebar(sidebarEl, index, state, {
+      onChange: (h = 'push') => render(h),
+      onHome: resetToHome,
+    });
 
     if (state.mode === 'compare') {
       renderCompareView(mainEl, index, state, onSort, onMoveClick);
@@ -88,17 +65,17 @@ async function main() {
     } else {
       renderCharacterView(mainEl, index, state, (cat) => {
         state.characterCategory = cat;
-        render();
+        render('push');
       }, onSort, onMoveClick);
     }
   }
 
   window.addEventListener('popstate', () => {
-    mergeUrlState(state, urlToState(index.characters));
-    render();
+    applyState(state, stateFromUrl(index.characters));
+    render('none');
   });
 
-  render();
+  render('replace');
 }
 
 main().catch((err) => {

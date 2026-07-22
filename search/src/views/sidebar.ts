@@ -1,9 +1,11 @@
 import type { AppState, AppMode, SearchIndex } from '../types';
 import { DEFAULT_CATEGORIES } from '../types';
 
+import type { HistoryMode } from '../url';
+
 export interface SidebarHandlers {
-  onChange: () => void;
-  onExport: () => void;
+  onChange: (history?: HistoryMode) => void;
+  onHome: () => void;
 }
 
 export function renderSidebar(
@@ -14,8 +16,11 @@ export function renderSidebar(
 ) {
   root.replaceChildren();
 
-  const title = document.createElement('h1');
+  const title = document.createElement('button');
+  title.type = 'button';
+  title.className = 'site-title';
   title.textContent = 'TH123 Frame Data';
+  title.addEventListener('click', handlers.onHome);
   root.appendChild(title);
 
   const modeGroup = document.createElement('div');
@@ -64,13 +69,6 @@ export function renderSidebar(
   if (state.mode === 'filter') {
     root.appendChild(customCondition(state, handlers));
   }
-
-  const exportBtn = document.createElement('button');
-  exportBtn.type = 'button';
-  exportBtn.className = 'export-btn';
-  exportBtn.textContent = 'CSV エクスポート';
-  exportBtn.addEventListener('click', handlers.onExport);
-  root.appendChild(exportBtn);
 
   const meta = document.createElement('p');
   meta.className = 'meta-info';
@@ -189,12 +187,15 @@ function moveNameField(state: AppState, handlers: SidebarHandlers): HTMLElement 
   input.value = state.moveName;
   input.addEventListener('input', () => {
     state.moveName = input.value;
-    handlers.onChange();
+    handlers.onChange('replace');
+  });
+  input.addEventListener('blur', () => {
+    handlers.onChange('push');
   });
   g.appendChild(input);
   g.appendChild(checkboxField('部分一致', state.partialMove, (v) => {
     state.partialMove = v;
-    handlers.onChange();
+    handlers.onChange('push');
   }));
   return g;
 }

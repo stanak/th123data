@@ -50,10 +50,26 @@ body {
   top: 0;
 }
 
-.sidebar h1 {
+.sidebar h1,
+.site-title {
   font-size: 1.1rem;
   margin: 0 0 1rem;
   color: var(--accent);
+}
+
+.site-title {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.site-title:hover {
+  text-decoration: underline;
 }
 
 .main {
@@ -112,7 +128,6 @@ body {
 
 .mode-btn,
 .preset-btn,
-.export-btn,
 .tab-btn {
   border: 1px solid var(--border);
   background: var(--surface2);
@@ -188,15 +203,6 @@ body {
 
 .condition-list li {
   margin-bottom: 0.25rem;
-}
-
-.export-btn {
-  width: 100%;
-  margin-top: 0.5rem;
-  background: var(--accent2);
-  border-color: var(--accent2);
-  color: #0d1117;
-  font-weight: 600;
 }
 
 .meta-info {

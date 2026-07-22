@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRAME_DATA = path.join(__dirname, 'frame_data.json');
 const OUT = path.join(__dirname, 'search', 'public', 'search_index.json');
 
-const CATEGORIES = ['基本動作', '通常技', '射撃技', '必殺技', 'スペルカード'];
+const CATEGORIES = ['通常技', '射撃技', '必殺技', 'スペルカード'];
 
 /** @returns {number | null} */
 export function parseFrameValue(raw) {

@@ -59,7 +59,7 @@ export interface AppState {
   sortAsc: boolean;
 }
 
-export const DEFAULT_CATEGORIES = ['通常技', '射撃技', '必殺技', 'スペルカード', '基本動作'];
+export const DEFAULT_CATEGORIES = ['通常技', '射撃技', '必殺技', 'スペルカード'];
 
 export function createDefaultState(characters: string[]): AppState {
   return {
@@ -76,4 +76,23 @@ export function createDefaultState(characters: string[]): AppState {
     sortColumn: null,
     sortAsc: true,
   };
+}
+
+export function applyState(target: AppState, source: AppState): void {
+  target.mode = source.mode;
+  target.moveName = source.moveName;
+  target.partialMove = source.partialMove;
+  target.categories = new Set(source.categories);
+  target.characters = new Set(source.characters);
+  target.selectedCharacter = source.selectedCharacter;
+  target.characterCategory = source.characterCategory;
+  target.conditions = source.conditions.map((c) => ({ ...c }));
+  target.advantagePreset = source.advantagePreset;
+  target.showMissingCompare = source.showMissingCompare;
+  target.sortColumn = source.sortColumn;
+  target.sortAsc = source.sortAsc;
+}
+
+export function applyDefaultState(state: AppState, characters: string[]): void {
+  applyState(state, createDefaultState(characters));
 }
