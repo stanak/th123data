@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** 頭上花剪斬 214B/C の相手別有利差表 */
+/** 頭上花剪斬 214B/C/HB の相手別有利差表 */
 
 const ADVANTAGE_DESCRIPTION =
   '有利差は正G・誤Gそれぞれの有利差を表す。相手キャラは、基本的に正ガードのときは後ろ歩き状態で、誤ガードのときはしゃがみ状態でガードするものとする。';
@@ -82,6 +82,23 @@ export const ZUJOU_214C_ADVANTAGE_TABLE = {
   ],
 };
 
+export const ZUJOU_214HB_ADVANTAGE_TABLE = {
+  title: 'ホールドB版（発生48F）',
+  description: ADVANTAGE_DESCRIPTION,
+  rows: [
+    {
+      相手キャラ: ['チルノ', '美鈴', '空', '諏訪子', 'アリス', '紫', '文', '衣玖', '天子'],
+      正G: '-1',
+      誤G: '+23',
+    },
+    {
+      相手キャラ: ['早苗', '霊夢', '魔理沙', 'パチュリー', '咲夜', '妖夢', 'レミリア', '幽々子', '萃香', '鈴仙', '小町'],
+      正G: '-1',
+      誤G: '+24',
+    },
+  ],
+};
+
 function patchNestedCommand(row, command, startup, table) {
   if (!row?.Lv || typeof row.Lv !== 'object') return;
   for (const cmdTree of Object.values(row.Lv)) {
@@ -100,5 +117,6 @@ export function patchYoumuZujouAdvantage(char, name) {
   if (!row) return char;
   patchNestedCommand(row, '214B', '33', ZUJOU_214B_ADVANTAGE_TABLE);
   patchNestedCommand(row, '214C', '39', ZUJOU_214C_ADVANTAGE_TABLE);
+  patchNestedCommand(row, '214HB', '48', ZUJOU_214HB_ADVANTAGE_TABLE);
   return char;
 }
