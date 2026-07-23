@@ -7,10 +7,45 @@ function normalizeParenState(label) {
   return label;
 }
 
+/** 諏訪子など: ホールド6B系（1段階）-6B（1段階） → H6B + 1段階 */
+function parseHold6BMoveName(name) {
+  const staged = name.match(/^ホールド6B系[（(]([12]段階)[）)]-(.+?)[（(]\1[）)]$/);
+  if (staged) {
+    const stage = staged[1];
+    const move = staged[2];
+    const baseName = move.startsWith('H') ? move : `H${move}`;
+    return {
+      baseName,
+      variant: null,
+      hold: true,
+      stateLabel: stage,
+      namedHoldMove: true,
+      changed: true,
+    };
+  }
+
+  const simple = name.match(/^ホールド6B系-(.+)$/);
+  if (simple) {
+    return {
+      baseName: simple[1],
+      variant: null,
+      hold: true,
+      stateLabel: null,
+      namedHoldMove: true,
+      changed: true,
+    };
+  }
+
+  return null;
+}
+
 export function parseSpecialMoveName(name) {
   if (typeof name !== 'string' || !name) {
     return { baseName: name, variant: null, hold: false, stateLabel: null, changed: false };
   }
+
+  const hold6b = parseHold6BMoveName(name);
+  if (hold6b) return hold6b;
 
   let s = name;
   const stateParts = [];
@@ -131,7 +166,14 @@ function buildStateParent(items) {
     コマンド: first['コマンド'] ?? null,
   };
   if (first['Lv'] != null) parent['Lv'] = first['Lv'];
-  parent['状態'] = items.map((row) => rowToStateEntry(row, row._stateLabel));
+  const seen = new Set();
+  parent['状態'] = [];
+  for (const row of items) {
+    const label = row._stateLabel;
+    if (seen.has(label)) continue;
+    seen.add(label);
+    parent['状態'].push(rowToStateEntry(row, label));
+  }
   return parent;
 }
 
@@ -152,6 +194,13 @@ function applyVariantsToExistingStates(row, parsed) {
 }
 
 function expandFlatRow(row, parsed) {
+  if (parsed.namedHoldMove) {
+    const copy = structuredClone(row);
+    copy['技名'] = parsed.baseName;
+    if (parsed.stateLabel) copy._stateLabel = parsed.stateLabel;
+    return [copy];
+  }
+
   return variantKeys(parsed.variant, parsed.hold).flatMap((variantKey) => {
     const copy = structuredClone(row);
     copy['技名'] = parsed.baseName;
@@ -186,26 +235,31 @@ function preprocessRows(rows) {
 }
 
 function groupStateRows(rows) {
+  const groups = new Map();
+
+  for (const row of rows) {
+    if (!row._stateLabel) continue;
+    const key = groupKey(row);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(row);
+  }
+
+  if (!groups.size) {
+    return rows.map(({ _stateLabel, ...clean }) => clean);
+  }
+
+  const emitted = new Set();
   const out = [];
-  let i = 0;
-  while (i < rows.length) {
-    const row = rows[i];
+  for (const row of rows) {
     if (!row._stateLabel) {
       const { _stateLabel, ...clean } = row;
       out.push(clean);
-      i++;
       continue;
     }
-
     const key = groupKey(row);
-    const items = [];
-    let j = i;
-    while (j < rows.length && rows[j]._stateLabel && groupKey(rows[j]) === key) {
-      items.push(rows[j]);
-      j++;
-    }
-    out.push(buildStateParent(items));
-    i = j;
+    if (emitted.has(key)) continue;
+    emitted.add(key);
+    out.push(buildStateParent(groups.get(key)));
   }
   return out;
 }
@@ -216,8 +270,11 @@ export function normalizeSpecialMoveRows(rows) {
 }
 
 export function normalizeCharacterSpecialMoves(char) {
-  const section = char.frameData?.['フレームデータ']?.['必殺技'];
-  if (!section?.rows) return char;
-  section.rows = normalizeSpecialMoveRows(section.rows);
+  const frame = char.frameData?.['フレームデータ'];
+  if (!frame) return char;
+  for (const section of Object.values(frame)) {
+    if (!section?.rows) continue;
+    section.rows = normalizeSpecialMoveRows(section.rows);
+  }
   return char;
 }
