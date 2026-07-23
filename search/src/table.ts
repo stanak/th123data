@@ -120,6 +120,43 @@ function moveBlockKey(row: IndexRow): string {
   return `${row.character}\0${row.moveName}`;
 }
 
+function findScrollContainer(el: HTMLElement): HTMLElement | null {
+  let node: HTMLElement | null = el.parentElement;
+  while (node) {
+    const { overflowY } = getComputedStyle(node);
+    if (/(auto|scroll|overlay)/.test(overflowY)) return node;
+    node = node.parentElement;
+  }
+  return null;
+}
+
+function findMoveBlockRow(container: HTMLElement, character: string, moveName: string): HTMLElement | null {
+  for (const tr of container.querySelectorAll('tr')) {
+    if (tr instanceof HTMLElement && tr.dataset.character === character && tr.dataset.moveName === moveName) {
+      return tr;
+    }
+  }
+  return null;
+}
+
+function restoreScrollAnchor(
+  container: HTMLElement,
+  anchorTop: number,
+  character: string,
+  moveName: string,
+): void {
+  const row = findMoveBlockRow(container, character, moveName);
+  if (!row) return;
+  const delta = row.getBoundingClientRect().top - anchorTop;
+  if (Math.abs(delta) < 1) return;
+  const scrollEl = findScrollContainer(container);
+  if (scrollEl) {
+    scrollEl.scrollTop += delta;
+  } else {
+    window.scrollBy(0, delta);
+  }
+}
+
 function readMoveCollapseState(container: HTMLElement): Record<string, MoveCollapseState> {
   try {
     return JSON.parse(container.dataset.moveCollapse ?? '{}');
@@ -358,7 +395,7 @@ function createVariantToggle(
   control: VariantCollapseControl,
   dim: CollapseDim,
   container: HTMLElement,
-  rerender: () => void,
+  rerender: (anchorRow?: HTMLElement | null) => void,
   label?: string,
 ): HTMLButtonElement {
   const btn = document.createElement('button');
@@ -378,7 +415,7 @@ function createVariantToggle(
       [dim]: !current[dim],
     };
     writeMoveCollapseState(container, state);
-    rerender();
+    rerender(btn.closest('tr'));
   });
   return btn;
 }
@@ -404,7 +441,7 @@ function renderVariantColumnCell(
   row: DisplayRow,
   col: TableColumn,
   container: HTMLElement,
-  rerender: () => void,
+  rerender: (anchorRow?: HTMLElement | null) => void,
 ): boolean {
   const control = variantCollapseControl(row, colKey);
   if (!control) return false;
@@ -627,7 +664,17 @@ export function renderDataTable(
     getExtraCell?: (row: IndexRow, col: TableColumn) => string | HTMLElement | null;
     emptyMessage?: string;
   } = {},
+  scrollAnchorRow?: HTMLElement | null,
 ) {
+  let scrollAnchor: { top: number; character: string; moveName: string } | null = null;
+  if (scrollAnchorRow?.dataset.character && scrollAnchorRow.dataset.moveName) {
+    scrollAnchor = {
+      top: scrollAnchorRow.getBoundingClientRect().top,
+      character: scrollAnchorRow.dataset.character,
+      moveName: scrollAnchorRow.dataset.moveName,
+    };
+  }
+
   container.replaceChildren();
   if (!rows.length) {
     const empty = document.createElement('p');
@@ -639,7 +686,9 @@ export function renderDataTable(
 
   const displayRows: DisplayRow[] = prepareCollapsedDisplayRows(rows, container);
 
-  const rerender = () => renderDataTable(container, rows, columns, options);
+  const rerender = (anchorRow?: HTMLElement | null) => {
+    renderDataTable(container, rows, columns, options, anchorRow);
+  };
 
   const wrap = document.createElement('div');
   wrap.className = 'table-wrap';
@@ -667,6 +716,8 @@ export function renderDataTable(
   for (const row of displayRows) {
     const tr = document.createElement('tr');
     tr.dataset.id = row.id;
+    tr.dataset.character = row.character;
+    tr.dataset.moveName = row.moveName;
     if (row.isParentSummary) tr.classList.add('move-parent-row');
     if (row.isVariantPlaceholder) tr.classList.add('variant-collapsed-row');
     for (const col of columns) {
@@ -720,4 +771,10 @@ export function renderDataTable(
   table.appendChild(tbody);
   wrap.appendChild(table);
   container.appendChild(wrap);
+
+  if (scrollAnchor) {
+    requestAnimationFrame(() => {
+      restoreScrollAnchor(container, scrollAnchor.top, scrollAnchor.character, scrollAnchor.moveName);
+    });
+  }
 }
