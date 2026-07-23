@@ -2,7 +2,9 @@ import type { Condition, IndexRow } from './types';
 import { formatMatchedAdvantage, type AdvantageKey } from './i18n';
 
 export function getStat(row: IndexRow, path: string): unknown {
-  if (path === '技名') return row.stateName ? row.moveName : row.moveName;
+  if (path === '技名') return row.moveName;
+  if (path === '段') return row.segment;
+  if (path === '位置') return row.position;
   if (path === '状態') return row.stateName;
   if (path === 'コマンド') return row.command;
   if (path === 'Lv') return row.lv;
@@ -126,22 +128,33 @@ export function filterByMoveName(
   const q = moveName.trim();
   if (!q) return rows;
 
-  const fullName = (r: IndexRow) =>
-    r.stateName ? `${r.moveName}-${r.stateName}` : r.moveName;
+  const fullName = (r: IndexRow) => {
+    const parts = [r.moveName];
+    if (r.segment) parts.push(/^\d+$/.test(r.segment) ? `${r.segment}段目` : r.segment);
+    if (r.position) parts.push(r.position);
+    if (r.stateName) parts.push(r.stateName);
+    return parts.join('-');
+  };
 
   if (partial) {
     return rows.filter(
       (r) =>
         r.moveName.includes(q) ||
         fullName(r).includes(q) ||
+        (r.segment?.includes(q) ?? false) ||
+        (r.position?.includes(q) ?? false) ||
         (r.stateName?.includes(q) ?? false),
     );
   }
 
   return rows.filter((r) => {
     if (fullName(r) === q) return true;
-    if (!r.stateName && r.moveName === q) return true;
-    if (r.stateName && r.moveName === q) return true;
+    if (!rowHasVariantLabel(r) && r.moveName === q) return true;
+    if (rowHasVariantLabel(r) && r.moveName === q) return true;
     return false;
   });
+}
+
+function rowHasVariantLabel(r: IndexRow): boolean {
+  return !!(r.segment || r.position || r.stateName);
 }

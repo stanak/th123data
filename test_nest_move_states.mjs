@@ -14,6 +14,6 @@ const hyphenLeft = rows.some((r) => String(r['技名']).includes('-') && /段目
 console.log(JSON.stringify({
   has2A: !!twoA,
   nested2A: !!twoA?.['Lv'],
-  firstState: twoA?.['Lv']?.['']?.['']?.['1段目']?.['技名'] ?? twoA?.['状態']?.[0]?.['技名'],
+  firstSegment: twoA?.['Lv']?.['']?.['']?.['段']?.['1'] ? '1' : null,
   hyphenRowsRemain: hyphenLeft,
 }, null, 2));

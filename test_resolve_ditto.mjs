@@ -58,9 +58,9 @@ const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
 );
 const air = reimu.frameData['フレームデータ']['スペルカード'].rows.find(
-  (r) => r['技名'] === '明珠暗投（空中版）',
+  (r) => r['技名'] === '明珠暗投',
 );
-assert.equal(air['Lv']['']['']['_']['受身不能'], '60');
-assert.equal(air['Lv']['']['']['_']['攻撃Lv'], '大');
+assert.equal(air['Lv']['']['']['位置']['空中']['受身不能'], '60');
+assert.equal(air['Lv']['']['']['位置']['空中']['攻撃Lv'], '大');
 
 console.log(JSON.stringify({ ok: true }, null, 2));

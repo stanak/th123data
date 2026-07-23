@@ -3,7 +3,14 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { CHARACTER_ORDER } from './characters.mjs';
-import { collapseLvEntries, isNestedMoveRow, stateSortKey } from './lv_utils.mjs';
+import { collapseLvEntries, isNestedMoveRow } from './lv_utils.mjs';
+import {
+  classifyVariantLabel,
+  isVariantBucketNode,
+  positionSortKey,
+  segmentSortKey,
+  VARIANT_BUCKETS,
+} from './variant_buckets.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRAME_DATA = path.join(__dirname, 'frame_data.json');
@@ -109,13 +116,15 @@ export function extractParentStats(row) {
   return summaryStats;
 }
 
-function pushIndexRow(rows, ctx, parentRow, stats, moveName, stateName, parentStats = null) {
+function pushIndexRow(rows, ctx, parentRow, stats, moveName, variant, parentStats = null) {
   const entry = {
     id: String(ctx.id++),
     character: ctx.character,
     category: ctx.category,
     moveName,
-    stateName,
+    segment: variant.segment,
+    position: variant.position,
+    stateName: variant.stateName,
     command: parentRow['コマンド'] ?? stats['コマンド'] ?? null,
     lv: parentRow['Lv'] ?? stats['Lv'] ?? null,
     stats,
@@ -128,21 +137,70 @@ function pushIndexRow(rows, ctx, parentRow, stats, moveName, stateName, parentSt
   rows.push(entry);
 }
 
-function collectNestedLeaves(lvTree) {
+function leafVariant(bucket, key) {
+  return {
+    segment: bucket === '段' ? key : null,
+    position: bucket === '位置' ? key : null,
+    stateName: bucket === '状態' ? key : null,
+  };
+}
+
+function collectLeavesFromCmdNode(cmdNode, lv, lvKey, command) {
   const leaves = [];
-  for (const [lvKey, cmdTree] of Object.entries(lvTree)) {
-    const lv = Number(lvKey);
-    const lvNum = Number.isNaN(lv) ? lvKey : lv;
-    for (const [cmdKey, stateTree] of Object.entries(cmdTree)) {
-      for (const [stateKey, stats] of Object.entries(stateTree)) {
+  const lvNum = Number(lvKey);
+  const resolvedLv = Number.isNaN(lvNum) ? lvKey : lvNum;
+
+  if (isVariantBucketNode(cmdNode)) {
+    if (cmdNode['_'] && typeof cmdNode['_'] === 'object') {
+      leaves.push({
+        lv: resolvedLv,
+        lvKey,
+        command: command || null,
+        segment: null,
+        position: null,
+        stateName: null,
+        stats: cmdNode['_'],
+      });
+    }
+    for (const bucket of VARIANT_BUCKETS) {
+      const bucketNode = cmdNode[bucket];
+      if (!bucketNode || typeof bucketNode !== 'object') continue;
+      for (const [key, stats] of Object.entries(bucketNode)) {
+        const variant = leafVariant(bucket, key);
         leaves.push({
-          lv: typeof lvNum === 'number' ? lvNum : Number(lvKey),
+          lv: resolvedLv,
           lvKey,
-          command: cmdKey || null,
-          stateName: stateKey === '_' ? null : stateKey,
+          command: command || null,
+          ...variant,
           stats,
         });
       }
+    }
+    return leaves;
+  }
+
+  for (const [key, stats] of Object.entries(cmdNode)) {
+    if (key === '_' || typeof stats !== 'object' || stats == null) continue;
+    const classified = classifyVariantLabel(key);
+    const variant = classified
+      ? leafVariant(classified.bucket, classified.key)
+      : { segment: null, position: null, stateName: key };
+    leaves.push({
+      lv: resolvedLv,
+      lvKey,
+      command: command || null,
+      ...variant,
+      stats,
+    });
+  }
+  return leaves;
+}
+
+function collectNestedLeaves(lvTree) {
+  const leaves = [];
+  for (const [lvKey, cmdTree] of Object.entries(lvTree)) {
+    for (const [cmdKey, cmdNode] of Object.entries(cmdTree)) {
+      leaves.push(...collectLeavesFromCmdNode(cmdNode, lvKey, lvKey, cmdKey));
     }
   }
   return leaves;
@@ -155,17 +213,23 @@ function indexNestedMoveRow(rows, ctx, row) {
 
   const groups = new Map();
   for (const leaf of leaves) {
-    const key = `${leaf.stateName ?? ''}\0${leaf.command ?? ''}`;
+    const key = `${leaf.segment ?? ''}\0${leaf.position ?? ''}\0${leaf.stateName ?? ''}\0${leaf.command ?? ''}`;
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(leaf);
   }
 
   const sortedKeys = [...groups.keys()].sort((a, b) => {
-    const [stateA, cmdA] = a.split('\0');
-    const [stateB, cmdB] = b.split('\0');
-    const skA = stateSortKey(stateA || null);
-    const skB = stateSortKey(stateB || null);
-    if (typeof skA === 'number' && typeof skB === 'number' && skA !== skB) return skA - skB;
+    const [segA, posA, stateA, cmdA] = a.split('\0');
+    const [segB, posB, stateB, cmdB] = b.split('\0');
+    const segKeyA = segmentSortKey(segA || null);
+    const segKeyB = segmentSortKey(segB || null);
+    if (typeof segKeyA === 'number' && typeof segKeyB === 'number' && segKeyA !== segKeyB) {
+      return segKeyA - segKeyB;
+    }
+    const segCmp = String(segA).localeCompare(String(segB), 'ja', { numeric: true });
+    if (segCmp) return segCmp;
+    const posCmp = positionSortKey(posA || null) - positionSortKey(posB || null);
+    if (posCmp) return posCmp;
     const stateCmp = String(stateA).localeCompare(String(stateB), 'ja', { numeric: true });
     if (stateCmp) return stateCmp;
     return String(cmdA).localeCompare(String(cmdB), 'ja');
@@ -178,6 +242,8 @@ function indexNestedMoveRow(rows, ctx, row) {
         lv: typeof leaf.lv === 'number' && !Number.isNaN(leaf.lv) ? leaf.lv : Number(leaf.lvKey),
         stats: leaf.stats,
         command: leaf.command,
+        segment: leaf.segment,
+        position: leaf.position,
         stateName: leaf.stateName,
       })),
     );
@@ -188,7 +254,11 @@ function indexNestedMoveRow(rows, ctx, row) {
         { コマンド: item.command, Lv: item.lvDisplay },
         item.stats,
         moveName,
-        item.stateName,
+        {
+          segment: item.segment ?? null,
+          position: item.position ?? null,
+          stateName: item.stateName ?? null,
+        },
         parentStats,
       );
     }
@@ -221,12 +291,24 @@ function buildIndex() {
           const moveName = String(row['技名'] ?? '');
           const parentStats = extractParentStats(row);
           for (const state of states) {
-            pushIndexRow(rows, ctx, row, state, moveName, String(state['技名'] ?? ''), parentStats);
+            const classified = classifyVariantLabel(state['技名']);
+            const variant = classified
+              ? {
+                  segment: classified.bucket === '段' ? classified.key : null,
+                  position: classified.bucket === '位置' ? classified.key : null,
+                  stateName: classified.bucket === '状態' ? classified.key : null,
+                }
+              : { segment: null, position: null, stateName: String(state['技名'] ?? '') || null };
+            pushIndexRow(rows, ctx, row, state, moveName, variant, parentStats);
           }
           continue;
         }
         const moveName = row['技名'] ?? row['行動の種類'] ?? '';
-        pushIndexRow(rows, ctx, row, row, String(moveName), null);
+        pushIndexRow(rows, ctx, row, row, String(moveName), {
+          segment: null,
+          position: null,
+          stateName: null,
+        });
       }
     }
   }

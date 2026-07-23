@@ -12,6 +12,7 @@ import { propagateCharacterParentAttackInfo } from './propagate_parent_attack_in
 import { resolveCharacterDitto } from './resolve_ditto.mjs';
 import { expandCharacterLvRanges } from './expand_lv_ranges.mjs';
 import { mergeCharacterMovesByName } from './merge_moves_by_name.mjs';
+import { normalizeCharacterMovePosition } from './normalize_move_position.mjs';
 
 const SKIP_KEYS = new Set([
   'tables', 'subsections', 'pages', 'notes', 'content', 'footnotes',
@@ -103,13 +104,15 @@ export function flattenCharacter(char) {
   if (Object.keys(frameData).length > 0) out.frameData = frameData;
   return mergeCharacterMovesByName(
     expandCharacterLvRanges(
-      dedupeCharacterRows(
-        resolveCharacterDitto(
-          propagateCharacterParentAttackInfo(
-            nestCharacterMoveStates(
-              normalizeCharacterFrameValues(
-                mergeCharacterMoveAttackStubs(
-                  normalizeCharacterSpecialMoves(normalizeCharacterMoveNames(mergeCharacterBulletSummaries(out))),
+      normalizeCharacterMovePosition(
+        dedupeCharacterRows(
+          resolveCharacterDitto(
+            propagateCharacterParentAttackInfo(
+              nestCharacterMoveStates(
+                normalizeCharacterFrameValues(
+                  mergeCharacterMoveAttackStubs(
+                    normalizeCharacterSpecialMoves(normalizeCharacterMoveNames(mergeCharacterBulletSummaries(out))),
+                  ),
                 ),
               ),
             ),

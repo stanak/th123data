@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-/** Merge same-name flat rows into 技名 → Lv → コマンド → 状態 tree. */
+/** Merge same-name flat rows into 技名 → Lv → コマンド → {段|位置|状態} tree. */
 
 import { isNestedMoveRow, stripMoveMeta } from './lv_utils.mjs';
+import { classifyVariantLabel, VARIANT_BUCKETS } from './variant_buckets.mjs';
 
 const SKIP_CATEGORIES = new Set(['射撃技']);
 const PARENT_SUMMARY_KEYS = ['動作', 'キャンセル', '有利差', '備考', '攻撃Lv', '攻撃分類'];
@@ -23,27 +24,49 @@ function extractParentSummary(row) {
   return Object.keys(summary).length ? summary : null;
 }
 
-function addLeaf(tree, lv, command, stateName, stats) {
+function ensureCmdNode(tree, lv, command) {
   const lvKey = String(lv ?? '');
   const cmdKey = command ?? '';
-  const stateKey = stateName ?? '_';
   if (!tree[lvKey]) tree[lvKey] = {};
   if (!tree[lvKey][cmdKey]) tree[lvKey][cmdKey] = {};
-  tree[lvKey][cmdKey][stateKey] = stripMoveMeta(stats);
+  return tree[lvKey][cmdKey];
+}
+
+function addVariantLeaf(tree, lv, command, bucket, key, stats) {
+  const cmdNode = ensureCmdNode(tree, lv, command);
+  if (!cmdNode[bucket]) cmdNode[bucket] = {};
+  cmdNode[bucket][key] = stripMoveMeta(stats);
+}
+
+function addPlainLeaf(tree, lv, command, stats) {
+  const cmdNode = ensureCmdNode(tree, lv, command);
+  cmdNode['_'] = stripMoveMeta(stats);
 }
 
 function flatRowLeaves(row) {
   const lv = row['Lv'] ?? '';
   const command = row['コマンド'] ?? '';
+  const namePosition = row._namePosition ?? null;
+  const nameState = row._nameState ?? null;
+
   if (Array.isArray(row['状態']) && row['状態'].length) {
-    return row['状態'].map((state) => ({
-      lv,
-      command,
-      stateName: state['技名'] ?? '_',
-      stats: state,
-    }));
+    return row['状態'].map((state) => {
+      const label = state['技名'] ?? '_';
+      const classified = classifyVariantLabel(label);
+      if (classified) {
+        return { lv, command, bucket: classified.bucket, key: classified.key, stats: state };
+      }
+      return { lv, command, bucket: null, key: '_', stats: state };
+    });
   }
-  return [{ lv, command, stateName: '_', stats: row }];
+
+  if (namePosition) {
+    return [{ lv, command, bucket: '位置', key: namePosition, stats: row }];
+  }
+  if (nameState) {
+    return [{ lv, command, bucket: '状態', key: nameState, stats: row }];
+  }
+  return [{ lv, command, bucket: null, key: '_', stats: row }];
 }
 
 function buildMoveTree(name, rows) {
@@ -51,7 +74,11 @@ function buildMoveTree(name, rows) {
   let parentSummary = null;
   for (const row of rows) {
     for (const leaf of flatRowLeaves(row)) {
-      addLeaf(tree, leaf.lv, leaf.command, leaf.stateName, leaf.stats);
+      if (leaf.bucket) {
+        addVariantLeaf(tree, leaf.lv, leaf.command, leaf.bucket, leaf.key, leaf.stats);
+      } else {
+        addPlainLeaf(tree, leaf.lv, leaf.command, leaf.stats);
+      }
     }
     const summary = extractParentSummary(row);
     if (summary) parentSummary = summary;
@@ -103,3 +130,5 @@ export function mergeCharacterMovesByName(char) {
   }
   return char;
 }
+
+export { VARIANT_BUCKETS };

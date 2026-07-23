@@ -64,15 +64,21 @@ const youmu = flattenCharacter(
 );
 const heart = youmu.frameData['フレームデータ']['必殺技'].rows.find((r) => r['技名'] === '心抄斬');
 assert.ok(heart);
-assert.ok(heart['Lv']['1']['214B']['突進']);
-assert.ok(heart['Lv']['1']['214C']['突進']);
+assert.ok(heart['Lv']['1']['214B']['状態']['突進']);
+assert.ok(heart['Lv']['1']['214C']['状態']['突進']);
 
 const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
 );
 const jyoushi = reimu.frameData['フレームデータ']['必殺技'].rows.find((r) => r['技名'] === '常置陣');
 assert.ok(jyoushi);
-assert.ok(jyoushi['Lv']['1']['214B']['設置']);
-assert.ok(jyoushi['Lv']['1']['214C']['設置']);
+assert.ok(jyoushi['Lv']['1']['214B']['状態']['設置']);
+assert.ok(jyoushi['Lv']['1']['214C']['状態']['設置']);
+
+const meishu = reimu.frameData['フレームデータ']['スペルカード'].rows.find((r) => r['技名'] === '明珠暗投');
+assert.ok(meishu);
+assert.ok(meishu['Lv']['']['']['位置']['地上']);
+assert.ok(meishu['Lv']['']['']['位置']['空中']);
+assert.ok(!reimu.frameData['フレームデータ']['スペルカード'].rows.some((r) => r['技名']?.includes('版')));
 
 console.log(JSON.stringify({ ok: true, heartLvKeys: Object.keys(heart['Lv']) }, null, 2));

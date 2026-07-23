@@ -89,8 +89,17 @@ function motionColumns(options?: ColumnOptions): TableColumn[] {
   return cols;
 }
 
-export function rowsHaveStates(rows: IndexRow[]): boolean {
-  return rows.some((r) => r.stateName);
+export function rowsHaveVariants(rows: IndexRow[]): boolean {
+  return rows.some((r) => r.segment || r.position || r.stateName);
+}
+
+function formatSegmentDisplay(segment: string | null): string {
+  if (!segment) return '';
+  return /^\d+$/.test(segment) ? `${segment}段目` : segment;
+}
+
+function rowHasVariant(row: IndexRow): boolean {
+  return !!(row.segment || row.position || row.stateName);
 }
 
 export function prepareDisplayRows(rows: IndexRow[]): DisplayRow[] {
@@ -125,14 +134,14 @@ function expandMoveBlock(group: IndexRow[]): DisplayRow[] {
   let i = 0;
   while (i < group.length) {
     const row = group[i];
-    if (!row.stateName) {
+    if (!rowHasVariant(row)) {
       out.push({ ...row, moveRowSpan: 1, showMoveName: true });
       i++;
       continue;
     }
 
     let j = i;
-    while (j < group.length && group[j].stateName) j++;
+    while (j < group.length && rowHasVariant(group[j])) j++;
     const hasParentSummary = rowHasParentSummary(row);
     if (hasParentSummary) {
       out.push({
@@ -141,6 +150,8 @@ function expandMoveBlock(group: IndexRow[]): DisplayRow[] {
         isParentSummary: true,
         moveRowSpan: 1,
         showMoveName: true,
+        segment: null,
+        position: null,
         stateName: null,
         stats: row.parentStats,
         parsed: row.parentParsed,
@@ -167,7 +178,7 @@ export function columnOptionsFromCategories(categories: Set<string>): ColumnOpti
 }
 
 export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): TableColumn[] {
-  const hasStates = rows ? rowsHaveStates(rows) : false;
+  const hasVariants = rows ? rowsHaveVariants(rows) : false;
   const cols: TableColumn[] = [
     { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => characterSortIndex(r.character) },
     {
@@ -189,13 +200,27 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
     sortValue: (r) => r.moveName,
   });
 
-  if (hasStates) {
-    cols.push({
-      key: 'stateName',
-      label: t('colState'),
-      get: (r) => r.stateName ?? '',
-      sortValue: (r) => r.stateName ?? '',
-    });
+  if (hasVariants) {
+    cols.push(
+      {
+        key: 'segment',
+        label: t('colSegment'),
+        get: (r) => formatSegmentDisplay(r.segment),
+        sortValue: (r) => r.segment ?? '',
+      },
+      {
+        key: 'position',
+        label: t('colPosition'),
+        get: (r) => r.position ?? '',
+        sortValue: (r) => r.position ?? '',
+      },
+      {
+        key: 'stateName',
+        label: t('colState'),
+        get: (r) => r.stateName ?? '',
+        sortValue: (r) => r.stateName ?? '',
+      },
+    );
   }
 
   cols.push(
@@ -257,9 +282,13 @@ export function sortRows(
   const col = getCompareColumns(options, rows).find((c) => c.key === column);
   if (!col?.sortValue) return rows;
   const sorted = [...rows].sort((a, b) => {
-    if (column === 'stateName' || column === 'moveName') {
+    if (column === 'stateName' || column === 'segment' || column === 'position' || column === 'moveName') {
       const moveCmp = a.moveName.localeCompare(b.moveName, 'ja');
       if (moveCmp !== 0) return moveCmp;
+      const segCmp = String(a.segment ?? '').localeCompare(String(b.segment ?? ''), 'ja', { numeric: true });
+      if (segCmp !== 0) return segCmp;
+      const posCmp = String(a.position ?? '').localeCompare(String(b.position ?? ''), 'ja');
+      if (posCmp !== 0) return posCmp;
       return String(a.stateName ?? '').localeCompare(String(b.stateName ?? ''), 'ja', { numeric: true });
     }
     const av = col.sortValue!(a);
@@ -328,7 +357,7 @@ export function renderDataTable(
       if (col.key === 'moveName' && !row.showMoveName) {
         continue;
       }
-      if (col.key === 'stateName' && row.isParentSummary) {
+      if ((col.key === 'stateName' || col.key === 'segment' || col.key === 'position') && row.isParentSummary) {
         const td = document.createElement('td');
         tr.appendChild(td);
         continue;

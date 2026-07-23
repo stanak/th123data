@@ -34,6 +34,8 @@ export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] 
       character,
       category: [...state.categories][0] ?? '',
       moveName: state.moveName,
+      segment: null,
+      position: null,
       stateName: null,
       command: null,
       lv: null,
