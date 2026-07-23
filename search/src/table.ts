@@ -126,11 +126,16 @@ function rowsHaveLvUpEffects(rows: IndexRow[]): boolean {
 
 function rowsHaveBulletStats(rows: IndexRow[]): boolean {
   return rows.some((r) => {
-    const s = getStat(r, '相殺強度');
-    const h = getStat(r, 'ヒット数');
-    const n = getStat(r, '射撃備考');
-    return (s != null && s !== '') || (h != null && h !== '') || (n != null && n !== '');
+    for (const path of ['相殺強度', 'ヒット数', '相殺回数', 'グレイズ耐久数', '射撃備考']) {
+      const v = getStat(r, path);
+      if (v != null && v !== '' && v !== '-') return true;
+    }
+    return false;
   });
+}
+
+function categoriesMayHaveBulletStats(options?: ColumnOptions): boolean {
+  return selectedCategories(options).includes('通常技');
 }
 
 function bulletStatColumn(key: string, label: string, path: string): TableColumn {
@@ -585,7 +590,9 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
   const hasVariants = rows ? rowsHaveVariants(rows) : false;
   const hasSpecialNotes = rows ? rowsHaveSpecialNotes(rows) : false;
   const hasLvUpEffects = rows ? rowsHaveLvUpEffects(rows) : false;
-  const hasBulletStats = rows ? rowsHaveBulletStats(rows) : false;
+  const hasBulletStats = rows
+    ? rowsHaveBulletStats(rows) || categoriesMayHaveBulletStats(options)
+    : categoriesMayHaveBulletStats(options);
   const cols: TableColumn[] = [
     { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => characterSortIndex(r.character) },
     {

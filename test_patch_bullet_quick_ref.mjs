@@ -24,4 +24,9 @@ const cFront = sanae['射撃技'].rows.find((r) => r['技名'] === 'C')['状態'
 assert.equal(cFront['相殺強度'], 'B');
 assert.equal(cFront['グレイズ耐久数'], '1回');
 
+const suika = structuredClone(frame.characters['萃香']);
+patchCharacterBulletQuickRef(suika, '萃香', quickRef);
+const ja = suika['通常技'].rows.find((r) => r['技名'] === 'JA');
+assert.equal(ja['ヒット数'], '1');
+
 console.log(JSON.stringify({ ok: true, patched, unmatchedCount: unmatched.length }, null, 2));

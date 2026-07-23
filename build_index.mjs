@@ -92,6 +92,20 @@ function hasDisplayableValue(value) {
 }
 
 const PARENT_SUMMARY_KEYS = ['動作', 'キャンセル', '有利差', '備考'];
+const BULLET_STAT_KEYS = ['ヒット数', '相殺強度', '相殺回数', 'グレイズ耐久数', '射撃備考'];
+
+export function mergeBulletStatsFromParent(parentRow, stats) {
+  const merged = { ...stats };
+  for (const key of BULLET_STAT_KEYS) {
+    const parentValue = parentRow?.[key];
+    if (parentValue == null || parentValue === '' || parentValue === '-') continue;
+    const childValue = merged[key];
+    if (childValue == null || childValue === '' || childValue === '-') {
+      merged[key] = parentValue;
+    }
+  }
+  return merged;
+}
 
 export function extractParentStats(row) {
   const { 技名, 状態, 攻撃Lv, 攻撃分類, コマンド, Lv, ヒットストップ, 受身不能, ...rest } = row;
@@ -218,7 +232,7 @@ function indexStateRows(rows, ctx, row) {
           stateName: classified.bucket === '状態' ? classified.key : null,
         }
       : { segment: null, position: null, stateName: String(state['技名'] ?? '') || null };
-    pushIndexRow(rows, ctx, row, state, moveName, variant, parentStats);
+    pushIndexRow(rows, ctx, row, mergeBulletStatsFromParent(row, state), moveName, variant, parentStats);
   }
 }
 

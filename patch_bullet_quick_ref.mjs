@@ -13,7 +13,7 @@ import { normalizeMoveName } from './normalize_move.mjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_PATH = path.join(__dirname, 'bullet_quick_ref.json');
 
-const PATCH_CATEGORIES = ['射撃技', '必殺技', 'スペルカード'];
+const PATCH_CATEGORIES = ['通常技', '射撃技', '必殺技', 'スペルカード'];
 
 function applyBulletQuickFields(target, source) {
   if (source.相殺強度) target['相殺強度'] = source.相殺強度;
@@ -108,7 +108,7 @@ export function patchCharacterBulletQuickRef(char, characterName, quickRefData) 
             continue;
           }
 
-          if (patchRowDirect(row, wikiEntry, wikiSub)) {
+          if (patchRowDirect(row, wikiEntry, null)) {
             patched++;
             hit = true;
           }
