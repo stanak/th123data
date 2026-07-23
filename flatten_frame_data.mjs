@@ -14,6 +14,7 @@ import { expandCharacterLvRanges } from './expand_lv_ranges.mjs';
 import { mergeCharacterMovesByName } from './merge_moves_by_name.mjs';
 import { normalizeCharacterMovePosition } from './normalize_move_position.mjs';
 import { patchCharacterStartupFrames } from './patch_startup_frames.mjs';
+import { removeCharacterOrphanTableRows } from './remove_orphan_table_rows.mjs';
 import { getSourceFrameSections } from './character_frame.mjs';
 
 const SKIP_KEYS = new Set([
@@ -103,13 +104,15 @@ export function flattenCharacter(char) {
       expandCharacterLvRanges(
         normalizeCharacterMovePosition(
           patchCharacterStartupFrames(
-            dedupeCharacterRows(
-              resolveCharacterDitto(
-                propagateCharacterParentAttackInfo(
-                  nestCharacterMoveStates(
-                    normalizeCharacterFrameValues(
-                      mergeCharacterMoveAttackStubs(
-                        normalizeCharacterSpecialMoves(normalizeCharacterMoveNames(mergeCharacterBulletSummaries(out))),
+            removeCharacterOrphanTableRows(
+              dedupeCharacterRows(
+                resolveCharacterDitto(
+                  propagateCharacterParentAttackInfo(
+                    nestCharacterMoveStates(
+                      normalizeCharacterFrameValues(
+                        mergeCharacterMoveAttackStubs(
+                          normalizeCharacterSpecialMoves(normalizeCharacterMoveNames(mergeCharacterBulletSummaries(out))),
+                        ),
                       ),
                     ),
                   ),
