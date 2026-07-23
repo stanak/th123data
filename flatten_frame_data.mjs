@@ -8,6 +8,7 @@ import { normalizeCharacterMoveNames } from './normalize_move.mjs';
 import { normalizeCharacterFrameValues } from './normalize_frame_values.mjs';
 import { normalizeCharacterSpecialMoves } from './normalize_special_moves.mjs';
 import { mergeCharacterMoveAttackStubs } from './merge_move_attack_stubs.mjs';
+import { propagateCharacterParentAttackInfo } from './propagate_parent_attack_info.mjs';
 
 const SKIP_KEYS = new Set([
   'tables', 'subsections', 'pages', 'notes', 'content', 'footnotes',
@@ -98,10 +99,12 @@ export function flattenCharacter(char) {
   }
   if (Object.keys(frameData).length > 0) out.frameData = frameData;
   return dedupeCharacterRows(
-    nestCharacterMoveStates(
-      normalizeCharacterFrameValues(
-        mergeCharacterMoveAttackStubs(
-          normalizeCharacterSpecialMoves(normalizeCharacterMoveNames(mergeCharacterBulletSummaries(out))),
+    propagateCharacterParentAttackInfo(
+      nestCharacterMoveStates(
+        normalizeCharacterFrameValues(
+          mergeCharacterMoveAttackStubs(
+            normalizeCharacterSpecialMoves(normalizeCharacterMoveNames(mergeCharacterBulletSummaries(out))),
+          ),
         ),
       ),
     ),

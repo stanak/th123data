@@ -93,10 +93,19 @@ function hasDisplayableValue(value) {
   return true;
 }
 
+const PARENT_SUMMARY_KEYS = ['動作', 'キャンセル', '有利差', '備考'];
+
 export function extractParentStats(row) {
-  const { 技名, 状態, ...rest } = row;
-  if (!hasDisplayableValue(rest)) return null;
-  return rest;
+  const { 技名, 状態, 攻撃Lv, 攻撃分類, コマンド, Lv, ヒットストップ, 受身不能, ...rest } = row;
+  const summaryStats = {};
+  for (const key of PARENT_SUMMARY_KEYS) {
+    const value = row[key] ?? rest[key];
+    if (value != null && hasDisplayableValue(value)) {
+      summaryStats[key] = value;
+    }
+  }
+  if (!Object.keys(summaryStats).length) return null;
+  return summaryStats;
 }
 
 function pushIndexRow(rows, ctx, parentRow, stats, moveName, stateName, parentStats = null) {
