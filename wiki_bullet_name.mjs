@@ -5,7 +5,40 @@ import { normalizeMoveName } from './normalize_move.mjs';
 const SUB_ALIASES = {
   前半部分: ['前半分', '前半'],
   後半部分: ['後半'],
+  立A: ['A', '近A'],
+  立B: ['B'],
+  立C: ['C'],
+  JpA: ['JA'],
+  JpB: ['JB'],
+  JpC: ['JC'],
+  A攻撃: ['A'],
+  '+A攻撃': ['6A'],
+  '+A攻撃系': ['2A', '8A'],
+  B攻撃: ['B'],
+  C攻撃: ['C'],
+  始動攻撃: ['始動'],
 };
+
+/** Wiki 早見表の説明付き入力名 → frame_data 技名 */
+const WIKI_INPUT_ALIASES = {
+  ダッシュB: 'DB',
+  A攻撃: 'A',
+  '+A攻撃': '6A',
+  '+A攻撃系': ['2A', '8A'],
+  B攻撃: 'B',
+  C攻撃: 'C',
+  始動攻撃: '始動',
+};
+
+function wikiInputAliasKey(input) {
+  return String(input ?? '').replace(/\s+/g, '').trim();
+}
+
+function wikiInputAliasTargets(input) {
+  const hit = WIKI_INPUT_ALIASES[wikiInputAliasKey(input)];
+  if (!hit) return null;
+  return Array.isArray(hit) ? hit : [hit];
+}
 
 export function joinCellLines(text) {
   if (!text || typeof text !== 'string') return text;
@@ -24,10 +57,17 @@ export function normalizeWikiBulletInput(input, groupContext = '') {
     .trim();
   if (!s || s === '-') return null;
 
+  const aliasTargets = wikiInputAliasTargets(s);
+  if (aliasTargets) return normalizeMoveName(aliasTargets[0]);
+
+  if (/^ホールド版・Jp\+A|^ホールド版・J\+A/.test(s.replace(/\s+/g, ''))) return 'HJ2A';
+
   if (s === 'Jp+B') return 'J2B';
+  if (s === 'Jp+A') return 'J2A';
   if (s === 'Jp+C') {
     return /\+C系|[（(]\+C/.test(groupContext) ? 'J6C' : 'J2C';
   }
+  if (s === 'ダッシュB') return 'DB';
 
   let hold = false;
   if (s.startsWith('ホールド')) {
@@ -35,16 +75,38 @@ export function normalizeWikiBulletInput(input, groupContext = '') {
     s = s.slice('ホールド'.length);
   }
 
-  if (/^\+([BC])$/i.test(s)) s = `6${s.slice(1)}`;
+  if (s === 'Jp+A') return hold ? 'HJ2A' : 'J2A';
+  if (s === 'Jp+B') return hold ? 'HJ2B' : 'J2B';
+
+  if (/^\+([ABC])$/i.test(s)) s = `6${s.slice(1)}`;
   s = s.replace(/Jp/g, 'J');
   s = s.replace(/(\d)\+([ABC])/gi, '$1$2');
 
-  if (/^屈(?=[\dBC])/i.test(s)) s = `2${s.slice(1)}`;
-  else if (/^立(?=[BC])/i.test(s)) s = s.slice(1);
+  if (/^屈(?=[\dABC])/i.test(s)) s = `2${s.slice(1)}`;
+  else if (/^立(?=[ABC])/i.test(s)) s = s.slice(1);
 
   if (hold) s = `H${s}`;
 
   return normalizeMoveName(s);
+}
+
+export function resolveWikiBulletTargets(input, groupContext = '') {
+  const aliasTargets = wikiInputAliasTargets(input);
+  if (aliasTargets) {
+    return [...new Set(aliasTargets.map((name) => normalizeMoveName(name)))];
+  }
+
+  const direct = normalizeWikiBulletInput(input, groupContext);
+  if (!direct) return [];
+
+  const targets = new Set([direct]);
+  if (direct === 'A' && wikiInputAliasKey(input) === '立A') {
+    targets.add('近A');
+  }
+  for (const alias of SUB_ALIASES[input] ?? []) {
+    targets.add(normalizeMoveName(alias));
+  }
+  return [...targets];
 }
 
 export function extractGroupInputs(groupName) {
@@ -70,8 +132,7 @@ export function expandWikiBulletTargets(groupName, subName) {
 
   if (inputs.length && isGroupRow) {
     for (const input of inputs) {
-      const name = normalizeWikiBulletInput(input, group);
-      if (name) targets.add(name);
+      for (const name of resolveWikiBulletTargets(input, group)) targets.add(name);
     }
     if (!/ホールド/.test(group)) {
       for (const name of [...targets]) {
@@ -83,17 +144,19 @@ export function expandWikiBulletTargets(groupName, subName) {
 
   if (inputs.length) {
     for (const input of inputs) {
-      const name = normalizeWikiBulletInput(input, group);
-      if (!name) continue;
-      if (/系射撃/.test(group) && (sub === '前半部分' || sub === '後半部分')) {
-        targets.add(name);
+      for (const name of resolveWikiBulletTargets(input, group)) {
+        if (/系射撃/.test(group) && (sub === '前半部分' || sub === '後半部分')) {
+          targets.add(name);
+        }
       }
     }
     if (targets.size) return [...targets];
   }
 
-  const direct = normalizeWikiBulletInput(sub, group) ?? normalizeWikiBulletInput(group, group);
-  if (direct) targets.add(direct);
+  for (const name of resolveWikiBulletTargets(sub, group)) targets.add(name);
+  const groupDirect = normalizeWikiBulletInput(group, group);
+  if (groupDirect) targets.add(groupDirect);
+
   if (group && group !== sub && !/系射撃/.test(group)) {
     targets.add(group.replace(/\s+/g, ''));
   }
@@ -102,7 +165,7 @@ export function expandWikiBulletTargets(groupName, subName) {
     for (const alias of SUB_ALIASES[sub] ?? []) targets.add(alias);
   }
 
-  return [...targets].map((n) => normalizeMoveName(n));
+  return [...new Set([...targets].map((n) => normalizeMoveName(n)))];
 }
 
 export function normalizeLookupKey(name) {
@@ -120,6 +183,9 @@ export function subNameMatches(wikiSub, rowName) {
   if (a === b) return true;
   for (const alias of SUB_ALIASES[wikiSub] ?? []) {
     if (normalizeLookupKey(alias) === b) return true;
+  }
+  for (const target of resolveWikiBulletTargets(wikiSub)) {
+    if (normalizeLookupKey(target) === b) return true;
   }
   return false;
 }

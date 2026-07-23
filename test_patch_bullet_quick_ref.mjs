@@ -28,5 +28,24 @@ const suika = structuredClone(frame.characters['萃香']);
 patchCharacterBulletQuickRef(suika, '萃香', quickRef);
 const ja = suika['通常技'].rows.find((r) => r['技名'] === 'JA');
 assert.equal(ja['ヒット数'], '1');
+const missing = suika['スペルカード'].rows.find((r) => r['技名'] === 'ミッシングパープルパワー');
+const missingA = missing['状態'].find((s) => s['技名'] === 'A');
+assert.equal(missingA['ヒット数'], '1');
+assert.ok(missingA['射撃備考']?.includes('特別射撃属性'));
+
+const alice = structuredClone(frame.characters['アリス']);
+patchCharacterBulletQuickRef(alice, 'アリス', quickRef);
+const mirai = alice['スペルカード'].rows.find((r) => r['技名'] === '未来文楽');
+const miraiA = mirai['状態'].find((s) => s['技名'] === 'A');
+assert.equal(miraiA['ヒット数'], '5');
+const mirai6A = mirai['状態'].find((s) => s['技名'] === '6A');
+assert.equal(mirai6A['ヒット数'], '4');
+
+const marisa = structuredClone(frame.characters['魔理沙']);
+patchCharacterBulletQuickRef(marisa, '魔理沙', quickRef);
+const marisaDb = marisa['通常技'].rows.find((r) => r['技名'] === 'DB');
+assert.equal(marisaDb['ヒット数'], '1');
+const marisaHj2a = marisa['通常技'].rows.find((r) => r['技名'] === 'HJ2A');
+assert.equal(marisaHj2a['相殺強度'], 'B');
 
 console.log(JSON.stringify({ ok: true, patched, unmatchedCount: unmatched.length }, null, 2));
