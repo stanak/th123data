@@ -19,6 +19,23 @@ const wave = data.characters['早苗']['必殺技'].rows.find((r) => r['技名']
 assert.equal(wave.Lv['1']?.['追加効果'], undefined);
 assert.equal(wave.Lv['2']['追加効果'], sanaeEffects['波起こし']['2']);
 
+assert.equal(normalizeWikiMoveName('人形火葬'), '人形火操');
+assert.equal(normalizeWikiMoveName('鳳紋蝶の槍'), '鳳蝶紋の槍');
+assert.equal(normalizeWikiMoveName('非想の威光'), '緋想の威光');
+
+const aliceFire = data.characters['アリス']['必殺技'].rows.find((r) => r['技名'] === '人形火操');
+assert.equal(aliceFire.Lv['2']['追加効果'], lvUp.characters['アリス'].moves['人形火葬']['2']);
+assert.equal(aliceFire.Lv['4']['追加効果'], lvUp.characters['アリス'].moves['人形火葬']['4']);
+
+const yuyukoSpear = data.characters['幽々子']['必殺技'].rows.find((r) => r['技名'] === '鳳蝶紋の槍');
+assert.equal(yuyukoSpear.Lv['3']['追加効果'], lvUp.characters['幽々子'].moves['鳳紋蝶の槍']['3']);
+
+const tenshiGlory = data.characters['天子']['必殺技'].rows.find((r) => r['技名'] === '非想の威光');
+assert.ok(tenshiGlory, 'renamed to 非想の威光');
+assert.equal(tenshiGlory.Lv['1']['追加効果'], lvUp.characters['天子'].moves['非想の威光']['1']);
+assert.equal(tenshiGlory.Lv['4']['追加効果'], lvUp.characters['天子'].moves['非想の威光']['4']);
+assert.ok(!data.characters['天子']['必殺技'].rows.some((r) => r['技名'] === '緋想の威光'));
+
 function lookupKey(name) {
   return normalizeWikiMoveName(name).replace(/ /g, '');
 }

@@ -16,7 +16,26 @@ const WIKI_MOVE_ALIASES = {
   '至る所に青山あり': '至る処に青山あり',
   '物質と反物質の宇宙': '物質と反物質の境界',
   'フィールドウルトラバイトレット': 'フィールドウルトラバイオレット',
+  // Wiki 必殺技Lv-up表のタイポ → frame data 技名
+  '人形火葬': '人形火操',
+  '鳳紋蝶の槍': '鳳蝶紋の槍',
+  '非想の威光': '緋想の威光',
 };
+
+/** Lv-up 適用後に frame data 側の誤表記を正しい技名へ */
+const FRAME_MOVE_RENAMES = {
+  '緋想の威光': '非想の威光',
+};
+
+function renameFrameMoveRows(char) {
+  const section = char['必殺技'];
+  if (!section?.rows) return char;
+  for (const row of section.rows) {
+    const renamed = FRAME_MOVE_RENAMES[row['技名']];
+    if (renamed) row['技名'] = renamed;
+  }
+  return char;
+}
 
 export function normalizeWikiMoveName(name) {
   let s = String(name ?? '')
@@ -64,7 +83,7 @@ export function patchCharacterLvUpEffects(char, characterName, lvUpData) {
       row.Lv[lvKey]['追加効果'] = text;
     }
   }
-  return char;
+  return renameFrameMoveRows(char);
 }
 
 export function patchAllLvUpEffects(characters, lvUpData) {
