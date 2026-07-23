@@ -189,8 +189,16 @@ function collectLeavesFromCmdNode(cmdNode, lv, lvKey, command) {
 function collectNestedLeaves(lvTree) {
   const leaves = [];
   for (const [lvKey, cmdTree] of Object.entries(lvTree)) {
+    if (!cmdTree || typeof cmdTree !== 'object') continue;
+    const lvEffect = typeof cmdTree['追加効果'] === 'string' ? cmdTree['追加効果'] : null;
     for (const [cmdKey, cmdNode] of Object.entries(cmdTree)) {
-      leaves.push(...collectLeavesFromCmdNode(cmdNode, lvKey, lvKey, cmdKey));
+      if (cmdKey === '追加効果') continue;
+      for (const leaf of collectLeavesFromCmdNode(cmdNode, lvKey, lvKey, cmdKey)) {
+        if (lvEffect) {
+          leaf.stats = { ...leaf.stats, 追加効果: lvEffect };
+        }
+        leaves.push(leaf);
+      }
     }
   }
   return leaves;

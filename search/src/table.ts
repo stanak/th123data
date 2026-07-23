@@ -117,6 +117,13 @@ function rowsHaveSpecialNotes(rows: IndexRow[]): boolean {
   });
 }
 
+function rowsHaveLvUpEffects(rows: IndexRow[]): boolean {
+  return rows.some((r) => {
+    const v = getStat(r, '追加効果');
+    return v != null && v !== '';
+  });
+}
+
 function rowsHaveBulletStats(rows: IndexRow[]): boolean {
   return rows.some((r) => {
     const s = getStat(r, '相殺強度');
@@ -577,6 +584,7 @@ export function columnOptionsFromCategories(categories: Set<string>): ColumnOpti
 export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): TableColumn[] {
   const hasVariants = rows ? rowsHaveVariants(rows) : false;
   const hasSpecialNotes = rows ? rowsHaveSpecialNotes(rows) : false;
+  const hasLvUpEffects = rows ? rowsHaveLvUpEffects(rows) : false;
   const hasBulletStats = rows ? rowsHaveBulletStats(rows) : false;
   const cols: TableColumn[] = [
     { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => characterSortIndex(r.character) },
@@ -673,6 +681,15 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
       label: t('colSpecialNotes'),
       get: (r) => specialNotesSummary(getStat(r, '特記事項')),
       sortValue: (r) => specialNotesSummary(getStat(r, '特記事項')),
+    });
+  }
+
+  if (hasLvUpEffects) {
+    cols.push({
+      key: 'lvUpEffect',
+      label: t('colLvUpEffect'),
+      get: (r) => String(getStat(r, '追加効果') ?? ''),
+      sortValue: (r) => String(getStat(r, '追加効果') ?? ''),
     });
   }
 
@@ -862,6 +879,17 @@ export function renderDataTable(
             characterLabel(row.character, getLocale()),
             row.moveName,
             t('colBulletNotes'),
+          ].filter(Boolean).join(' — ');
+          const trigger = createNotesTrigger(notesText, notesTitle);
+          if (trigger) td.appendChild(trigger);
+        } else if (col.key === 'lvUpEffect') {
+          td.classList.add('notes-cell');
+          const notesText = col.get(row);
+          const notesTitle = [
+            characterLabel(row.character, getLocale()),
+            row.moveName,
+            row.lv ? `Lv${row.lv}` : '',
+            t('colLvUpEffect'),
           ].filter(Boolean).join(' — ');
           const trigger = createNotesTrigger(notesText, notesTitle);
           if (trigger) td.appendChild(trigger);

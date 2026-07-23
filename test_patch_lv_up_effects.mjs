@@ -62,4 +62,11 @@ assert.ok(patched >= 500, `expected many patched entries, got ${patched}`);
 assert.ok(missingMove <= 10, `too many unmatched moves: ${missingMove}`);
 assert.ok(missingLv <= 5, `too many unmatched lv slots: ${missingLv}`);
 
-console.log(JSON.stringify({ ok: true, patched, missingMove, missingLv }, null, 2));
+const index = JSON.parse(fs.readFileSync(path.join(__dirname, 'search/public/search_index.json'), 'utf8'));
+let indexLvUp = 0;
+for (const r of index.rows) if (r.stats['追加効果']) indexLvUp++;
+assert.ok(indexLvUp >= 500, `expected 追加効果 in search index, got ${indexLvUp}`);
+const sanaeWindIdx = index.rows.find((r) => r.character === '早苗' && r.moveName === '風起こし' && r.lv === '1');
+assert.equal(sanaeWindIdx?.stats?.['追加効果'], sanaeEffects['風起こし']['1']);
+
+console.log(JSON.stringify({ ok: true, patched, missingMove, missingLv, indexLvUp }, null, 2));

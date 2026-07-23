@@ -40,6 +40,7 @@ export const ALL_COLUMN_DEFS: ColumnDef[] = [
   { key: 'bulletNotes', labelKey: 'colBulletNotes', group: 'bullet' },
   { key: 'notes', labelKey: 'colNotes', group: 'other' },
   { key: 'specialNotes', labelKey: 'colSpecialNotes', group: 'other' },
+  { key: 'lvUpEffect', labelKey: 'colLvUpEffect', group: 'other' },
 ];
 
 const GROUP_LABEL_KEYS: Record<ColumnGroupId, MessageKey> = {
