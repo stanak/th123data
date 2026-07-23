@@ -62,15 +62,17 @@ assert.equal(bc[0]['状態'][0]['技名'], '地上');
 const youmu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/妖夢.json'), 'utf8')),
 );
-const heart = youmu.frameData['フレームデータ']['必殺技'].rows.filter((r) => r['技名'] === '心抄斬');
-assert.ok(heart.some((r) => r['コマンド'] === '214B' && r['状態']?.some((s) => s['技名'] === '突進')));
-assert.ok(heart.some((r) => r['コマンド'] === '214C'));
+const heart = youmu.frameData['フレームデータ']['必殺技'].rows.find((r) => r['技名'] === '心抄斬');
+assert.ok(heart);
+assert.ok(heart['Lv']['1']['214B']['突進']);
+assert.ok(heart['Lv']['1']['214C']['突進']);
 
 const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
 );
-const jyoushi = reimu.frameData['フレームデータ']['必殺技'].rows.filter((r) => r['技名'] === '常置陣');
-assert.ok(jyoushi.some((r) => r['コマンド'] === '214B' && r['状態']));
-assert.ok(jyoushi.some((r) => r['コマンド'] === '214C'));
+const jyoushi = reimu.frameData['フレームデータ']['必殺技'].rows.find((r) => r['技名'] === '常置陣');
+assert.ok(jyoushi);
+assert.ok(jyoushi['Lv']['1']['214B']['設置']);
+assert.ok(jyoushi['Lv']['1']['214C']['設置']);
 
-console.log(JSON.stringify({ ok: true, heart: heart.length, jyoushi: jyoushi.length }, null, 2));
+console.log(JSON.stringify({ ok: true, heartLvKeys: Object.keys(heart['Lv']) }, null, 2));

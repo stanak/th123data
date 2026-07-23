@@ -49,13 +49,15 @@ const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
 );
 const specials = reimu.frameData['フレームデータ']['必殺技'].rows;
-assert.equal(specials.filter(isAttackInfoStub).length, 1);
-const keibaku = specials.filter((r) => r['技名'] === '繋縛陣');
-assert.ok(keibaku.every((r) => r['攻撃Lv'] === '大' && r['攻撃分類'] === '上段'));
+assert.equal(specials.filter(isAttackInfoStub).length, 0);
+const keibaku = specials.find((r) => r['技名'] === '繋縛陣');
+assert.ok(keibaku);
+assert.equal(keibaku['攻撃Lv'], '大');
+assert.equal(keibaku['攻撃分類'], '上段');
 assert.ok(!specials.some((r) => isAttackInfoStub(r) && r['技名'] === '繋縛陣'));
 
 console.log(JSON.stringify({
   ok: true,
   reimuStubsLeft: specials.filter(isAttackInfoStub).length,
-  keibakuRows: keibaku.length,
+  keibakuMerged: !!keibaku,
 }, null, 2));

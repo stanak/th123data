@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 /** Merge 攻撃Lv/攻撃分類-only stub rows into same-name frame-data rows. */
 
+import { isNestedMoveRow } from './lv_utils.mjs';
+
 const SKIP_CATEGORIES = new Set(['射撃技']);
 
 export function isAttackInfoStub(row) {
+  if (isNestedMoveRow(row)) return false;
   const hasMotion = row['動作'] && Object.keys(row['動作']).length > 0;
   const hasCancel = row['キャンセル'];
   const hasAdv = row['有利差'];

@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { CHARACTER_ORDER } from './characters.mjs';
+import { collapseLvEntries, isNestedMoveRow, stateSortKey } from './lv_utils.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRAME_DATA = path.join(__dirname, 'frame_data.json');
@@ -127,6 +128,73 @@ function pushIndexRow(rows, ctx, parentRow, stats, moveName, stateName, parentSt
   rows.push(entry);
 }
 
+function collectNestedLeaves(lvTree) {
+  const leaves = [];
+  for (const [lvKey, cmdTree] of Object.entries(lvTree)) {
+    const lv = Number(lvKey);
+    const lvNum = Number.isNaN(lv) ? lvKey : lv;
+    for (const [cmdKey, stateTree] of Object.entries(cmdTree)) {
+      for (const [stateKey, stats] of Object.entries(stateTree)) {
+        leaves.push({
+          lv: typeof lvNum === 'number' ? lvNum : Number(lvKey),
+          lvKey,
+          command: cmdKey || null,
+          stateName: stateKey === '_' ? null : stateKey,
+          stats,
+        });
+      }
+    }
+  }
+  return leaves;
+}
+
+function indexNestedMoveRow(rows, ctx, row) {
+  const moveName = String(row['技名'] ?? '');
+  const parentStats = extractParentStats(row);
+  const leaves = collectNestedLeaves(row['Lv']);
+
+  const groups = new Map();
+  for (const leaf of leaves) {
+    const key = `${leaf.stateName ?? ''}\0${leaf.command ?? ''}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(leaf);
+  }
+
+  const sortedKeys = [...groups.keys()].sort((a, b) => {
+    const [stateA, cmdA] = a.split('\0');
+    const [stateB, cmdB] = b.split('\0');
+    const skA = stateSortKey(stateA || null);
+    const skB = stateSortKey(stateB || null);
+    if (typeof skA === 'number' && typeof skB === 'number' && skA !== skB) return skA - skB;
+    const stateCmp = String(stateA).localeCompare(String(stateB), 'ja', { numeric: true });
+    if (stateCmp) return stateCmp;
+    return String(cmdA).localeCompare(String(cmdB), 'ja');
+  });
+
+  for (const key of sortedKeys) {
+    const groupLeaves = groups.get(key);
+    const collapsed = collapseLvEntries(
+      groupLeaves.map((leaf) => ({
+        lv: typeof leaf.lv === 'number' && !Number.isNaN(leaf.lv) ? leaf.lv : Number(leaf.lvKey),
+        stats: leaf.stats,
+        command: leaf.command,
+        stateName: leaf.stateName,
+      })),
+    );
+    for (const item of collapsed) {
+      pushIndexRow(
+        rows,
+        ctx,
+        { コマンド: item.command, Lv: item.lvDisplay },
+        item.stats,
+        moveName,
+        item.stateName,
+        parentStats,
+      );
+    }
+  }
+}
+
 function buildIndex() {
   const data = JSON.parse(fs.readFileSync(FRAME_DATA, 'utf8'));
   const characters = CHARACTER_ORDER.filter((name) => data.characters[name]);
@@ -144,6 +212,10 @@ function buildIndex() {
       const section = sections[category];
       if (!section?.rows) continue;
       for (const row of section.rows) {
+        if (isNestedMoveRow(row)) {
+          indexNestedMoveRow(rows, ctx, row);
+          continue;
+        }
         const states = row['状態'];
         if (Array.isArray(states) && states.length) {
           const moveName = String(row['技名'] ?? '');

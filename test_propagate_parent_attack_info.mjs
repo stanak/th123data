@@ -47,7 +47,7 @@ assert.deepEqual(
 const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
 );
-const keibaku = reimu.frameData['フレームデータ']['必殺技'].rows.find((r) => r['技名'] === '繋縛陣' && r['コマンド'] === '214B');
-assert.equal(keibaku['状態'][0]['攻撃Lv'], '大');
+const keibaku = reimu.frameData['フレームデータ']['必殺技'].rows.find((r) => r['技名'] === '繋縛陣');
+assert.equal(keibaku['Lv']['1']['214B']['地上']['攻撃Lv'], '大');
 
 console.log(JSON.stringify({ ok: true }, null, 2));
