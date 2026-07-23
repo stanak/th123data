@@ -18,6 +18,11 @@ assert.equal(normalizeFrameListValue('152025…'), '15,20,25,...');
 assert.equal(normalizeFrameListValue('3942…57'), '39,42,...,57');
 assert.equal(normalizeFrameListValue('2025…65'), '20,25,...,65');
 assert.equal(normalizeFrameListValue('42、4548、51…66、69'), '42,45,48,51,...,66,69');
+assert.equal(normalizeFrameListValue('88101'), '88,101');
+assert.equal(normalizeFrameListValue('101121'), '101,121');
+assert.equal(normalizeFrameListValue('9499104109'), '94,99,104,109');
+assert.equal(normalizeFrameListValue('114150186222'), '114,150,186,222');
+assert.equal(normalizeFrameListValue('117119…147'), '117,119,...,147');
 
 const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),

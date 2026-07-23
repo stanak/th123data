@@ -1,15 +1,71 @@
 #!/usr/bin/env node
-/** Split scraped frame lists where 4+ digit tokens are concatenated 2-digit values. */
+/** Split scraped frame lists where digit tokens are concatenated without separators. */
 
-function splitConcatenatedDigits(token) {
-  const s = String(token).trim();
-  if (!/^\d+$/.test(s) || s.length < 4) return s;
+const MAX_FRAME = 350;
 
-  const parts = [];
-  for (let i = 0; i < s.length; i += 2) {
-    parts.push(s.slice(i, i + 2));
+function scoreSplit(parts) {
+  if (!parts.length) return -Infinity;
+  let score = 0;
+  for (let i = 1; i < parts.length; i++) {
+    const prev = Number(parts[i - 1]);
+    const curr = Number(parts[i]);
+    const gap = curr - prev;
+    if (gap < 0) score -= 50;
+    else if (gap === 0) score -= 5;
+    else if (gap <= 20) score += 5;
+    else score -= gap;
   }
-  return parts.join(',');
+  for (const part of parts) {
+    const n = Number(part);
+    if (n >= 100 && part.length === 3) score += 8;
+    if (n <= 99 && part.length === 2) score += 1;
+  }
+  for (let i = 0; i < parts.length - 1; i++) {
+    if (parts[i] === '10') {
+      const merged = Number(`10${parts[i + 1]}`);
+      if (merged >= 100 && merged <= 199) score -= 40;
+    }
+  }
+  return score;
+}
+
+export function splitConcatenatedDigits(s) {
+  const token = String(s).trim();
+  if (!/^\d+$/.test(token) || token.length < 4) return token;
+
+  const n = token.length;
+  let best = null;
+  let bestScore = -Infinity;
+
+  function dfs(index, parts) {
+    if (index === n) {
+      const sc = scoreSplit(parts);
+      if (sc > bestScore) {
+        bestScore = sc;
+        best = [...parts];
+      }
+      return;
+    }
+    for (const len of [3, 2]) {
+      if (index + len > n) continue;
+      const part = token.slice(index, index + len);
+      const num = Number(part);
+      if (Number.isNaN(num) || num > MAX_FRAME) continue;
+      if (len === 3 && num < 100) continue;
+      parts.push(part);
+      dfs(index + len, parts);
+      parts.pop();
+    }
+  }
+
+  dfs(0, []);
+  if (best) return best.join(',');
+
+  const fallback = [];
+  for (let i = 0; i < token.length; i += 2) {
+    fallback.push(token.slice(i, i + 2));
+  }
+  return fallback.join(',');
 }
 
 function expandFrameTokenList(part) {
