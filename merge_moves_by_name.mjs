@@ -4,7 +4,6 @@
 import { isNestedMoveRow, stripMoveMeta } from './lv_utils.mjs';
 import { classifyVariantLabel, VARIANT_BUCKETS } from './variant_buckets.mjs';
 
-const SKIP_CATEGORIES = new Set(['射撃技']);
 const PARENT_SUMMARY_KEYS = ['動作', 'キャンセル', '有利差', '備考', '攻撃Lv', '攻撃分類'];
 
 function hasDisplayableValue(value) {
@@ -125,7 +124,7 @@ export function mergeCharacterMovesByName(char) {
   if (!frame) return char;
 
   for (const [category, section] of Object.entries(frame)) {
-    if (SKIP_CATEGORIES.has(category) || !section?.rows) continue;
+    if (!section?.rows) continue;
     section.rows = mergeMovesByName(section.rows);
   }
   return char;

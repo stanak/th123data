@@ -113,10 +113,12 @@ const suwako = flattenCharacter(
 const suwakoShooting = suwako.frameData['フレームデータ']['射撃技'].rows;
 const suwakoH6b = suwakoShooting.find((r) => r['技名'] === 'H6B');
 assert.ok(suwakoH6b, 'H6B move');
-assert.deepEqual(suwakoH6b['状態'].map((s) => s['技名']).sort(), ['1段階', '2段階']);
+assert.ok(suwakoH6b['Lv']['']['']['状態']['1段階']);
+assert.ok(suwakoH6b['Lv']['']['']['状態']['2段階']);
 const suwakoHj2b = suwakoShooting.find((r) => r['技名'] === 'HJ2B');
 assert.ok(suwakoHj2b);
-assert.deepEqual(suwakoHj2b['状態'].map((s) => s['技名']).sort(), ['1段階', '2段階']);
+assert.ok(suwakoHj2b['Lv']['']['']['状態']['1段階']);
+assert.ok(suwakoHj2b['Lv']['']['']['状態']['2段階']);
 assert.ok(!suwakoShooting.some((r) => r['技名']?.includes('ホールド6B系')));
 
 console.log(JSON.stringify({ ok: true, heartLvKeys: Object.keys(heart['Lv']) }, null, 2));
