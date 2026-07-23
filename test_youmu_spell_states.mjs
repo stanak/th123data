@@ -16,6 +16,8 @@ assert.equal(badRows.length, 0);
 assert.equal(kurin['状態'].length, 16);
 assert.equal(hou['状態'].length, 16);
 assert.equal(kurin['状態'][0]['技名'], '近A');
+assert.equal(kurin['状態'][6]['技名'], '2A');
+assert.equal(kurin['状態'][7]['技名'], '2A');
 assert.equal(kurin['状態'][8]['技名'], '6A');
 assert.equal(hou['状態'][0]['技名'], '近A');
 assert.equal(hou['状態'][15]['技名'], 'DC');
