@@ -94,12 +94,37 @@ export function rowsHaveStates(rows: IndexRow[]): boolean {
 }
 
 export function prepareDisplayRows(rows: IndexRow[]): DisplayRow[] {
-  const out: DisplayRow[] = [];
+  const expanded: DisplayRow[] = [];
   let i = 0;
   while (i < rows.length) {
     const row = rows[i];
     const key = `${row.character}\0${row.moveName}`;
+    let j = i;
+    while (j < rows.length && `${rows[j].character}\0${rows[j].moveName}` === key) j++;
+    expanded.push(...expandMoveBlock(rows.slice(i, j)));
+    i = j;
+  }
 
+  let k = 0;
+  while (k < expanded.length) {
+    const key = `${expanded[k].character}\0${expanded[k].moveName}`;
+    let m = k;
+    while (m < expanded.length && `${expanded[m].character}\0${expanded[m].moveName}` === key) m++;
+    const span = m - k;
+    for (let n = k; n < m; n++) {
+      expanded[n].showMoveName = n === k;
+      expanded[n].moveRowSpan = n === k ? span : 0;
+    }
+    k = m;
+  }
+  return expanded;
+}
+
+function expandMoveBlock(group: IndexRow[]): DisplayRow[] {
+  const out: DisplayRow[] = [];
+  let i = 0;
+  while (i < group.length) {
+    const row = group[i];
     if (!row.stateName) {
       out.push({ ...row, moveRowSpan: 1, showMoveName: true });
       i++;
@@ -107,30 +132,25 @@ export function prepareDisplayRows(rows: IndexRow[]): DisplayRow[] {
     }
 
     let j = i;
-    while (j < rows.length) {
-      const r = rows[j];
-      if (`${r.character}\0${r.moveName}` !== key || !r.stateName) break;
-      j++;
-    }
-    const span = j - i;
+    while (j < group.length && group[j].stateName) j++;
     const hasParentSummary = rowHasParentSummary(row);
     if (hasParentSummary) {
       out.push({
         ...row,
         id: `parent-${row.id}`,
         isParentSummary: true,
-        moveRowSpan: span + 1,
+        moveRowSpan: 1,
         showMoveName: true,
         stateName: null,
         stats: row.parentStats,
         parsed: row.parentParsed,
       });
     }
-    for (let k = i; k < j; k++) {
+    for (let idx = i; idx < j; idx++) {
       out.push({
-        ...rows[k],
-        moveRowSpan: 0,
-        showMoveName: !hasParentSummary && k === i,
+        ...group[idx],
+        moveRowSpan: 1,
+        showMoveName: !hasParentSummary && idx === i,
       });
     }
     i = j;
@@ -163,7 +183,7 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
     label: t('colMoveName'),
     get: (r) => {
       const display = r as DisplayRow;
-      if (hasStates && r.stateName && display.showMoveName === false) return '';
+      if (display.showMoveName === false) return '';
       return r.moveName;
     },
     sortValue: (r) => r.moveName,
@@ -275,10 +295,7 @@ export function renderDataTable(
     return;
   }
 
-  const hasStates = rowsHaveStates(rows);
-  const displayRows: DisplayRow[] = hasStates
-    ? prepareDisplayRows(rows)
-    : rows.map((r) => ({ ...r, moveRowSpan: 1, showMoveName: true }));
+  const displayRows: DisplayRow[] = prepareDisplayRows(rows);
 
   const wrap = document.createElement('div');
   wrap.className = 'table-wrap';
@@ -308,7 +325,7 @@ export function renderDataTable(
     tr.dataset.id = row.id;
     if (row.isParentSummary) tr.classList.add('move-parent-row');
     for (const col of columns) {
-      if (col.key === 'moveName' && hasStates && row.stateName && !row.showMoveName) {
+      if (col.key === 'moveName' && !row.showMoveName) {
         continue;
       }
       if (col.key === 'stateName' && row.isParentSummary) {
@@ -331,7 +348,7 @@ export function renderDataTable(
         col.key === 'moveName' &&
         options.onMoveClick &&
         row.moveName &&
-        (!row.stateName || row.showMoveName)
+        row.showMoveName
       ) {
         const a = document.createElement('a');
         a.href = '#';

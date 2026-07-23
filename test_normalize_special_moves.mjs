@@ -11,6 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 assert.deepEqual(parseSpecialMoveName('B版心抄斬-突進'), {
   baseName: '心抄斬',
   variant: 'B',
+  hold: false,
   stateLabel: '突進',
   changed: true,
 });
@@ -18,6 +19,27 @@ assert.deepEqual(parseSpecialMoveName('C版生死流転斬（1段目）').baseNa
 assert.equal(parseSpecialMoveName('C版生死流転斬（1段目）').stateLabel, '1段目');
 assert.equal(parseSpecialMoveName('C版生死流転斬（1段目）').variant, 'C');
 assert.equal(suffixCommand('214', 'B'), '214B');
+assert.equal(suffixCommand('214', 'B', true), '214HB');
+assert.equal(suffixCommand('214', 'C', true), '214HC');
+assert.equal(parseSpecialMoveName('ホールド版地上BC共通メテオニックデブリ').baseName, 'メテオニックデブリ');
+assert.equal(parseSpecialMoveName('ホールド版地上BC共通メテオニックデブリ').hold, true);
+assert.equal(parseSpecialMoveName('ホールドB版スクウェアリコシェ').variant, 'B');
+assert.equal(parseSpecialMoveName('ホールドB版スクウェアリコシェ').hold, true);
+
+const hold = normalizeSpecialMoveRows([
+  { 技名: 'ホールド版地上BC共通メテオニックデブリ', コマンド: '236', Lv: '0', 動作: { 発生: '42' } },
+]);
+assert.equal(hold.length, 2);
+assert.equal(hold[0]['技名'], 'メテオニックデブリ');
+assert.equal(hold[0]['コマンド'], '236HB');
+assert.equal(hold[1]['コマンド'], '236HC');
+assert.equal(hold[0]['状態'][0]['技名'], '地上');
+
+const holdB = normalizeSpecialMoveRows([
+  { 技名: 'ホールドB版スクウェアリコシェ', コマンド: '214', Lv: '1~4', 動作: { 発生: '1' } },
+]);
+assert.equal(holdB.length, 1);
+assert.equal(holdB[0]['コマンド'], '214HB');
 
 const grouped = normalizeSpecialMoveRows([
   { 技名: 'B版心抄斬-突進', コマンド: '214', Lv: '1~4', 動作: { 発生: '25' } },

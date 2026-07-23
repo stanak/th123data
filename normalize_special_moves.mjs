@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Normalize 必殺技 names: B版/C版/BC共通, 地上/空中, hyphens, and parentheses. */
+/** Normalize 必殺技 names: B版/C版/BC共通, hold variants, 地上/空中, hyphens, and parentheses. */
 
 function normalizeParenState(label) {
   if (label === '地上版') return '地上';
@@ -9,15 +9,30 @@ function normalizeParenState(label) {
 
 export function parseSpecialMoveName(name) {
   if (typeof name !== 'string' || !name) {
-    return { baseName: name, variant: null, stateLabel: null, changed: false };
+    return { baseName: name, variant: null, hold: false, stateLabel: null, changed: false };
   }
 
   let s = name;
   const stateParts = [];
   let changed = false;
+  let hold = false;
+
+  if (s.startsWith('ホールド版')) {
+    hold = true;
+    s = s.slice('ホールド版'.length);
+    changed = true;
+  } else if (s.startsWith('ホールド')) {
+    hold = true;
+    s = s.slice('ホールド'.length);
+    changed = true;
+  }
 
   if (s.startsWith('地上空中共通')) {
     s = s.slice('地上空中共通'.length);
+    changed = true;
+  } else if (s.startsWith('立ちしゃがみ共通')) {
+    stateParts.push('立ちしゃがみ');
+    s = s.slice('立ちしゃがみ共通'.length);
     changed = true;
   } else if (s.startsWith('地上版')) {
     stateParts.push('地上');
@@ -72,20 +87,27 @@ export function parseSpecialMoveName(name) {
   return {
     baseName,
     variant,
+    hold,
     stateLabel: stateParts.length ? stateParts.at(-1) : null,
-    changed: changed || !!variant || !!stateParts.length,
+    changed: changed || !!variant || !!stateParts.length || hold,
   };
 }
 
-function variantKeys(variant) {
+function variantKeys(variant, hold = false) {
   if (variant === 'BC') return ['B', 'C'];
   if (variant === 'B' || variant === 'C') return [variant];
+  if (hold) return ['B', 'C'];
   return [null];
 }
 
-export function suffixCommand(command, variantKey) {
+export function suffixCommand(command, variantKey, hold = false) {
   if (!command || !variantKey) return command ?? null;
   const s = String(command);
+  if (hold) {
+    if (/H[BC]$/.test(s)) return s;
+    if (/[BC]$/.test(s)) return `${s.slice(0, -1)}H${s.slice(-1)}`;
+    return `${s}H${variantKey}`;
+  }
   if (/[BC]$/.test(s)) return s;
   return `${s}${variantKey}`;
 }
@@ -114,14 +136,14 @@ function buildStateParent(items) {
 }
 
 function applyVariantsToExistingStates(row, parsed) {
-  return variantKeys(parsed.variant).map((variantKey) => {
+  return variantKeys(parsed.variant, parsed.hold).map((variantKey) => {
     const copy = structuredClone(row);
     copy['技名'] = parsed.baseName;
-    copy['コマンド'] = suffixCommand(copy['コマンド'], variantKey);
+    copy['コマンド'] = suffixCommand(copy['コマンド'], variantKey, parsed.hold);
     if (Array.isArray(copy['状態'])) {
       for (const state of copy['状態']) {
         if (state['コマンド'] != null) {
-          state['コマンド'] = suffixCommand(state['コマンド'], variantKey);
+          state['コマンド'] = suffixCommand(state['コマンド'], variantKey, parsed.hold);
         }
       }
     }
@@ -130,10 +152,10 @@ function applyVariantsToExistingStates(row, parsed) {
 }
 
 function expandFlatRow(row, parsed) {
-  return variantKeys(parsed.variant).flatMap((variantKey) => {
+  return variantKeys(parsed.variant, parsed.hold).flatMap((variantKey) => {
     const copy = structuredClone(row);
     copy['技名'] = parsed.baseName;
-    copy['コマンド'] = suffixCommand(copy['コマンド'], variantKey);
+    copy['コマンド'] = suffixCommand(copy['コマンド'], variantKey, parsed.hold);
     if (parsed.stateLabel) copy._stateLabel = parsed.stateLabel;
     return [copy];
   });
@@ -182,7 +204,7 @@ function groupStateRows(rows) {
       items.push(rows[j]);
       j++;
     }
-    out.push(items.length === 1 ? buildStateParent(items) : buildStateParent(items));
+    out.push(buildStateParent(items));
     i = j;
   }
   return out;
