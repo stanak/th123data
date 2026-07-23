@@ -12,7 +12,7 @@ import {
 import { characterLabel, sortCharacters } from '../characters';
 
 export interface SidebarHandlers {
-  onChange: (history?: HistoryMode) => void;
+  onChange: (history?: HistoryMode, options?: { skipSidebar?: boolean }) => void;
   onHome: () => void;
   onLocaleChange: (locale: Locale) => void;
 }
@@ -222,7 +222,7 @@ function moveNameField(state: AppState, handlers: SidebarHandlers): HTMLElement 
   input.addEventListener('input', () => {
     state.moveName = input.value;
     clearBtn.disabled = !input.value;
-    handlers.onChange('replace');
+    handlers.onChange('replace', { skipSidebar: true });
   });
   input.addEventListener('blur', () => {
     handlers.onChange('push');
@@ -232,7 +232,7 @@ function moveNameField(state: AppState, handlers: SidebarHandlers): HTMLElement 
     input.value = '';
     clearBtn.disabled = true;
     input.focus();
-    handlers.onChange('push');
+    handlers.onChange('push', { skipSidebar: true });
   });
 
   row.appendChild(input);

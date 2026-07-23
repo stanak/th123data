@@ -71,14 +71,7 @@ async function main() {
     render('push');
   }
 
-  function render(history: HistoryMode = 'push') {
-    updateHistory(state, history, characters);
-    renderSidebar(sidebarEl, index, state, {
-      onChange: (h = 'push') => render(h),
-      onHome: resetToHome,
-      onLocaleChange,
-    });
-
+  function renderMain() {
     if (state.mode === 'compare') {
       renderCompareView(mainEl, index, state, onSort, onMoveClick);
     } else if (state.mode === 'filter') {
@@ -89,6 +82,21 @@ async function main() {
         render('push');
       }, onSort, onMoveClick);
     }
+  }
+
+  function render(
+    history: HistoryMode = 'push',
+    options?: { skipSidebar?: boolean },
+  ) {
+    updateHistory(state, history, characters);
+    if (!options?.skipSidebar) {
+      renderSidebar(sidebarEl, index, state, {
+        onChange: (h = 'push', opts) => render(h, opts),
+        onHome: resetToHome,
+        onLocaleChange,
+      });
+    }
+    renderMain();
   }
 
   window.addEventListener('popstate', () => {
