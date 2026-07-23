@@ -395,44 +395,28 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-.variant-cell {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.variant-cell-value {
-  min-width: 0;
-}
-
 .variant-toggle {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.25rem;
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid var(--border);
   background: var(--surface);
-  color: var(--accent);
+  color: var(--text);
   border-radius: 4px;
-  padding: 0.15rem 0.45rem;
+  padding: 0.2rem 0.5rem;
   cursor: pointer;
   font: inherit;
-  font-size: 0.82rem;
+  font-size: inherit;
   white-space: nowrap;
-  max-width: 100%;
   text-align: left;
-  flex-shrink: 0;
-}
-
-.variant-toggle.icon-only {
-  padding: 0.1rem 0.35rem;
-  min-width: 1.6rem;
-  justify-content: center;
 }
 
 .variant-toggle:hover {
   border-color: var(--accent);
   background: rgba(110, 168, 254, 0.12);
+  color: var(--accent);
 }
 
 .variant-collapsed-row td:not(:has(.variant-toggle)) {
@@ -440,5 +424,6 @@ body {
 }
 
 .data-table td:has(.variant-toggle) {
-  min-width: 5.5rem;
+  padding: 0.25rem 0.35rem;
+  vertical-align: middle;
 }

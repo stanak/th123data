@@ -359,15 +359,16 @@ function createVariantToggle(
   dim: CollapseDim,
   container: HTMLElement,
   rerender: () => void,
-  iconOnly = false,
+  label?: string,
 ): HTMLButtonElement {
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = 'variant-toggle' + (iconOnly ? ' icon-only' : '');
-  btn.title = control.collapsed ? t('expandVariants') : t('collapseVariants');
-  btn.textContent = iconOnly
-    ? (control.collapsed ? '▶' : '▼')
-    : (control.collapsed ? `▶ ${control.summary}` : `▼ ${control.summary}`);
+  btn.className = 'variant-toggle';
+  const text = label || control.summary;
+  btn.title = control.collapsed
+    ? (label && label !== control.summary ? `${t('expandVariants')} (${control.summary})` : t('expandVariants'))
+    : t('collapseVariants');
+  btn.textContent = control.collapsed ? `▶ ${text}` : `▼ ${text}`;
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     const state = readMoveCollapseState(container);
@@ -408,17 +409,9 @@ function renderVariantColumnCell(
   const control = variantCollapseControl(row, colKey);
   if (!control) return false;
 
-  td.classList.add('variant-cell');
   const displayText = variantCellDisplayText(colKey, row, col);
-  if (displayText) {
-    const span = document.createElement('span');
-    span.className = 'variant-cell-value';
-    span.textContent = displayText;
-    td.appendChild(span);
-  }
-
   const dim: CollapseDim = colKey === 'stateName' ? 'state' : colKey as CollapseDim;
-  td.appendChild(createVariantToggle(control, dim, container, rerender, !!displayText));
+  td.appendChild(createVariantToggle(control, dim, container, rerender, displayText || undefined));
   return true;
 }
 
