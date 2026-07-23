@@ -7,6 +7,7 @@ import {
   fieldPathLabel,
   getLocale,
   type Locale,
+  ADVANTAGE_CONDITION_FIELDS,
 } from '../i18n';
 import { characterLabel, sortCharacters } from '../characters';
 
@@ -251,7 +252,12 @@ function customCondition(state: AppState, handlers: SidebarHandlers): HTMLElemen
   const row = document.createElement('div');
   row.className = 'condition-row';
   const field = document.createElement('select');
-  for (const f of ['有利差.*', '動作.発生', '動作.全体', '動作.持続', '動作.暗転', 'キャンセル.上位', 'キャンセル.移動', '技名', '状態', 'コマンド', '攻撃Lv']) {
+  for (const f of [
+    ...ADVANTAGE_CONDITION_FIELDS,
+    '動作.発生', '動作.全体', '動作.持続', '動作.暗転',
+    'キャンセル.上位', 'キャンセル.移動',
+    '技名', '状態', 'コマンド', '攻撃Lv',
+  ]) {
     const opt = document.createElement('option');
     opt.value = f;
     opt.textContent = fieldPathLabel(f);

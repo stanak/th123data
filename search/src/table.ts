@@ -1,8 +1,7 @@
 import type { IndexRow } from './types';
 import { getStat } from './query';
-import { t, displayCellValue, advantageColumnLabel, categoryLabel, getLocale } from './i18n';
+import { t, displayCellValue, advantageColumnLabel, categoryLabel, getLocale, ADVANTAGE_KEYS } from './i18n';
 import { characterLabel, characterSortIndex } from './characters';
-import type { AdvantageKey } from './i18n';
 
 export interface TableColumn {
   key: string;
@@ -577,7 +576,7 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
     { key: 'command', label: t('colCommand'), get: (r) => r.command ?? '', sortValue: (r) => r.command ?? '' },
     { key: 'lv', label: t('colLv'), get: (r) => r.lv ?? '', sortValue: (r) => r.lv ?? '' },
     ...motionColumns(options),
-    ...(['通常', '正G', '誤G', 'CH'] as AdvantageKey[]).map((advKey) => ({
+    ...ADVANTAGE_KEYS.map((advKey) => ({
       key: `adv${advKey}`,
       label: advantageColumnLabel(advKey),
       get: (r: IndexRow) => String(r.parsed.advantage.raws[advKey] ?? ''),
@@ -612,14 +611,6 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
   );
 
   return cols;
-}
-
-export function getFilterExtraColumn(): TableColumn {
-  return {
-    key: 'matchedAdv',
-    label: t('colMatchedAdv'),
-    get: () => '',
-  };
 }
 
 export function sortRows(

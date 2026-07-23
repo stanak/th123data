@@ -1,5 +1,12 @@
 import type { Condition, IndexRow } from './types';
-import { formatMatchedAdvantage, type AdvantageKey } from './i18n';
+import { type AdvantageKey } from './i18n';
+
+const ADVANTAGE_PARSED_KEY: Record<AdvantageKey, 'seig' | 'goG' | 'tsujo' | 'ch'> = {
+  '正G': 'seig',
+  '誤G': 'goG',
+  '通常': 'tsujo',
+  CH: 'ch',
+};
 
 export function getStat(row: IndexRow, path: string): unknown {
   if (path === '技名') return row.moveName;
@@ -37,9 +44,13 @@ export function getNumeric(row: IndexRow, path: string): number | null {
   if (path === '有利差.min') return row.parsed.advantage.min;
   if (path === '有利差.max') return row.parsed.advantage.max;
   if (path.startsWith('有利差.')) {
-    const key = path.slice('有利差.'.length) as keyof typeof row.parsed.advantage;
-    const v = row.parsed.advantage[key];
-    return typeof v === 'number' ? v : null;
+    const key = path.slice('有利差.'.length) as AdvantageKey;
+    const parsedKey = ADVANTAGE_PARSED_KEY[key];
+    if (parsedKey) {
+      const v = row.parsed.advantage[parsedKey];
+      return typeof v === 'number' ? v : null;
+    }
+    return null;
   }
   const raw = getStat(row, path);
   if (raw == null) return null;
@@ -93,31 +104,6 @@ function matchCondition(row: IndexRow, cond: Condition): boolean {
 export function applyConditions(rows: IndexRow[], conditions: Condition[]): IndexRow[] {
   if (!conditions.length) return rows;
   return rows.filter((row) => conditions.every((c) => matchCondition(row, c)));
-}
-
-export function advantagePresetCondition(threshold: number): Condition {
-  return { field: '有利差.*', op: '<=', value: String(threshold) };
-}
-
-export function matchedAdvantageLabel(row: IndexRow, threshold?: number): string {
-  const adv = row.parsed.advantage;
-  const parts: { key: AdvantageKey; raw: string }[] = [];
-  const entries: [AdvantageKey, number | null][] = [
-    ['正G', adv.seig],
-    ['誤G', adv.goG],
-    ['通常', adv.tsujo],
-    ['CH', adv.ch],
-  ];
-  for (const [key, num] of entries) {
-    const raw = adv.raws[key];
-    if (raw == null) continue;
-    if (threshold != null && num != null && num <= threshold) {
-      parts.push({ key, raw });
-    } else if (threshold == null) {
-      parts.push({ key, raw });
-    }
-  }
-  return formatMatchedAdvantage(parts);
 }
 
 export function filterByMoveName(

@@ -1,6 +1,10 @@
 export type Locale = 'ja' | 'en';
 export type AdvantageKey = '正G' | '誤G' | '通常' | 'CH';
 
+export const ADVANTAGE_KEYS: AdvantageKey[] = ['正G', '誤G', '通常', 'CH'];
+
+export const ADVANTAGE_CONDITION_FIELDS = ADVANTAGE_KEYS.map((key) => `有利差.${key}`);
+
 const STORAGE_KEY = 'th123data-locale';
 
 /** hibimato 天則用語対応表: https://hibimato.seesaa.net/article/445952959.html */
@@ -32,6 +36,10 @@ const ATTACK_LV_EN: Record<string, string> = {
 };
 
 const FIELD_PATH_EN: Record<string, string> = {
+  '有利差.正G': 'frame adv (rightblock)',
+  '有利差.誤G': 'frame adv (wrongblock)',
+  '有利差.通常': 'frame adv (block)',
+  '有利差.CH': 'frame adv (counter hit)',
   '有利差.*': 'frame advantage.*',
   '動作.発生': 'startup',
   '動作.全体': 'total',
@@ -222,13 +230,7 @@ export function advantageTypeLabel(key: AdvantageKey): string {
 }
 
 export function advantageColumnLabel(key: AdvantageKey): string {
-  const map: Record<AdvantageKey, MessageKey> = {
-    '通常': 'colAdvTsujo',
-    '正G': 'colAdvSeig',
-    '誤G': 'colAdvGoG',
-    CH: 'colAdvCh',
-  };
-  return t(map[key]);
+  return advantageTypeLabel(key);
 }
 
 export function fieldPathLabel(field: string): string {

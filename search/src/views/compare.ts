@@ -2,10 +2,9 @@ import type { AppState, IndexRow, SearchIndex } from '../types';
 import {
   applyConditions,
   filterByMoveName,
-  matchedAdvantageLabel,
 } from '../query';
 import { t } from '../i18n';
-import { getCompareColumns, getFilterExtraColumn, sortRows, renderDataTable, columnOptionsFromCategories } from '../table';
+import { getCompareColumns, sortRows, renderDataTable, columnOptionsFromCategories } from '../table';
 import { sortCharacters } from '../characters';
 
 export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] {
@@ -135,17 +134,10 @@ export function renderFilterView(
   container.appendChild(header);
 
   const columnOptions = columnOptionsFromCategories(state.categories);
-  const filterCols = [
-    ...getCompareColumns(columnOptions, rows).filter((c) => !['adv通常', 'adv正G'].includes(c.key)),
-    {
-      ...getFilterExtraColumn(),
-      get: (row: IndexRow) => matchedAdvantageLabel(row),
-    },
-  ];
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
 
-  renderDataTable(tableHost, rows, filterCols, {
+  renderDataTable(tableHost, rows, getCompareColumns(columnOptions, rows), {
     sortColumn: state.sortColumn,
     sortAsc: state.sortAsc,
     onSort,
