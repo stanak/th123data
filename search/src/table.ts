@@ -2,6 +2,7 @@ import type { IndexRow } from './types';
 import { getStat } from './query';
 import { t, displayCellValue, advantageColumnLabel, categoryLabel, getLocale, ADVANTAGE_KEYS } from './i18n';
 import { characterLabel, characterSortIndex } from './characters';
+import { createNotesTrigger } from './notesOverlay';
 
 export interface TableColumn {
   key: string;
@@ -752,8 +753,19 @@ export function renderDataTable(
         });
         td.appendChild(a);
       } else {
-        td.textContent = col.get(row);
-        if (col.key === 'notes') td.classList.add('notes-cell');
+        if (col.key === 'notes') {
+          td.classList.add('notes-cell');
+          const notesText = col.get(row);
+          const notesTitle = [
+            characterLabel(row.character, getLocale()),
+            row.moveName,
+            row.stateName,
+          ].filter(Boolean).join(' — ');
+          const trigger = createNotesTrigger(notesText, notesTitle);
+          if (trigger) td.appendChild(trigger);
+        } else {
+          td.textContent = col.get(row);
+        }
       }
       tr.appendChild(td);
     }
