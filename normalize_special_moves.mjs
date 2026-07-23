@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Normalize 必殺技 names: B版/C版/BC共通, hold variants, 地上/空中, hyphens, and parentheses. */
 
 function normalizeParenState(label) {
@@ -270,9 +271,9 @@ export function normalizeSpecialMoveRows(rows) {
 }
 
 export function normalizeCharacterSpecialMoves(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
-  for (const section of Object.values(frame)) {
+  const categories = getCharacterCategories(char);
+
+  for (const section of Object.values(categories)) {
     if (!section?.rows) continue;
     section.rows = normalizeSpecialMoveRows(section.rows);
   }

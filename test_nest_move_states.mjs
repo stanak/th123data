@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const raw = JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8'));
 const flat = flattenCharacter(raw);
-const rows = flat.frameData['フレームデータ']['通常技'].rows;
+const rows = flat['通常技'].rows;
 const twoA = rows.find((r) => r['技名'] === '2A');
 const hyphenLeft = rows.some((r) => String(r['技名']).includes('-') && /段目$/.test(String(r['技名'])));
 

@@ -25,5 +25,5 @@ fs.writeFileSync(OUT, JSON.stringify({ characters }, null, 2), 'utf8');
 console.log(JSON.stringify({
   path: OUT,
   characterCount: Object.keys(characters).length,
-  aliceRows: characters['アリス']?.frameData?.['フレームデータ']?.['必殺技']?.rows?.length,
+  aliceRows: characters['アリス']?.['必殺技']?.rows?.length,
 }, null, 2));

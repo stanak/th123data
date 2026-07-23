@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Expand Lv ranges (e.g. 1~2) into individual integer Lv rows before move merge. */
 
 import { isNestedMoveRow, parseLvLevels } from './lv_utils.mjs';
@@ -36,10 +37,9 @@ export function expandLvRanges(rows) {
 }
 
 export function expandCharacterLvRanges(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const [category, section] of Object.entries(frame)) {
+  for (const [category, section] of Object.entries(categories)) {
     if (SKIP_CATEGORIES.has(category) || !section?.rows) continue;
     section.rows = expandLvRanges(section.rows);
   }

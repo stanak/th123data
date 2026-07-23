@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'frame_data.json'), 'utf8'));
 
-const spells = data.characters['妖夢'].frameData['フレームデータ']['スペルカード'].rows;
+const spells = data.characters['妖夢']['スペルカード'].rows;
 const kurin = spells.find((r) => r['技名'] === '幽明の苦輪');
 const hou = spells.find((r) => r['技名'] === '幽明求問持聡明の法');
 const badRows = spells.filter((r) => typeof r['技名'] !== 'string');

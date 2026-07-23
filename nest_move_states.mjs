@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Nest hyphenated move variants (e.g. 2A-1段目) under parent move with 状態 array. */
 
 const NESTABLE_STATE = new Set([
@@ -101,9 +102,9 @@ export function nestMoveStates(rows) {
 }
 
 export function nestCharacterMoveStates(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
-  for (const section of Object.values(frame)) {
+  const categories = getCharacterCategories(char);
+
+  for (const section of Object.values(categories)) {
     if (!section?.rows) continue;
     section.rows = nestMoveStates(section.rows);
   }

@@ -57,7 +57,7 @@ assert.equal(states2[1]['状態'][0]['キャンセル']['上位'], '28');
 const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
 );
-const air = reimu.frameData['フレームデータ']['スペルカード'].rows.find(
+const air = reimu['スペルカード'].rows.find(
   (r) => r['技名'] === '明珠暗投',
 );
 assert.equal(air['Lv']['']['']['位置']['空中']['受身不能'], '60');

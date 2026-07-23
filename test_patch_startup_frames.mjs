@@ -14,11 +14,11 @@ assert.equal(patchStartupValue('61,68,77,88,10,1'), '61,68,77,88,101');
 const sakuya = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/咲夜.json'), 'utf8')),
 );
-const spell = sakuya.frameData['フレームデータ']['スペルカード'].rows.find((r) => r['技名'] === '殺人ドール');
+const spell = sakuya['スペルカード'].rows.find((r) => r['技名'] === '殺人ドール');
 const startup = spell?.['動作']?.['発生'] ?? spell?.['Lv']?.['']?.['']?.['_']?.['動作']?.['発生'];
 assert.equal(startup, '117,119,...,147');
 
-const misdir = sakuya.frameData['フレームデータ']['必殺技'].rows.find((r) => r['技名'] === 'ミスディレクション');
+const misdir = sakuya['必殺技'].rows.find((r) => r['技名'] === 'ミスディレクション');
 function findStartup(node) {
   if (node?.['動作']?.['発生']) return node['動作']['発生'];
   if (node && typeof node === 'object') {

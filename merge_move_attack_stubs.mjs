@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Merge 攻撃Lv/攻撃分類-only stub rows into same-name frame-data rows. */
 
 import { isNestedMoveRow } from './lv_utils.mjs';
@@ -112,10 +113,9 @@ export function mergeMoveAttackStubs(rows) {
 }
 
 export function mergeCharacterMoveAttackStubs(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const [category, section] of Object.entries(frame)) {
+  for (const [category, section] of Object.entries(categories)) {
     if (SKIP_CATEGORIES.has(category) || !section?.rows) continue;
     section.rows = mergeMoveAttackStubs(section.rows);
   }

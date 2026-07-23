@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { CHARACTER_ORDER } from './characters.mjs';
+import { getCharacterCategories } from './character_frame.mjs';
 import { collapseLvEntries, isNestedMoveRow } from './lv_utils.mjs';
 import {
   classifyVariantLabel,
@@ -276,7 +277,7 @@ function buildIndex() {
     ctx.character = character;
     const charData = data.characters[character];
     if (charData.footnotes) footnotes[character] = charData.footnotes;
-    const sections = charData.frameData?.['フレームデータ'] || {};
+    const sections = getCharacterCategories(charData);
     for (const category of CATEGORIES) {
       ctx.category = category;
       const section = sections[category];

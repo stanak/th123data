@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCategorySection } from './character_frame.mjs';
 /** Merge 射撃技 summary rows (攻撃Lv/攻撃分類 only) into matching frame-data rows. */
 
 const EXTRA_SUFFIXES = ['弾頭', '爆発', '分裂前', '分裂後', '前半', '後半', '大岩', '小岩'];
@@ -272,7 +273,7 @@ export function mergeBulletSummaries(rows) {
 }
 
 export function mergeCharacterBulletSummaries(char) {
-  const section = char.frameData?.['フレームデータ']?.['射撃技'];
+  const section = getCategorySection(char, '射撃技');
   if (!section?.rows) return char;
   section.rows = mergeBulletSummaries(section.rows);
   return char;

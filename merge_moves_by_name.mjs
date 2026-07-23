@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Merge same-name flat rows into 技名 → Lv → コマンド → {段|位置|状態} tree. */
 
 import { isNestedMoveRow, stripMoveMeta } from './lv_utils.mjs';
@@ -120,10 +121,9 @@ export function mergeMovesByName(rows) {
 }
 
 export function mergeCharacterMovesByName(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const [category, section] of Object.entries(frame)) {
+  for (const [category, section] of Object.entries(categories)) {
     if (!section?.rows) continue;
     section.rows = mergeMovesByName(section.rows);
   }

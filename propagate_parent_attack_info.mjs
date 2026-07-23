@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Copy parent 攻撃Lv/攻撃分類 into 状態 entries when missing. */
 
 function propagateAttackInfo(row) {
@@ -26,10 +27,9 @@ export function propagateParentAttackInfoRows(rows) {
 }
 
 export function propagateCharacterParentAttackInfo(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const section of Object.values(frame)) {
+  for (const section of Object.values(categories)) {
     if (!section?.rows) continue;
     section.rows = propagateParentAttackInfoRows(section.rows);
   }

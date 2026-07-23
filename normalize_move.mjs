@@ -1,5 +1,7 @@
 /** Shared move-name normalization rules. */
 
+import { getCharacterCategories } from './character_frame.mjs';
+
 export function joinCellLines(text) {
   if (!text || typeof text !== 'string') return text;
   return text
@@ -210,10 +212,9 @@ function normalizeRowMoveName(row) {
 }
 
 export function normalizeCharacterMoveNames(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const section of Object.values(frame)) {
+  for (const section of Object.values(categories)) {
     if (!section?.rows) continue;
     for (const row of section.rows) {
       normalizeRowMoveName(row);

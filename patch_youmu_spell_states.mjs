@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCategorySection } from './character_frame.mjs';
 /** Patch 妖夢 spell cards with advantage-table states during 幽明の苦輪 / 幽明求問持聡明の法. */
 
 export const YOUMU_SPELL_ADVANTAGE_STATES = [
@@ -23,7 +24,7 @@ export const YOUMU_SPELL_ADVANTAGE_STATES = [
 export function patchYoumuSpellStates(char, characterName) {
   if (characterName !== '妖夢') return char;
 
-  const section = char.frameData?.['フレームデータ']?.['スペルカード'];
+  const section = getCategorySection(char, 'スペルカード');
   if (!section?.rows) return char;
 
   const states = structuredClone(YOUMU_SPELL_ADVANTAGE_STATES);

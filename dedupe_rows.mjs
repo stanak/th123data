@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Remove consecutive or non-consecutive fully identical rows. */
 
 function stableStringify(value) {
@@ -27,10 +28,9 @@ export function dedupeRows(rows) {
 }
 
 export function dedupeCharacterRows(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const section of Object.values(frame)) {
+  for (const section of Object.values(categories)) {
     if (!section?.rows) continue;
     section.rows = dedupeRows(section.rows);
   }

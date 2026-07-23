@@ -25,7 +25,7 @@ const unmatchedSummaries = [];
 const unmatchedDetails = [];
 
 for (const [char, data] of Object.entries(d.characters)) {
-  const rows = data.frameData?.['フレームデータ']?.['射撃技']?.rows || [];
+  const rows = data?.['射撃技']?.rows || [];
   const summaries = rows.filter(isBulletSummaryRow);
   summaryCount += summaries.length;
   const ctx = buildContext(summaries);
@@ -48,6 +48,6 @@ console.log('unmatched details', unmatchedDetails.length, unmatchedDetails);
 
 const raw = JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8'));
 const c = mergeCharacterBulletSummaries(flattenCharacter(raw));
-const after = c.frameData['フレームデータ']['射撃技'].rows;
+const after = c['射撃技'].rows;
 console.log('Reimu summaries left', after.filter(isBulletSummaryRow).length);
 console.log('Reimu C系-立C', after.find((r) => r['技名'] === 'C系-立C'));

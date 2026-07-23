@@ -27,7 +27,7 @@ for (const [input, expected] of cases) {
 }
 
 const frame = JSON.parse(fs.readFileSync(path.join(__dirname, 'frame_data.json'), 'utf8'));
-const reimuBullets = frame.characters['霊夢'].frameData['フレームデータ']['射撃技'].rows;
+const reimuBullets = frame.characters['霊夢']['射撃技'].rows;
 const names = new Set(reimuBullets.map((r) => r['技名']));
 
 assert.ok(names.has('B'), 'expected normalized B');

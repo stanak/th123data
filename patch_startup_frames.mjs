@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Apply hand-verified 発生 corrections after normalize_frame_values. */
 
 import fs from 'fs';
@@ -52,10 +53,9 @@ export function patchNestedStartup(lvTree, corrections = loadStartupCorrections(
 }
 
 export function patchCharacterStartupFrames(char, corrections = loadStartupCorrections()) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const section of Object.values(frame)) {
+  for (const section of Object.values(categories)) {
     if (!section?.rows) continue;
     for (const row of section.rows) patchRowStartup(row, corrections);
   }

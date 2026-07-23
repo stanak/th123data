@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Strip 地上版/空中版/地中版 from 技名; route into 位置 at merge time. */
 
 import { normalizePositionLabel } from './variant_buckets.mjs';
@@ -73,10 +74,9 @@ export function normalizeMovePositionRows(rows) {
 }
 
 export function normalizeCharacterMovePosition(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const [category, section] of Object.entries(frame)) {
+  for (const [category, section] of Object.entries(categories)) {
     if (SKIP_CATEGORIES.has(category) || !section?.rows) continue;
     section.rows = normalizeMovePositionRows(section.rows);
   }

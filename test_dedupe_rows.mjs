@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { flattenCharacter } from './flatten_frame_data.mjs';
+import { getCharacterCategories } from './character_frame.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,9 +21,8 @@ function countExactDupes(rows) {
 function countAllDupes(data) {
   let total = 0;
   for (const char of Object.values(data.characters)) {
-    const frame = char.frameData?.['フレームデータ'];
-    if (!frame) continue;
-    for (const sec of Object.values(frame)) {
+    const categories = getCharacterCategories(char);
+    for (const sec of Object.values(categories)) {
       total += countExactDupes(sec.rows || []);
     }
   }
@@ -32,7 +32,7 @@ function countAllDupes(data) {
 const marisa = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/魔理沙.json'), 'utf8')),
 );
-const marisa2A = marisa.frameData['フレームデータ']['通常技'].rows.filter((r) => r['技名'] === '2A').length;
+const marisa2A = marisa['通常技'].rows.filter((r) => r['技名'] === '2A').length;
 
 const frameData = JSON.parse(fs.readFileSync(path.join(__dirname, 'frame_data.json'), 'utf8'));
 

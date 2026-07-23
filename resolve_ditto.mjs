@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Resolve 〃 (ditto) markers from the previous row or previous matching state. */
 
 export function resolveDittoValue(value, prevValue) {
@@ -114,10 +115,9 @@ export function resolveDittoRows(rows) {
 }
 
 export function resolveCharacterDitto(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const section of Object.values(frame)) {
+  for (const section of Object.values(categories)) {
     if (!section?.rows) continue;
     section.rows = resolveDittoRows(section.rows);
   }

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { getCharacterCategories } from './character_frame.mjs';
 /** Split scraped frame lists where digit tokens are concatenated without separators. */
 
 const MAX_FRAME = 350;
@@ -130,10 +131,9 @@ function normalizeRowFrameValues(row) {
 }
 
 export function normalizeCharacterFrameValues(char) {
-  const frame = char.frameData?.['フレームデータ'];
-  if (!frame) return char;
+  const categories = getCharacterCategories(char);
 
-  for (const section of Object.values(frame)) {
+  for (const section of Object.values(categories)) {
     if (!section?.rows) continue;
     for (const row of section.rows) {
       normalizeRowFrameValues(row);

@@ -14,6 +14,7 @@ import { expandCharacterLvRanges } from './expand_lv_ranges.mjs';
 import { mergeCharacterMovesByName } from './merge_moves_by_name.mjs';
 import { normalizeCharacterMovePosition } from './normalize_move_position.mjs';
 import { patchCharacterStartupFrames } from './patch_startup_frames.mjs';
+import { getSourceFrameSections } from './character_frame.mjs';
 
 const SKIP_KEYS = new Set([
   'tables', 'subsections', 'pages', 'notes', 'content', 'footnotes',
@@ -94,15 +95,9 @@ export function flattenCharacter(char) {
   if (char.footnotes && Object.keys(char.footnotes).length > 0) {
     out.footnotes = char.footnotes;
   }
-  const frameData = {};
-  for (const [sectionKey, sectionVal] of Object.entries(char.frameData || {})) {
-    if (!sectionVal || typeof sectionVal !== 'object') continue;
-    frameData[sectionKey] = {};
-    for (const [category, categoryVal] of Object.entries(sectionVal)) {
-      frameData[sectionKey][category] = flattenSection(categoryVal);
-    }
+  for (const [category, categoryVal] of Object.entries(getSourceFrameSections(char))) {
+    out[category] = flattenSection(categoryVal);
   }
-  if (Object.keys(frameData).length > 0) out.frameData = frameData;
   return patchCharacterStartupFrames(
     mergeCharacterMovesByName(
       expandCharacterLvRanges(

@@ -48,7 +48,7 @@ assert.equal(merged[1]['攻撃分類'], '上段');
 const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
 );
-const specials = reimu.frameData['フレームデータ']['必殺技'].rows;
+const specials = reimu['必殺技'].rows;
 assert.equal(specials.filter(isAttackInfoStub).length, 0);
 const keibaku = specials.find((r) => r['技名'] === '繋縛陣');
 assert.ok(keibaku);
