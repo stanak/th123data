@@ -3,6 +3,8 @@ import { getStat } from './query';
 import { t, displayCellValue, advantageColumnLabel, categoryLabel, getLocale, ADVANTAGE_KEYS } from './i18n';
 import { characterLabel, characterSortIndex } from './characters';
 import { createNotesTrigger } from './notesOverlay';
+import { createSpecialNotesTrigger } from './specialNotesOverlay';
+import { specialNotesSummary } from './specialNotes';
 
 export interface TableColumn {
   key: string;
@@ -105,6 +107,13 @@ function motionColumns(options?: ColumnOptions): TableColumn[] {
 
 export function rowsHaveVariants(rows: IndexRow[]): boolean {
   return rows.some((r) => r.segment || r.position || r.stateName);
+}
+
+function rowsHaveSpecialNotes(rows: IndexRow[]): boolean {
+  return rows.some((r) => {
+    const v = getStat(r, '特記事項');
+    return v != null && v !== '';
+  });
 }
 
 function formatSegmentDisplay(segment: string | null): string {
@@ -538,6 +547,7 @@ export function columnOptionsFromCategories(categories: Set<string>): ColumnOpti
 
 export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): TableColumn[] {
   const hasVariants = rows ? rowsHaveVariants(rows) : false;
+  const hasSpecialNotes = rows ? rowsHaveSpecialNotes(rows) : false;
   const cols: TableColumn[] = [
     { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => characterSortIndex(r.character) },
     {
@@ -619,6 +629,15 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
       sortValue: (r) => String(getStat(r, '備考') ?? ''),
     },
   );
+
+  if (hasSpecialNotes) {
+    cols.push({
+      key: 'specialNotes',
+      label: t('colSpecialNotes'),
+      get: (r) => specialNotesSummary(getStat(r, '特記事項')),
+      sortValue: (r) => specialNotesSummary(getStat(r, '特記事項')),
+    });
+  }
 
   return cols;
 }
@@ -771,6 +790,16 @@ export function renderDataTable(
             row.stateName,
           ].filter(Boolean).join(' — ');
           const trigger = createNotesTrigger(notesText, notesTitle);
+          if (trigger) td.appendChild(trigger);
+        } else if (col.key === 'specialNotes') {
+          td.classList.add('notes-cell');
+          const specialContent = getStat(row, '特記事項');
+          const specialTitle = [
+            characterLabel(row.character, getLocale()),
+            row.moveName,
+            row.command,
+          ].filter(Boolean).join(' — ');
+          const trigger = createSpecialNotesTrigger(specialContent, specialTitle);
           if (trigger) td.appendChild(trigger);
         } else {
           td.textContent = col.get(row);

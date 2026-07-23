@@ -481,6 +481,70 @@ body.notes-overlay-open {
   word-break: break-word;
 }
 
+.notes-panel-wide {
+  width: min(920px, 100%);
+  max-height: min(85vh, 720px);
+}
+
+.special-notes-panel-body {
+  white-space: normal;
+}
+
+.special-notes-description {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.special-notes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.special-notes-table th,
+.special-notes-table td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.special-notes-table thead th {
+  background: var(--surface2);
+  font-weight: 600;
+}
+
+.special-notes-table td:first-child {
+  text-align: left;
+}
+
+.special-notes-table .adv-plus {
+  color: #6eb5ff;
+  font-weight: 600;
+}
+
+.special-notes-table .adv-minus {
+  color: #ff7a7a;
+  font-weight: 600;
+}
+
+.special-notes-table .adv-neutral {
+  color: var(--muted);
+}
+
+.special-notes-json {
+  margin: 0;
+  font-size: 0.78rem;
+  overflow-x: auto;
+}
+
+.special-notes-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 .move-link {
   color: var(--accent);
   text-decoration: none;

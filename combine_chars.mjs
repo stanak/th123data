@@ -6,6 +6,7 @@ import { flattenCharacter } from './flatten_frame_data.mjs';
 import { CHARACTER_ORDER } from './characters.mjs';
 import { patchYoumuSpellStates } from './patch_youmu_spell_states.mjs';
 import { patchYoumuMoveNames } from './patch_youmu_move_names.mjs';
+import { patchYoumuZujouAdvantage } from './patch_youmu_zujou_advantage.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CHAR_DIR = path.join(__dirname, 'chars');
@@ -19,7 +20,10 @@ for (const name of CHARACTER_ORDER) {
     continue;
   }
   const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
-  characters[name] = patchYoumuMoveNames(patchYoumuSpellStates(flattenCharacter(raw), name), name);
+  characters[name] = patchYoumuZujouAdvantage(
+    patchYoumuMoveNames(patchYoumuSpellStates(flattenCharacter(raw), name), name),
+    name,
+  );
 }
 
 fs.writeFileSync(OUT, JSON.stringify({ characters }, null, 2), 'utf8');

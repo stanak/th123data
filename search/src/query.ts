@@ -43,6 +43,7 @@ export function getStat(row: IndexRow, path: string): unknown {
   if (path === '攻撃Lv') return row.stats['攻撃Lv'];
   if (path === '攻撃分類') return row.stats['攻撃分類'];
   if (path === '備考') return row.stats['備考'];
+  if (path === '特記事項') return row.stats['特記事項'];
   if (path.startsWith('有利差.')) {
     const key = path.slice('有利差.'.length);
     return row.parsed.advantage.raws[key] ?? null;
