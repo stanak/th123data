@@ -7,10 +7,13 @@ import { CHARACTER_ORDER } from './characters.mjs';
 import { patchYoumuSpellStates } from './patch_youmu_spell_states.mjs';
 import { patchYoumuMoveNames } from './patch_youmu_move_names.mjs';
 import { patchYoumuZujouAdvantage } from './patch_youmu_zujou_advantage.mjs';
+import { patchCharacterLvUpEffects } from './patch_lv_up_effects.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CHAR_DIR = path.join(__dirname, 'chars');
 const OUT = path.join(__dirname, 'frame_data.json');
+const LV_UP_PATH = path.join(__dirname, 'lv_up_effects.json');
+const lvUpData = fs.existsSync(LV_UP_PATH) ? JSON.parse(fs.readFileSync(LV_UP_PATH, 'utf8')) : null;
 
 const characters = {};
 for (const name of CHARACTER_ORDER) {
@@ -24,6 +27,7 @@ for (const name of CHARACTER_ORDER) {
     patchYoumuMoveNames(patchYoumuSpellStates(flattenCharacter(raw), name), name),
     name,
   );
+  if (lvUpData) patchCharacterLvUpEffects(characters[name], name, lvUpData);
 }
 
 fs.writeFileSync(OUT, JSON.stringify({ characters }, null, 2), 'utf8');

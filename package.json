@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build:index": "node build_index.mjs",
+    "fetch:lv-up": "node fetch_lv_up_effects.mjs",
     "build:search": "npm run build:index && cd search && npm run build",
     "dev:search": "npm run build:index && cd search && npm run dev"
   },
