@@ -139,19 +139,23 @@ export function expandDanmokuRows(rows) {
 
 export function resolveDittoRows(rows) {
   if (!Array.isArray(rows)) return;
-  let prev = null;
-  for (const row of rows) {
-    if (prev && sameMoveName(row?.技名, prev?.技名)) {
-      resolveDittoInRow(row, prev);
-    }
-    prev = row;
-  }
+  resolveDittoRowsImpl(rows);
 }
 
-function sameMoveName(a, b) {
-  if (a == null || b == null) return false;
-  if (typeof a === 'string' && typeof b === 'string') return a === b;
-  return JSON.stringify(a) === JSON.stringify(b);
+function resolveDittoRowsImpl(rows) {
+  let prevRow = null;
+  for (const row of rows) {
+    if (prevRow) resolveDittoInRow(row, prevRow);
+    if (Array.isArray(row?.['状態'])) {
+      let prevState = null;
+      for (const state of row['状態']) {
+        const prevNamed = prevRow?.['状態']?.find((s) => s['技名'] === state['技名']);
+        resolveDittoInRow(state, prevNamed ?? prevState ?? prevRow);
+        prevState = state;
+      }
+    }
+    prevRow = row;
+  }
 }
 
 function resolveDittoInRow(row, prevRow) {

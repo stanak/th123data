@@ -77,7 +77,7 @@ body {
 
 .main {
   padding: 1rem 1.25rem;
-  overflow-x: auto;
+  overflow-x: visible;
 }
 
 .field-group {
@@ -317,7 +317,8 @@ body {
 
 .data-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.85rem;
 }
 
@@ -329,11 +330,17 @@ body {
   vertical-align: top;
 }
 
-.data-table th {
+.data-table thead th {
   background: var(--surface2);
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 3;
+  box-shadow: 0 1px 0 var(--border);
+  white-space: nowrap;
+}
+
+.data-table th {
+  background: var(--surface2);
   white-space: nowrap;
 }
 
