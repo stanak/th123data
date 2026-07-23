@@ -384,3 +384,33 @@ body {
   background: var(--surface2);
   border-bottom: 1px solid var(--border);
 }
+
+.variant-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 0.15rem 0.45rem;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  max-width: 100%;
+  text-align: left;
+}
+
+.variant-toggle:hover {
+  border-color: var(--accent);
+  background: rgba(110, 168, 254, 0.12);
+}
+
+.variant-placeholder-row td {
+  color: var(--muted);
+}
+
+.data-table td:has(.variant-toggle) {
+  min-width: 5.5rem;
+}
