@@ -2,12 +2,10 @@
 /** 妖夢: wiki表記の屈A系を標準の 2A に統一。 */
 
 import { getCharacterCategories } from './character_frame.mjs';
-import { dedupeRows } from './dedupe_rows.mjs';
 
 export const YOUMU_MOVE_RENAMES = {
   近屈A: '2A',
   遠屈A: '2A',
-  '1A': '2A',
 };
 
 function renameRow(row) {
@@ -24,7 +22,6 @@ export function patchYoumuMoveNames(char, characterName) {
   for (const section of Object.values(getCharacterCategories(char))) {
     if (!section?.rows) continue;
     for (const row of section.rows) renameRow(row);
-    section.rows = dedupeRows(section.rows);
   }
   return char;
 }
