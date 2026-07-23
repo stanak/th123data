@@ -223,17 +223,6 @@ function previewCollapsedRow(
   return hidden[0] ?? segmentRows[0] ?? stateRows[0] ?? dataRows[0];
 }
 
-function clearedVariantFields(
-  preview: DisplayRow,
-  expanded: MoveCollapseState,
-): Pick<DisplayRow, 'segment' | 'stateName' | 'lv'> {
-  return {
-    segment: expanded.segment ? preview.segment : null,
-    stateName: expanded.state ? preview.stateName : null,
-    lv: expanded.lv ? preview.lv : null,
-  };
-}
-
 function applyVariantCollapse(block: DisplayRow[], expanded: MoveCollapseState, moveKey: string): DisplayRow[] {
   const dataRows = block.filter((r) => !r.isParentSummary && !r.isVariantPlaceholder);
   const segmentRows = dataRows.filter((r) => r.segment);
@@ -305,7 +294,6 @@ function applyVariantCollapse(block: DisplayRow[], expanded: MoveCollapseState, 
     const preview = previewCollapsedRow(dataRows, segmentRows, stateRows, hiddenIds);
     return [{
       ...preview,
-      ...clearedVariantFields(preview, expanded),
       id: `collapse-${moveKey}`,
       isVariantPlaceholder: true,
       isParentSummary: false,
@@ -371,14 +359,15 @@ function createVariantToggle(
   dim: CollapseDim,
   container: HTMLElement,
   rerender: () => void,
+  iconOnly = false,
 ): HTMLButtonElement {
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = 'variant-toggle';
+  btn.className = 'variant-toggle' + (iconOnly ? ' icon-only' : '');
   btn.title = control.collapsed ? t('expandVariants') : t('collapseVariants');
-  btn.textContent = control.collapsed
-    ? `▶ ${control.summary}`
-    : `▼ ${control.summary}`;
+  btn.textContent = iconOnly
+    ? (control.collapsed ? '▶' : '▼')
+    : (control.collapsed ? `▶ ${control.summary}` : `▼ ${control.summary}`);
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     const state = readMoveCollapseState(container);
@@ -393,26 +382,44 @@ function createVariantToggle(
   return btn;
 }
 
-function appendVariantToggleCell(
+function variantCollapseControl(row: DisplayRow, colKey: string): VariantCollapseControl | undefined {
+  if (colKey === 'segment') return row.segmentCollapse;
+  if (colKey === 'stateName') return row.stateCollapse;
+  if (colKey === 'lv') return row.lvCollapse;
+  return undefined;
+}
+
+function variantCellDisplayText(colKey: string, row: DisplayRow, col: TableColumn): string {
+  const value = col.get(row);
+  if (value) return value;
+  const control = variantCollapseControl(row, colKey);
+  if (control?.collapsed) return control.summary;
+  return '';
+}
+
+function renderVariantColumnCell(
   td: HTMLTableCellElement,
   colKey: string,
   row: DisplayRow,
+  col: TableColumn,
   container: HTMLElement,
   rerender: () => void,
 ): boolean {
-  if (colKey === 'segment' && row.segmentCollapse) {
-    td.appendChild(createVariantToggle(row.segmentCollapse, 'segment', container, rerender));
-    return true;
+  const control = variantCollapseControl(row, colKey);
+  if (!control) return false;
+
+  td.classList.add('variant-cell');
+  const displayText = variantCellDisplayText(colKey, row, col);
+  if (displayText) {
+    const span = document.createElement('span');
+    span.className = 'variant-cell-value';
+    span.textContent = displayText;
+    td.appendChild(span);
   }
-  if (colKey === 'stateName' && row.stateCollapse) {
-    td.appendChild(createVariantToggle(row.stateCollapse, 'state', container, rerender));
-    return true;
-  }
-  if (colKey === 'lv' && row.lvCollapse) {
-    td.appendChild(createVariantToggle(row.lvCollapse, 'lv', container, rerender));
-    return true;
-  }
-  return false;
+
+  const dim: CollapseDim = colKey === 'stateName' ? 'state' : colKey as CollapseDim;
+  td.appendChild(createVariantToggle(control, dim, container, rerender, !!displayText));
+  return true;
 }
 
 export function prepareDisplayRows(rows: IndexRow[]): DisplayRow[] {
@@ -675,7 +682,9 @@ export function renderDataTable(
       }
       if ((col.key === 'stateName' || col.key === 'segment' || col.key === 'position' || col.key === 'lv') && row.isParentSummary) {
         const td = document.createElement('td');
-        appendVariantToggleCell(td, col.key, row, container, rerender);
+        if (!renderVariantColumnCell(td, col.key, row, col, container, rerender)) {
+          td.textContent = col.get(row);
+        }
         tr.appendChild(td);
         continue;
       }
@@ -686,8 +695,8 @@ export function renderDataTable(
       }
 
       const extra = options.getExtraCell?.(row, col);
-      if (appendVariantToggleCell(td, col.key, row, container, rerender)) {
-        // toggle only
+      if (renderVariantColumnCell(td, col.key, row, col, container, rerender)) {
+        // value + toggle
       } else if (extra instanceof HTMLElement) {
         td.appendChild(extra);
       } else if (extra != null) {
