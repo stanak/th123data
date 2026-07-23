@@ -51,6 +51,11 @@ function isNestedField(value: unknown): value is Record<string, unknown> {
   return value != null && typeof value === 'object' && !Array.isArray(value);
 }
 
+function isAdvantageColumn(key: string, subKey?: string): boolean {
+  if (subKey === '有利差') return true;
+  return key === '正G' || key === '誤G' || key === '有利差';
+}
+
 function buildSpecialNotesTable(rows: Record<string, unknown>[]): HTMLTableElement {
   const keys = collectColumnKeys(rows);
   const nestedKeys = keys.filter((k) => k !== '相手キャラ' && rows.some((r) => isNestedField(r[k])));
@@ -104,7 +109,12 @@ function buildSpecialNotesTable(rows: Record<string, unknown>[]): HTMLTableEleme
     const tr = document.createElement('tr');
     for (const key of flatKeys) {
       const td = document.createElement('td');
-      td.textContent = formatCellValue(row[key]);
+      const raw = formatCellValue(row[key]);
+      td.textContent = raw;
+      if (isAdvantageColumn(key)) {
+        const cls = advantageClass(raw);
+        if (cls) td.classList.add(cls);
+      }
       tr.appendChild(td);
     }
     for (const key of nestedKeys) {
@@ -114,7 +124,7 @@ function buildSpecialNotesTable(rows: Record<string, unknown>[]): HTMLTableEleme
         const td = document.createElement('td');
         const raw = formatCellValue(nested[subKey]);
         td.textContent = raw;
-        if (key.includes('立ち') || key.includes('しゃがみ') || subKey === '有利差') {
+        if (isAdvantageColumn(key, subKey)) {
           const cls = advantageClass(raw);
           if (cls) td.classList.add(cls);
         }
