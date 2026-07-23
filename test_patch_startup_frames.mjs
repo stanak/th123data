@@ -19,16 +19,13 @@ const startup = spell?.['動作']?.['発生'] ?? spell?.['Lv']?.['']?.['']?.['_'
 assert.equal(startup, '117,119,...,147');
 
 const misdir = sakuya['必殺技'].rows.find((r) => r['技名'] === 'ミスディレクション');
-function findStartup(node) {
-  if (node?.['動作']?.['発生']) return node['動作']['発生'];
+function collectStartups(node, out = []) {
+  if (node?.['動作']?.['発生']) out.push(node['動作']['発生']);
   if (node && typeof node === 'object') {
-    for (const v of Object.values(node)) {
-      const found = findStartup(v);
-      if (found) return found;
-    }
+    for (const v of Object.values(node)) collectStartups(v, out);
   }
-  return null;
+  return out;
 }
-assert.equal(findStartup(misdir), '101,121');
+assert.ok(collectStartups(misdir).includes('101,121'));
 
 console.log('test_patch_startup_frames: ok');

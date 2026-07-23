@@ -51,9 +51,9 @@ const reimu = flattenCharacter(
 const specials = reimu['必殺技'].rows;
 assert.equal(specials.filter(isAttackInfoStub).length, 0);
 const keibaku = specials.find((r) => r['技名'] === '繋縛陣');
-assert.ok(keibaku);
-assert.equal(keibaku['攻撃Lv'], '大');
-assert.equal(keibaku['攻撃分類'], '上段');
+assert.ok(keibaku?.Lv?.['1']?.['214B']);
+assert.equal(keibaku['Lv']['1']['214B']['位置']['地上']['攻撃Lv'], '大');
+assert.equal(keibaku['Lv']['1']['214B']['位置']['地上']['攻撃分類'], '上段');
 assert.ok(!specials.some((r) => isAttackInfoStub(r) && r['技名'] === '繋縛陣'));
 
 console.log(JSON.stringify({

@@ -27,8 +27,8 @@ assert.equal(normalizeFrameListValue('117119…147'), '117,119,...,147');
 const reimu = flattenCharacter(
   JSON.parse(fs.readFileSync(path.join(__dirname, 'chars/霊夢.json'), 'utf8')),
 );
-const spell = reimu['スペルカード'].rows[0];
-assert.equal(spell['動作']['発生'], '27,33,39');
+const spell = reimu['スペルカード'].rows.find((r) => r['技名'] === '明珠暗投');
+assert.equal(spell['状態'][0]['動作']['発生'], '27,33,39');
 
 const bullet = reimu['射撃技'].rows.find((r) => r['技名'] === '2C');
 assert.equal(bullet['動作']['発生'], '15,20,25,...');

@@ -12,6 +12,7 @@ import { propagateCharacterParentAttackInfo } from './propagate_parent_attack_in
 import { resolveCharacterDitto } from './resolve_ditto.mjs';
 import { expandCharacterLvRanges } from './expand_lv_ranges.mjs';
 import { mergeCharacterMovesByName } from './merge_moves_by_name.mjs';
+import { mergeCharacterBareCommandAttack } from './merge_bare_command_attack.mjs';
 import { normalizeCharacterMovePosition } from './normalize_move_position.mjs';
 import { patchCharacterStartupFrames } from './patch_startup_frames.mjs';
 import { removeCharacterOrphanTableRows } from './remove_orphan_table_rows.mjs';
@@ -100,8 +101,9 @@ export function flattenCharacter(char) {
     out[category] = flattenSection(categoryVal);
   }
   return patchCharacterStartupFrames(
-    mergeCharacterMovesByName(
-      expandCharacterLvRanges(
+    mergeCharacterBareCommandAttack(
+      mergeCharacterMovesByName(
+        expandCharacterLvRanges(
         normalizeCharacterMovePosition(
           patchCharacterStartupFrames(
             removeCharacterOrphanTableRows(
@@ -122,6 +124,7 @@ export function flattenCharacter(char) {
           ),
         ),
       ),
+    ),
     ),
   );
 }

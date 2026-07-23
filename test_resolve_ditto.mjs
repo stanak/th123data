@@ -60,7 +60,8 @@ const reimu = flattenCharacter(
 const air = reimu['スペルカード'].rows.find(
   (r) => r['技名'] === '明珠暗投',
 );
-assert.equal(air['Lv']['']['']['位置']['空中']['受身不能'], '60');
-assert.equal(air['Lv']['']['']['位置']['空中']['攻撃Lv'], '大');
+const airState = air['状態'].find((s) => s['技名'] === '空中');
+assert.equal(airState['受身不能'], '60');
+assert.equal(airState['攻撃Lv'], '大');
 
 console.log(JSON.stringify({ ok: true }, null, 2));
