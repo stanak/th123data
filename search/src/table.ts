@@ -120,8 +120,9 @@ function rowsHaveSpecialNotes(rows: IndexRow[]): boolean {
 function rowsHaveBulletStats(rows: IndexRow[]): boolean {
   return rows.some((r) => {
     const s = getStat(r, '相殺強度');
+    const h = getStat(r, 'ヒット数');
     const n = getStat(r, '射撃備考');
-    return (s != null && s !== '') || (n != null && n !== '');
+    return (s != null && s !== '') || (h != null && h !== '') || (n != null && n !== '');
   });
 }
 
@@ -136,6 +137,7 @@ function bulletStatColumn(key: string, label: string, path: string): TableColumn
 
 function bulletColumns(): TableColumn[] {
   return [
+    bulletStatColumn('hitCount', t('colHitCount'), 'ヒット数'),
     bulletStatColumn('sousaiStrength', t('colSousaiStrength'), '相殺強度'),
     bulletStatColumn('sousaiCount', t('colSousaiCount'), '相殺回数'),
     bulletStatColumn('grazeDurability', t('colGrazeDurability'), 'グレイズ耐久数'),
@@ -686,7 +688,7 @@ function setStandardCellContent(td: HTMLTableCellElement, col: TableColumn, row:
     if (cls) td.classList.add(cls);
     return;
   }
-  if (col.key === 'sousaiCount' || col.key === 'grazeDurability') {
+  if (col.key === 'sousaiCount' || col.key === 'grazeDurability' || col.key === 'hitCount') {
     td.classList.add('bullet-stat-cell');
     td.textContent = col.get(row);
     return;

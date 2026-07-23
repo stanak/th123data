@@ -7,6 +7,7 @@ import { renderCompareView } from './views/compare';
 import { renderFilterView } from './views/compare';
 import { renderCharacterView } from './views/character';
 import { sortCharacters } from './characters';
+import { buildColumnPicker, writeHiddenColumns } from './columnVisibility';
 
 async function loadIndex(): Promise<SearchIndex> {
   const res = await fetch(`${import.meta.env.BASE_URL}search_index.json`);
@@ -29,6 +30,19 @@ async function main() {
   sidebarToggle.type = 'button';
   sidebarToggle.className = 'sidebar-toggle';
   mainToolbar.appendChild(sidebarToggle);
+
+  const columnPickerWrap = document.createElement('div');
+  columnPickerWrap.className = 'toolbar-column-picker';
+  const columnPickerBtn = document.createElement('button');
+  columnPickerBtn.type = 'button';
+  columnPickerBtn.className = 'toolbar-btn';
+  columnPickerBtn.textContent = t('columnVisibility');
+  columnPickerWrap.appendChild(columnPickerBtn);
+  const columnPickerPanel = document.createElement('div');
+  columnPickerPanel.className = 'toolbar-column-panel';
+  columnPickerPanel.hidden = true;
+  columnPickerWrap.appendChild(columnPickerPanel);
+  mainToolbar.appendChild(columnPickerWrap);
 
   const viewHost = document.createElement('div');
   viewHost.className = 'main-view';
@@ -59,6 +73,31 @@ async function main() {
     applySidebarLayout();
   });
 
+  function renderColumnPickerPanel() {
+    columnPickerPanel.replaceChildren();
+    columnPickerPanel.appendChild(buildColumnPicker(state.hiddenColumns, (nextHidden) => {
+      state.hiddenColumns = nextHidden;
+      writeHiddenColumns(nextHidden);
+      renderColumnPickerPanel();
+      renderMain();
+    }, { compact: true }));
+  }
+
+  columnPickerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    columnPickerPanel.hidden = !columnPickerPanel.hidden;
+    if (!columnPickerPanel.hidden) {
+      renderColumnPickerPanel();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (columnPickerPanel.hidden) return;
+    if (!columnPickerWrap.contains(e.target as Node)) {
+      columnPickerPanel.hidden = true;
+    }
+  });
+
   function onMoveClick(moveName: string) {
     state.mode = 'compare';
     state.moveName = moveName;
@@ -84,8 +123,12 @@ async function main() {
 
   function resetToHome() {
     const locale = state.locale;
+    const hiddenColumns = state.hiddenColumns;
+    const sidebarCollapsed = state.sidebarCollapsed;
     applyDefaultState(state, characters);
     state.locale = locale;
+    state.hiddenColumns = hiddenColumns;
+    state.sidebarCollapsed = sidebarCollapsed;
     setLocale(locale);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     render('push');

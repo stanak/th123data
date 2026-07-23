@@ -1,5 +1,6 @@
 import type { AppState } from './types';
 import { createDefaultState, readSidebarCollapsed } from './types';
+import { readHiddenColumns } from './columnVisibility';
 import type { Locale } from './i18n';
 import { detectLocale } from './i18n';
 import { sortCharacters } from './characters';
@@ -53,6 +54,7 @@ export function stateFromUrl(characters: string[]): AppState {
     sortColumn: p.get('sort'),
     sortAsc: p.get('asc') !== '0',
     sidebarCollapsed: readSidebarCollapsed(),
+    hiddenColumns: readHiddenColumns(),
   };
 }
 

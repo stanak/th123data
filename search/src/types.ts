@@ -54,6 +54,7 @@ export interface Condition {
 
 import type { Locale } from './i18n';
 import { sortCharacters } from './characters';
+import { readHiddenColumns } from './columnVisibility';
 
 export interface AppState {
   mode: AppMode;
@@ -69,6 +70,7 @@ export interface AppState {
   sortColumn: string | null;
   sortAsc: boolean;
   sidebarCollapsed: boolean;
+  hiddenColumns: Set<string>;
 }
 
 export const DEFAULT_CATEGORIES = ['通常技', '射撃技', '必殺技', 'スペルカード'];
@@ -99,6 +101,7 @@ export function createDefaultState(characters: string[]): AppState {
     sortColumn: null,
     sortAsc: true,
     sidebarCollapsed: readSidebarCollapsed(),
+    hiddenColumns: readHiddenColumns(),
   };
 }
 
@@ -116,6 +119,7 @@ export function applyState(target: AppState, source: AppState): void {
   target.sortColumn = source.sortColumn;
   target.sortAsc = source.sortAsc;
   target.sidebarCollapsed = source.sidebarCollapsed;
+  target.hiddenColumns = new Set(source.hiddenColumns);
 }
 
 export function applyDefaultState(state: AppState, characters: string[]): void {

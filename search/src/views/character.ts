@@ -6,6 +6,7 @@ import {
 import { t, categoryLabel, getLocale } from '../i18n';
 import { characterLabel } from '../characters';
 import { getCompareColumns, sortRows, renderDataTable, columnOptionsFromCategory } from '../table';
+import { applyColumnVisibility } from '../columnVisibility';
 
 export function getCharacterRows(index: SearchIndex, state: AppState): IndexRow[] {
   let rows = index.rows.filter(
@@ -82,7 +83,10 @@ export function renderCharacterView(
   }
 
   const columnOptions = columnOptionsFromCategory(state.characterCategory);
-  const charCols = getCompareColumns(columnOptions, rows).filter((c) => c.key !== 'character' && c.key !== 'category');
+  const charCols = applyColumnVisibility(
+    getCompareColumns(columnOptions, rows).filter((c) => c.key !== 'character' && c.key !== 'category'),
+    state.hiddenColumns,
+  );
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
 

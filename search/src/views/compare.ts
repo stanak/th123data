@@ -5,6 +5,7 @@ import {
 } from '../query';
 import { t } from '../i18n';
 import { getCompareColumns, sortRows, renderDataTable, columnOptionsFromCategories } from '../table';
+import { applyColumnVisibility } from '../columnVisibility';
 import { sortCharacters } from '../characters';
 
 export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] {
@@ -87,7 +88,7 @@ export function renderCompareView(
   const columnOptions = columnOptionsFromCategories(state.categories);
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
-  renderDataTable(tableHost, rows, getCompareColumns(columnOptions, rows), {
+  renderDataTable(tableHost, rows, applyColumnVisibility(getCompareColumns(columnOptions, rows), state.hiddenColumns), {
     sortColumn: state.sortColumn,
     sortAsc: state.sortAsc,
     onSort,
@@ -137,7 +138,7 @@ export function renderFilterView(
   const tableHost = document.createElement('div');
   container.appendChild(tableHost);
 
-  renderDataTable(tableHost, rows, getCompareColumns(columnOptions, rows), {
+  renderDataTable(tableHost, rows, applyColumnVisibility(getCompareColumns(columnOptions, rows), state.hiddenColumns), {
     sortColumn: state.sortColumn,
     sortAsc: state.sortAsc,
     onSort,

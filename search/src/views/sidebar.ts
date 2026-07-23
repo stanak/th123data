@@ -1,6 +1,7 @@
 import type { AppState, AppMode, SearchIndex } from '../types';
 import { DEFAULT_CATEGORIES } from '../types';
 import type { HistoryMode } from '../url';
+import { buildColumnPicker, writeHiddenColumns } from '../columnVisibility';
 import {
   t,
   categoryLabel,
@@ -75,12 +76,29 @@ export function renderSidebar(
     root.appendChild(customCondition(state, handlers));
   }
 
+  root.appendChild(columnVisibilityPanel(state, handlers));
+
   const meta = document.createElement('p');
   meta.className = 'meta-info';
   meta.textContent = t('metaInfo', { chars: index.characterCount, rows: index.rowCount });
   root.appendChild(meta);
 
   root.appendChild(langToggle(handlers));
+}
+
+function columnVisibilityPanel(state: AppState, handlers: SidebarHandlers): HTMLElement {
+  const details = document.createElement('details');
+  details.className = 'column-picker-box';
+  details.open = false;
+  const summary = document.createElement('summary');
+  summary.textContent = t('columnVisibility');
+  details.appendChild(summary);
+  details.appendChild(buildColumnPicker(state.hiddenColumns, (nextHidden) => {
+    state.hiddenColumns = nextHidden;
+    writeHiddenColumns(nextHidden);
+    handlers.onChange('replace');
+  }));
+  return details;
 }
 
 function langToggle(handlers: SidebarHandlers): HTMLElement {
