@@ -378,14 +378,40 @@ body {
 .lang-toggle {
   display: flex;
   gap: 0.35rem;
-  margin-top: auto;
+  margin-top: 0.75rem;
   margin-bottom: 0;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
   padding-top: 0.75rem;
   border-top: 1px solid var(--border);
 }
 
 .sidebar-footer {
   margin-bottom: 0;
+}
+
+.sidebar-attribution {
+  margin-top: 0.75rem;
+}
+
+.sidebar-github-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.sidebar-github-link:hover {
+  text-decoration: underline;
+}
+
+.sidebar-reuse-notice {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
 }
 
 .lang-toggle .preset-btn {

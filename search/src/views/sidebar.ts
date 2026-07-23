@@ -12,6 +12,8 @@ import {
 } from '../i18n';
 import { characterLabel, sortCharacters } from '../characters';
 
+const REPO_URL = 'https://github.com/stanak/th123data';
+
 export interface SidebarHandlers {
   onChange: (history?: HistoryMode, options?: { skipSidebar?: boolean }) => void;
   onHome: () => void;
@@ -77,13 +79,39 @@ export function renderSidebar(
   }
 
   root.appendChild(columnVisibilityPanel(state, handlers));
+  root.appendChild(sidebarBottom(index, handlers));
+}
+
+function sidebarBottom(index: SearchIndex, handlers: SidebarHandlers): HTMLElement {
+  const bottom = document.createElement('div');
+  bottom.className = 'sidebar-bottom';
 
   const meta = document.createElement('p');
   meta.className = 'meta-info';
   meta.textContent = t('metaInfo', { chars: index.characterCount, rows: index.rowCount });
-  root.appendChild(meta);
+  bottom.appendChild(meta);
 
-  root.appendChild(langToggle(handlers));
+  bottom.appendChild(langToggle(handlers));
+
+  const attribution = document.createElement('div');
+  attribution.className = 'sidebar-attribution';
+
+  const github = document.createElement('a');
+  github.className = 'sidebar-github-link';
+  github.href = REPO_URL;
+  github.target = '_blank';
+  github.rel = 'noopener noreferrer';
+  github.textContent = t('githubLink');
+
+  const reuse = document.createElement('p');
+  reuse.className = 'sidebar-reuse-notice';
+  reuse.textContent = t('reuseNotice');
+
+  attribution.appendChild(github);
+  attribution.appendChild(reuse);
+  bottom.appendChild(attribution);
+
+  return bottom;
 }
 
 function columnVisibilityPanel(state: AppState, handlers: SidebarHandlers): HTMLElement {

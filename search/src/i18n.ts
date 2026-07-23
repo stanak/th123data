@@ -136,6 +136,8 @@ const JA = {
   collapseVariants: 'クリックで畳む',
   langJa: '日本語',
   langEn: 'English',
+  githubLink: 'GitHub',
+  reuseNotice: 'データ（CC0）および本ページ（MIT）は、誰でも自由に再利用・改変できます。',
   loadError: 'search_index.json の読み込みに失敗しました',
   pageTitle: 'TH123 フレームデータ検索',
 } as const;
@@ -225,6 +227,8 @@ const EN: Record<MessageKey, string> = {
   collapseVariants: 'Click to collapse',
   langJa: '日本語',
   langEn: 'English',
+  githubLink: 'GitHub',
+  reuseNotice: 'Data (CC0) and this site (MIT) may be freely reused and modified by anyone.',
   loadError: 'Failed to load search_index.json',
   pageTitle: 'TH123 Frame Data Search',
 };
