@@ -121,4 +121,13 @@ assert.ok(suwakoHj2b['Lv']['']['']['状態']['1段階']);
 assert.ok(suwakoHj2b['Lv']['']['']['状態']['2段階']);
 assert.ok(!suwakoShooting.some((r) => r['技名']?.includes('ホールド6B系')));
 
+assert.equal(parseSpecialMoveName('立ちしゃがみ共通BC共通土着神の祟り').baseName, '土着神の祟り');
+assert.equal(parseSpecialMoveName('立ちしゃがみ共通BC共通土着神の祟り').stateLabel, null);
+assert.equal(parseSpecialMoveName('立ちしゃがみ共通BC共通土着神の祟り').variant, 'BC');
+
+const tsuchijin = suwako.frameData['フレームデータ']['必殺技'].rows.find((r) => r['技名'] === '土着神の祟り');
+assert.ok(tsuchijin, '土着神の祟り');
+assert.ok(tsuchijin['Lv']['0']['22B']['_']['動作'], 'no position bucket for 立ちしゃがみ');
+assert.equal(tsuchijin['Lv']['0']['22B']['位置'], undefined);
+
 console.log(JSON.stringify({ ok: true, heartLvKeys: Object.keys(heart['Lv']) }, null, 2));

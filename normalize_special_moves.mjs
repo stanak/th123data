@@ -66,7 +66,7 @@ export function parseSpecialMoveName(name) {
     s = s.slice('地上空中共通'.length);
     changed = true;
   } else if (s.startsWith('立ちしゃがみ共通')) {
-    stateParts.push('立ちしゃがみ');
+    // 立ち・しゃがみで差がないため位置にしない（地上空中共通と同様）
     s = s.slice('立ちしゃがみ共通'.length);
     changed = true;
   } else if (s.startsWith('地上版')) {
