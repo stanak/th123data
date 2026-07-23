@@ -134,6 +134,17 @@ function rowsHaveBulletStats(rows: IndexRow[]): boolean {
   });
 }
 
+function rowsHaveAttackAttributes(rows: IndexRow[]): boolean {
+  return rows.some((r) => {
+    const v = getStat(r, '攻撃属性');
+    return v != null && v !== '' && v !== '-';
+  });
+}
+
+function categoriesMayHaveAttackAttributes(options?: ColumnOptions): boolean {
+  return selectedCategories(options).some((c) => c === '必殺技' || c === 'スペルカード');
+}
+
 function categoriesMayHaveBulletStats(options?: ColumnOptions): boolean {
   return selectedCategories(options).includes('通常技');
 }
@@ -593,6 +604,9 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
   const hasBulletStats = rows
     ? rowsHaveBulletStats(rows) || categoriesMayHaveBulletStats(options)
     : categoriesMayHaveBulletStats(options);
+  const hasAttackAttributes = rows
+    ? rowsHaveAttackAttributes(rows) || categoriesMayHaveAttackAttributes(options)
+    : categoriesMayHaveAttackAttributes(options);
   const cols: TableColumn[] = [
     { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => characterSortIndex(r.character) },
     {
@@ -668,6 +682,15 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
       sortValue: (r) => String(getStat(r, '攻撃分類') ?? ''),
     },
   );
+
+  if (hasAttackAttributes) {
+    cols.push({
+      key: 'attackAttribute',
+      label: t('colAttackAttribute'),
+      get: (r) => String(getStat(r, '攻撃属性') ?? ''),
+      sortValue: (r) => String(getStat(r, '攻撃属性') ?? ''),
+    });
+  }
 
   if (hasBulletStats) {
     cols.push(...bulletColumns());

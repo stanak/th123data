@@ -92,7 +92,7 @@ function hasDisplayableValue(value) {
 }
 
 const PARENT_SUMMARY_KEYS = ['動作', 'キャンセル', '有利差', '備考'];
-const BULLET_STAT_KEYS = ['ヒット数', '相殺強度', '相殺回数', 'グレイズ耐久数', '射撃備考'];
+const BULLET_STAT_KEYS = ['ヒット数', '相殺強度', '相殺回数', 'グレイズ耐久数', '射撃備考', '攻撃属性'];
 
 export function mergeBulletStatsFromParent(parentRow, stats) {
   const merged = { ...stats };
@@ -282,7 +282,7 @@ function indexNestedMoveRow(rows, ctx, row) {
         rows,
         ctx,
         { コマンド: item.command, Lv: item.lvDisplay },
-        item.stats,
+        mergeBulletStatsFromParent(row, item.stats),
         moveName,
         {
           segment: item.segment ?? null,

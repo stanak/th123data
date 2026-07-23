@@ -33,6 +33,7 @@ export const ALL_COLUMN_DEFS: ColumnDef[] = [
   { key: 'advCH', labelKey: 'colAdvCh', group: 'advantage' },
   { key: 'attackLv', labelKey: 'colAttackLv', group: 'attack' },
   { key: 'attackClass', labelKey: 'colAttackClass', group: 'attack' },
+  { key: 'attackAttribute', labelKey: 'colAttackAttribute', group: 'attack' },
   { key: 'hitCount', labelKey: 'colHitCount', group: 'bullet' },
   { key: 'sousaiStrength', labelKey: 'colSousaiStrength', group: 'bullet' },
   { key: 'sousaiCount', labelKey: 'colSousaiCount', group: 'bullet' },

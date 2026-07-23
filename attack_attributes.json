@@ -1,0 +1,2869 @@
+{
+  "generatedAt": "2026-07-23T17:36:45.342Z",
+  "source": "https://w.atwiki.jp/bulletaction/pages",
+  "characters": {
+    "空": {
+      "pageId": 72,
+      "url": "https://w.atwiki.jp/bulletaction/pages/72.html",
+      "specialCount": 12,
+      "spellCount": 14,
+      "specials": [
+        {
+          "moveName": "グラウンドメルト",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ヘルゲイザー",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "B版は目の前、C版は前方一定距離を攻撃"
+        },
+        {
+          "moveName": "レイディアントブレード",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "相手に接近すると攻撃へ移行"
+        },
+        {
+          "moveName": "フレアアップ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ロケットダイブ",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "メルティング浴びせ蹴り",
+          "usage": "地上",
+          "attackAttribute": "投げ",
+          "notes": "投げ判定（ガード不能、立ち状態の相手のみ）\nしゃがみ状態の相手は掴めない"
+        },
+        {
+          "moveName": "シューティングスター",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（移動距離延長）"
+        },
+        {
+          "moveName": "レトロ原子核モデル",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "核熱の怨霊",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "B版はマーカーを設置\nC版は設置したマーカーから弾を発射する"
+        },
+        {
+          "moveName": "ブレイクサン",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗＋射",
+          "notes": "ホールド可能（弾数増加）\nホールド部分は磨耗\n射出部分は射撃"
+        },
+        {
+          "moveName": "シューティングサン",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（射出高度変化）"
+        },
+        {
+          "moveName": "地獄波動砲",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（発射待機）\n最大ホールドでレーザーに変化"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "「地獄の人工太陽」",
+          "cost": "1",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "手札の数だけコストとして消費"
+        },
+        {
+          "moveName": "制御「セルフトカマク」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "使用後、ダッシュ系統の行動を取ると判定発生\n何らかの攻撃動作で終了"
+        },
+        {
+          "moveName": "遮光「核熱バイザー」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "爆符「メガフレア」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "焔星「フィクストスター」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "核符「クリーピングサン」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "光熱「ハイテンションブレード」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打＋磨耗",
+          "notes": ""
+        },
+        {
+          "moveName": "焔星「十凶星」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "地熱「核ブレイズゲイザー」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "鴉符「八咫烏ダイブ」",
+          "cost": "4",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "核熱「核反応制御不能ダイブ」",
+          "cost": "4",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "「サブタレイニアサン」",
+          "cost": "4",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "爆符「ギガフレア」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "「アビスノヴァ」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "一定時間後に自動発動"
+        }
+      ]
+    },
+    "霊夢": {
+      "pageId": 74,
+      "url": "https://w.atwiki.jp/bulletaction/pages/74.html",
+      "specialCount": 11,
+      "spellCount": 10,
+      "specials": [
+        {
+          "moveName": "博麗アミュレット",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "妖怪バスター",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "拡散アミュレット",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "昇天脚",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "抄地昇天脚",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ボタン押しで追加攻撃可能"
+        },
+        {
+          "moveName": "雨乞祈り",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": "(*1)"
+        },
+        {
+          "moveName": "警醒陣",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "繋縛陣",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "常置陣",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "相手とx・y座標が近くなると攻撃判定発生"
+        },
+        {
+          "moveName": "亜空穴",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "封魔亜空穴",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "珠符「明珠暗投」",
+          "cost": "1",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "霊符「夢想妙珠」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "夢符「封魔陣」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "宝符「陰陽宝玉」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "結界「拡散結界」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "神技「天覇風神脚」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "神技「八方鬼縛陣」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "宝具「陰陽鬼神玉」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "神霊「夢想封印」",
+          "cost": "5",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "「夢想天生」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "使用で陰陽玉を装着\n打撃攻撃を当てるごとに1つずつ点灯\n7つ点灯時に専用攻撃が発生"
+        }
+      ]
+    },
+    "魔理沙": {
+      "pageId": 75,
+      "url": "https://w.atwiki.jp/bulletaction/pages/75.html",
+      "specialCount": 12,
+      "spellCount": 13,
+      "specials": [
+        {
+          "moveName": "メテオニックデブリ",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "ナロースパーク",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（射出待機）"
+        },
+        {
+          "moveName": "グリーンスプレッド",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ミアズマスウィープ",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "バスキースウィーパー",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ステラミサイル",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ウィッチレイライン",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ラジアルストライク",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "アップスウィープ",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "グラウンドスターダスト",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（射出距離変化）\n弾は接地すると爆発する"
+        },
+        {
+          "moveName": "デビルダムトーチ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "マジカル産廃再利用ボム",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "弾は一定時間後に爆発\n攻撃は魔理沙自身にも当たる"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "星符「メテオニックシャワー」",
+          "cost": "1",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "魔符「スターダストレヴァリエ」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "光符「ルミネスストライク」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "恋符「マスタースパーク」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "星符「エスケープベロシティ」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "星符「グラビティビート」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "光符「アースライトレイ」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "恋符「ノンディレクショナルレーザー」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "魔廃「ディープエコロジカルボム」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "一定時間後にガード不能の爆発"
+        },
+        {
+          "moveName": "魔砲「ファイナルスパーク」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "星符「ドラゴンメテオ」",
+          "cost": "5",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "彗星「ブレイジングスター」",
+          "cost": "5",
+          "usage": "地上／空中",
+          "attackAttribute": "特別射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "邪恋「実りやすいマスタースパーク」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        }
+      ]
+    },
+    "咲夜": {
+      "pageId": 78,
+      "url": "https://w.atwiki.jp/bulletaction/pages/78.html",
+      "specialCount": 9,
+      "spellCount": 10,
+      "specials": [
+        {
+          "moveName": "マジックスターソード",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "離剣の見",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "設置後一定時間経過で射出\n設置中に再度入力で即発射＋次を設置"
+        },
+        {
+          "moveName": "パラレルブレーン",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "半透明の間は攻撃判定を持たない"
+        },
+        {
+          "moveName": "クロースアップマジック",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "プロペリングシルバー",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "バウンスノーバウンス",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）\n画面端・天井でバウンドする特殊弾"
+        },
+        {
+          "moveName": "スクウェアリコシェ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（ヒット数増加）\n画面端・天井・床でバウンドする特殊弾\n射出直後は攻撃判定を持たない\n2回バウンドすると攻撃判定発生"
+        },
+        {
+          "moveName": "ミスディレクション",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "タイムパラドックス",
+          "usage": "地上",
+          "attackAttribute": "打＋射",
+          "notes": "B版は打撃→射撃の順番\nC版は射撃→打撃の順番"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "幻符「殺人ドール」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "銀符「シルバーバウンド」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "奇術「エターナルミーク」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "傷符「インスクライブレッドソウル」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "速符「ルミネスリコシェ」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "暗転中にor入力で射出方向変更可能"
+        },
+        {
+          "moveName": "時符「イマジナリバーチカルタイム」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "時計「ルナダイアル」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "ヒットすると相手の動きを止める特殊弾"
+        },
+        {
+          "moveName": "幻葬「夜霧の幻影殺人鬼」",
+          "cost": "4",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "傷魂「ソウルスカルプチュア」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "光速「Ｃ．リコシェ」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        }
+      ]
+    },
+    "アリス": {
+      "pageId": 76,
+      "url": "https://w.atwiki.jp/bulletaction/pages/76.html",
+      "specialCount": 12,
+      "spellCount": 12,
+      "specials": [
+        {
+          "moveName": "人形操創",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "人形は身代わり判定を持つ"
+        },
+        {
+          "moveName": "人形帰巣",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "人形は身代わり判定を持つ"
+        },
+        {
+          "moveName": "人形伏兵",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（射出待機）\n人形は身代わり判定を持つ"
+        },
+        {
+          "moveName": "人形無操",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）\n人形は身代わり判定を持つ\n人形は相手・弾・地面に接触すると爆発"
+        },
+        {
+          "moveName": "人形火操",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）\n人形は身代わり判定を持つ\n人形は相手・弾・地面に接触すると爆発"
+        },
+        {
+          "moveName": "大江戸爆薬からくり人形",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "人形は身代わり判定を持つ\n人形は相手・弾に接触すると爆発"
+        },
+        {
+          "moveName": "人形置操",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "人形は身代わり判定を持つ"
+        },
+        {
+          "moveName": "人形千槍",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "人形弓兵",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "人形振起",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "C射撃系で設置した人形を使って攻撃\nC射撃系の人形は2個まで設置できる\n攻撃中の人形は身代わり判定を持つ"
+        },
+        {
+          "moveName": "人形ＳＰ",
+          "usage": "地上(*1)",
+          "attackAttribute": "射撃",
+          "notes": "B版で出すと人形を1体チャージ。最大3体まで(*2)\nC版は人形を1体消費し攻撃\n3体チャージ時にB版を出すと3体全て消費して攻撃"
+        },
+        {
+          "moveName": "シーカーワイヤー",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "C射撃系で設置した人形を経由する射撃\nC射撃系の人形は2個まで設置できる"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "魔符「アーティフルサクリファイス」",
+          "cost": "1",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "戦符「リトルレギオン」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "咒符「上海人形」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "偵符「シーカードールズ」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "注力「トリップワイヤー」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": "C射撃系で設置した人形と糸で攻撃する"
+        },
+        {
+          "moveName": "魔操「リターンイナニメトネス」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "人形「未来文楽」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "備考",
+          "notes": "一定時間動作を停止し人形を操るモードに\n人形はA攻撃系とB攻撃とC攻撃を行える\nDボタンで自爆し強制終了"
+        },
+        {
+          "moveName": "戦操「ドールズウォー」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "咒祖「蓬莱人形」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "紅符「和蘭人形」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "槍符「キューティ大千槍」",
+          "cost": "4",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "人形「レミングスパレード」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        }
+      ]
+    },
+    "パチュリー": {
+      "pageId": 77,
+      "url": "https://w.atwiki.jp/bulletaction/pages/77.html",
+      "specialCount": 12,
+      "spellCount": 9,
+      "specials": [
+        {
+          "moveName": "サマーレッド",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "サマーフレイム",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（射出時間延長）"
+        },
+        {
+          "moveName": "ワイプモイスチャー",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "フラッシュオブスプリング",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（射出待機）\nホールド中に判定の射撃ボタンを押すと中断"
+        },
+        {
+          "moveName": "スタティックグリーン",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "オータムエッジ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（時間に応じて弾数増加）"
+        },
+        {
+          "moveName": "オータムブレード",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "フォールスラッシャー",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（射出待機）\nホールドしたまま行動できる"
+        },
+        {
+          "moveName": "ドヨースピア",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "エメラルドシティ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ウィンターエレメント",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "スティッキーバブル",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ダメージなし・のけぞりなしでガード不能の泡を射出\n泡がヒットすると相手にくっつく。泡は一定時間で消滅\n泡が10個くっつくと相手を捕縛して浮き上がらせる"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "土水符「ノエキアンデリュージュ」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "金木符「エレメンタルハーベスター」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "火金符「セントエルモピラー」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "月木符「サテライトヒマワリ」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "火水符「フロギスティックピラー」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "月符「サイレントセレナ」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "土金符「エメラルドメガロポリス」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "日符「ロイヤルフレア」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "日月符「ロイヤルダイヤモンドリング」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        }
+      ]
+    },
+    "妖夢": {
+      "pageId": 79,
+      "url": "https://w.atwiki.jp/bulletaction/pages/79.html",
+      "specialCount": 10,
+      "spellCount": 7,
+      "specials": [
+        {
+          "moveName": "結跏趺斬",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "燐気斬",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "弦月斬",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "折伏無間",
+          "usage": "地上",
+          "attackAttribute": "投げ",
+          "notes": "投げ判定（ガード不能、地上の相手のみ）\nホールド可能（自動追撃）\nホールドなしの場合、ダメージ0で相手を無防備にして突き飛ばす"
+        },
+        {
+          "moveName": "生死流転斬",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "連続入力で3回まで追加攻撃"
+        },
+        {
+          "moveName": "心抄斬",
+          "usage": "地上",
+          "attackAttribute": "打＋射",
+          "notes": "低い部分は打撃、高い部分は射撃"
+        },
+        {
+          "moveName": "頭上花剪斬",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ホールド可能（性質変化）"
+        },
+        {
+          "moveName": "憑坐の縛",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ヒットすると半身が相手の頭上に移動する"
+        },
+        {
+          "moveName": "悪し魂",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "奇び半身",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "人符「現世斬」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "断命剣「冥想斬」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "剣伎「桜花閃々」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "転生剣「円心流転斬」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "断迷剣「迷津慈航斬」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "断霊剣「成仏得脱斬」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "人鬼「未来永劫斬」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "初段ヒット後の追撃は、前半部分は射撃で最終段が打撃"
+        }
+      ]
+    },
+    "レミリア": {
+      "pageId": 80,
+      "url": "https://w.atwiki.jp/bulletaction/pages/80.html",
+      "specialCount": 12,
+      "spellCount": 9,
+      "specials": [
+        {
+          "moveName": "デーモンロードウォーク",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ヴァンパイアクロウ",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "連続入力で3回まで追加攻撃"
+        },
+        {
+          "moveName": "トリックスターデビル",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "デーモンロードクレイドル",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "ロケットキックアップ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "バンパイアキス",
+          "usage": "地上",
+          "attackAttribute": "投げ",
+          "notes": "投げ判定（ガード不能、地上の相手のみ）\nヒット時自分の体力を微量回復"
+        },
+        {
+          "moveName": "サーヴァントフライヤー",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "チェーンギャング",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（チェーン射出時間延長）"
+        },
+        {
+          "moveName": "デモンズディナーフォーク",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "デーモンロードアロー",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "シーリングフィア",
+          "usage": "地上／空中",
+          "attackAttribute": "打＋射",
+          "notes": "急降下部分は打撃\n地面衝突時の衝撃波は射撃"
+        },
+        {
+          "moveName": "スティグマナイザー",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "必殺「ハートブレイク」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "夜符「デーモンキングクレイドル」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "紅符「不夜城レッド」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "夜符「バッドレディスクランブル」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "運命「ミゼラブルフェイト」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "神槍「スピア・ザ・グングニル」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "悪魔「レミリアストレッチ」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "紅魔「スカーレットデビル」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "夜王「ドラキュラクレイドル」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        }
+      ]
+    },
+    "幽々子": {
+      "pageId": 81,
+      "url": "https://w.atwiki.jp/bulletaction/pages/81.html",
+      "specialCount": 12,
+      "spellCount": 11,
+      "specials": [
+        {
+          "moveName": "未生の光",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "鳳紋蝶の槍",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "死還の大地",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "胡蝶夢の舞",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "相手とY軸が合うと移動を省略して攻撃へ移行する"
+        },
+        {
+          "moveName": "逆さ屏風",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "センスオブエレガンス",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "幽胡蝶",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "壁や天井に当たると攻撃判定発生する特殊弾"
+        },
+        {
+          "moveName": "好死の霊",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "壁や天井に当たると攻撃判定発生する特殊弾"
+        },
+        {
+          "moveName": "スフィアブルーム",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ばら撒いた弾は一定時間後に爆発"
+        },
+        {
+          "moveName": "悉皆彷徨",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "誘霊の甘蜜",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（マーカー移動時間延長）"
+        },
+        {
+          "moveName": "故人のお届け物",
+          "usage": "地上",
+          "attackAttribute": "投げ",
+          "notes": "投げ判定（ガード不能、空中の相手のみ）"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "冥符「黄泉平坂行路」",
+          "cost": "1",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "死符「ギャストリドリーム」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "霊符「无寿の夢」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ヒット時に継続ダメージを与える特殊弾\n継続ダメージは一定時間経過か被弾で解除"
+        },
+        {
+          "moveName": "霊蝶「蝶の羽風生に暫く」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "幽雅「死出の誘蛾灯」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "「反魂蝶」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗＋射",
+          "notes": "使用する度に攻撃が強化される特殊スペルカード"
+        },
+        {
+          "moveName": "死蝶「華胥の永眠」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "寿命「无寿国の約束手形」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ヒット時、一定時間後に追加攻撃（ガード不能）が発生"
+        },
+        {
+          "moveName": "蝶符「鳳蝶紋の死槍」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "再迷「幻想郷の黄泉還り」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "桜符「センスオブチェリーブロッサム」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        }
+      ]
+    },
+    "紫": {
+      "pageId": 82,
+      "url": "https://w.atwiki.jp/bulletaction/pages/82.html",
+      "specialCount": 8,
+      "spellCount": 9,
+      "specials": [
+        {
+          "moveName": "開けて悔しき玉手箱",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "至る所に青山あり",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "魅惑のエサ",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）\nマーカーの位置めがけて弾が飛来する特殊弾"
+        },
+        {
+          "moveName": "禅寺に潜む妖蝶",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "幻想卍傘",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（射出待機）"
+        },
+        {
+          "moveName": "知能と脚の境界",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "C版はガード不能"
+        },
+        {
+          "moveName": "幻想狂想穴",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "肉体分解機",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "B版のみホールド可能（出現待機）"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "境符「二次元と三次元の境界」",
+          "cost": "1",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "暗転中に入力で射出方向変更可能"
+        },
+        {
+          "moveName": "式神「橙」",
+          "cost": "1",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "空餌「中毒性のあるエサ」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "境符「四重結界」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "式神「八雲藍」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "結界「客観結界」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "幻巣「飛行虫ネスト」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "結界「魅力的な四重結界」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "廃線「ぶらり廃駅下車の旅」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ガード不能"
+        }
+      ]
+    },
+    "萃香": {
+      "pageId": 83,
+      "url": "https://w.atwiki.jp/bulletaction/pages/83.html",
+      "specialCount": 10,
+      "spellCount": 10,
+      "specials": [
+        {
+          "moveName": "妖鬼-密",
+          "usage": "地上",
+          "attackAttribute": "打＋射",
+          "notes": "ホールド可能（射程距離延長）\nパンチ部分は打撃、爆発部分は射撃"
+        },
+        {
+          "moveName": "元鬼玉",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾強化）\n最大ホールド時磨耗射撃"
+        },
+        {
+          "moveName": "踏鞴",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "地霊-密",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": "地上で出すと一旦空中へ移動してから発動"
+        },
+        {
+          "moveName": "火鬼",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "大弾が地面に接触すると小弾が発生"
+        },
+        {
+          "moveName": "地霊-疎",
+          "usage": "地上",
+          "attackAttribute": "打＋射",
+          "notes": "地震部分は打撃、浮かび上がる弾は射撃"
+        },
+        {
+          "moveName": "妖鬼-疎",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "小萃香は身代わり判定を持つ\n空中版は弾数減少"
+        },
+        {
+          "moveName": "鬼神燐火術",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "疎鬼",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "攫鬼",
+          "usage": "地上",
+          "attackAttribute": "投げ",
+          "notes": "投げ判定（ガード不能、地上・空中対応）\n技効果中は相手を引き寄せる\n相手に接触すると投げに移行"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "霧符「雲集霧散」",
+          "cost": "1",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "萃符「戸隠山投げ」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "特別射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "酔神「鬼縛りの術」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ヒット時、相手の霊力を1つクラッシュ"
+        },
+        {
+          "moveName": "鬼符「ミッシングパワー」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "四天王奥義「三歩壊廃」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "酔夢「施餓鬼縛りの術」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ヒット時、相手の霊力を徐々に減少させる"
+        },
+        {
+          "moveName": "鬼神「ミッシングパープルパワー」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "使用後一定時間巨大化を維持し専用攻撃が行える"
+        },
+        {
+          "moveName": "鬼火「超高密度燐火術」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "備考",
+          "notes": "接地の度に分裂する特殊弾\n大弾はと中弾は磨耗射撃\n小弾は射撃"
+        },
+        {
+          "moveName": "萃鬼「天手力男投げ」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "投げ",
+          "notes": "投げ判定（ガード可能、地上・空中対応）"
+        },
+        {
+          "moveName": "鬼符「大江山悉皆落とし」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "投げ",
+          "notes": "投げ判定（ガード不能、地上の相手のみ）"
+        }
+      ]
+    },
+    "鈴仙": {
+      "pageId": 84,
+      "url": "https://w.atwiki.jp/bulletaction/pages/84.html",
+      "specialCount": 9,
+      "spellCount": 8,
+      "specials": [
+        {
+          "moveName": "マインドエクスプロージョン",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "マインドベンディング",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "マインドドロッピング",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（爆発待機）\n一定時間後に爆発し小弾を振り撒く特殊弾"
+        },
+        {
+          "moveName": "アンダーセンスブレイク",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "イリュージョナリィブラスト",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "アイサイトクリーニング",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（攻撃待機＋コーン拡大）\nコーン内の相手が居る位置へ攻撃\nコーンの外周は相殺判定だけを持つ"
+        },
+        {
+          "moveName": "リップルヴィジョン",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（ヒット数増加＋弾拡大）"
+        },
+        {
+          "moveName": "ディスビリーフアスペクト",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "分身を設置して攻撃させる"
+        },
+        {
+          "moveName": "ディスオーダーアイ",
+          "usage": "地上／空中",
+          "attackAttribute": "射＋打",
+          "notes": "分身が飛び出す部分は射撃\n分身が戻ってくる部分は打撃"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "惑見「離円花冠（カローラヴィジョン）」",
+          "cost": "1",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "弱心「喪心喪意（ディモチヴェイション）」",
+          "cost": "1",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ヒット時、相手の手札を1枚破壊する"
+        },
+        {
+          "moveName": "幻爆「近眼花火（マインドスターマイン）」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "幻惑「花冠視線（クラウンヴィジョン）」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "喪心「喪心創痍（ディスカーダー）」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ヒット時、相手の手札を1枚破壊する"
+        },
+        {
+          "moveName": "短視「超短脳波（エックスウェイブ）」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ヒット時、フィールドウルトラバイオレットと同じ分身を生成"
+        },
+        {
+          "moveName": "赤眼「望見円月（ルナティックブラスト）」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "「幻朧月睨（ルナティックレッドアイズ）」",
+          "cost": "5",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        }
+      ]
+    },
+    "文": {
+      "pageId": 86,
+      "url": "https://w.atwiki.jp/bulletaction/pages/86.html",
+      "specialCount": 11,
+      "spellCount": 9,
+      "specials": [
+        {
+          "moveName": "疾風扇",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "烈風扇",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "楓扇風",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "疾走風靡",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "疾走優美",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": "方向キー＋射撃で一度だけ方向転換が可能"
+        },
+        {
+          "moveName": "天狗ナメシ",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "暗夜の礫",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "鎌風ベーリング",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "攻撃判定を持つ風を纏う\n風は、地上→空中へ、または空中→地上へ移動すると消滅する"
+        },
+        {
+          "moveName": "天狗礫",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "地上B版で出すと礫を上空へ打ち上げる\n地上C版か空中版を出すと打ち上げた礫を降らせる"
+        },
+        {
+          "moveName": "天狗のダウンバースト",
+          "usage": "空中",
+          "attackAttribute": "打＋射(*1)",
+          "notes": ""
+        },
+        {
+          "moveName": "天狗の太鼓",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": "相手の頭上目掛けて飛び攻撃する\nジャンプ中はorで微調整可能\n跳ね返り中にAで追加攻撃が出る"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "魔獣「鎌鼬ベーリング」",
+          "cost": "1",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": "攻撃判定を持つ風を纏う\n風は、地上→空中へ、または空中→地上へ移動すると消滅する"
+        },
+        {
+          "moveName": "風符「天狗道の開風」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "旋符「紅葉扇風」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "突符「天狗のマクロバースト」",
+          "cost": "3",
+          "usage": "空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "突風「猿田彦の先導」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "逆風「人間禁制の道」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "一定時間、相手キャラのみを一方向に押す風を生成"
+        },
+        {
+          "moveName": "鴉符「暗夜のデイメア」",
+          "cost": "4",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "竜巻「天孫降臨の道しるべ」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "「幻想風靡」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "備考",
+          "notes": "初段は射撃、体当たりは打撃、追撃は磨耗射撃\nヒット時、とを交互に入力で追撃の高度上昇\n何も入力しなければ追撃の高度下降"
+        }
+      ]
+    },
+    "小町": {
+      "pageId": 85,
+      "url": "https://w.atwiki.jp/bulletaction/pages/85.html",
+      "specialCount": 10,
+      "spellCount": 8,
+      "specials": [
+        {
+          "moveName": "迷わず生きた人霊",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "相手が弾の真上に来ると垂直上昇する特殊弾"
+        },
+        {
+          "moveName": "死神の大鎌",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "通りすがりの人霊",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "浮かばれない地縛霊",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "死出の風",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "三途の舟",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "突進中にAの追加入力で派生技を出せる\n派生技はB版とC版で異なる"
+        },
+        {
+          "moveName": "怠惰に生きた浮遊霊",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "離魂の鎌",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "相手に当てると回復霊魂が発生\n回復霊魂に触れると微量に体力回復"
+        },
+        {
+          "moveName": "無間の道",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（フィールド範囲拡大）\n相手キャラの横方向への移動速度が低下するフィールドを生成"
+        },
+        {
+          "moveName": "お迎え体験版",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ホールド可能（攻撃待機）\n効果中は相手を引き寄せる\nホールド中に空いている方の射撃ボタンで中断"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "舟符「河の流れのように」",
+          "cost": "1",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "霊符「何処にでもいる浮遊霊」",
+          "cost": "1",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "死歌「八重霧の渡し」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "地獄「無間の狭間」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打＋射",
+          "notes": "相手キャラの横方向への移動速度が低下するフィールドを生成"
+        },
+        {
+          "moveName": "死符「死者選別の鎌」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "魂符「生魂流離の鎌」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ヒット時、取得すると体力が回復する霊魂を生成"
+        },
+        {
+          "moveName": "薄命「余命幾許も無し」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ヒット時、相手の残体力を半分にする特殊攻撃"
+        },
+        {
+          "moveName": "換命「不惜身命、可惜身命」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ヒット時、自分と相手の残体力を交換する特殊攻撃"
+        }
+      ]
+    },
+    "衣玖": {
+      "pageId": 87,
+      "url": "https://w.atwiki.jp/bulletaction/pages/87.html",
+      "specialCount": 10,
+      "spellCount": 8,
+      "specials": [
+        {
+          "moveName": "龍魚の一撃",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "龍神の一撃",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（ヒット数増加＋範囲拡大）"
+        },
+        {
+          "moveName": "羽衣は水の如く",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "技の出始めは立ちガード状態に等しい"
+        },
+        {
+          "moveName": "天女の一撃",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "静電誘導弾",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（相手を狙い再飛来）"
+        },
+        {
+          "moveName": "龍神の稲光り",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "龍の眼",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "龍魚の怒り",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "落雷は磨耗射撃"
+        },
+        {
+          "moveName": "龍神の怒り",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "ホールド可能（発動待機）"
+        },
+        {
+          "moveName": "龍神の髭",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "攻撃中にorで攻撃方向変化"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "雷符「雷鼓弾」",
+          "cost": "1",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "雷魚「雷雲魚遊泳弾」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "魚符「龍魚ドリル」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "雷符「エレキテルの竜宮」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "光星「光龍の吐息」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "棘符「雷雲棘魚」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "珠符「五爪龍の珠」",
+          "cost": "4",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "龍魚「龍宮の使い遊泳弾」",
+          "cost": "5",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        }
+      ]
+    },
+    "天子": {
+      "pageId": 88,
+      "url": "https://w.atwiki.jp/bulletaction/pages/88.html",
+      "specialCount": 11,
+      "spellCount": 9,
+      "specials": [
+        {
+          "moveName": "非想の威光",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "天地プレス",
+          "usage": "地上／空中",
+          "attackAttribute": "射＋特射",
+          "notes": "ホールド可能（攻撃位置変化）\n岩と岩が衝突する部分は特別射撃"
+        },
+        {
+          "moveName": "緋想の剣気",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "非想の剣",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "緋想の剣",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "攻撃中にBorCを2回押すと攻撃を繰り返す"
+        },
+        {
+          "moveName": "昇天突",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "坤儀の剣",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "六震-相",
+          "usage": "地上",
+          "attackAttribute": "特別射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "因果の剣",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "剣を投げる。剣は一定距離まで飛び手元に戻ってくる\n剣をキャッチすると無防備なモーションが発生\n剣が見える技を使用するとキャッチは発生しない"
+        },
+        {
+          "moveName": "天罰の石柱",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "石柱は身代わり判定を持つ"
+        },
+        {
+          "moveName": "地精の起床",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "石は地面に刺さったあと時間で成長する\n攻撃で石を破壊すると成長に応じた地震が発生\n成長しすぎると石は自壊し周囲にのみ攻撃"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "地符「不譲土壌の剣」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "非想「非想非非想の剣」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ヒット時、相手が天候の効果を受けなくなる特殊モードに"
+        },
+        {
+          "moveName": "天符「天道是非の剣」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "剣技「気炎万丈の剣」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "天気「緋想天促」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ヒット時、天気玉が大量に発生\nガード時はヒット時よりも少ないが天気玉発生"
+        },
+        {
+          "moveName": "気符「天啓気象の剣」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": "天候発現中に使用すると性能がアップ\n天候発現中に使用すると天候が強制終了"
+        },
+        {
+          "moveName": "地震「先憂後楽の剣」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "特別射撃",
+          "notes": "一定時間後に地震（ガード不能）を発生させる"
+        },
+        {
+          "moveName": "要石「天地開闢プレス」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打＋特射",
+          "notes": ""
+        },
+        {
+          "moveName": "「全人類の緋想天」",
+          "cost": "5",
+          "usage": "地上／空中",
+          "attackAttribute": "磨耗射撃",
+          "notes": "使用時、気質度が大幅に減少"
+        }
+      ]
+    },
+    "早苗": {
+      "pageId": 18,
+      "url": "https://w.atwiki.jp/bulletaction/pages/18.html",
+      "specialCount": 11,
+      "spellCount": 9,
+      "specials": [
+        {
+          "moveName": "風起こし",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "設置直後は攻撃判定を持たない\n飛翔の風を当てると攻撃判定を持ったまま移動"
+        },
+        {
+          "moveName": "波起こし",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "星落とし",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "乾神招来　突",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": "使用後は一定時間使用不可"
+        },
+        {
+          "moveName": "乾神招来　風",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "使用後は一定時間使用不可\n飛翔の風を当てると移動"
+        },
+        {
+          "moveName": "乾神招来　御柱",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "使用後は一定時間使用不可"
+        },
+        {
+          "moveName": "坤神招来　鉄輪",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "使用後は一定時間使用不可"
+        },
+        {
+          "moveName": "坤神招来　罠",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "使用後は一定時間使用不可"
+        },
+        {
+          "moveName": "おみくじ爆弾",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "接触or相殺or接地時に大凶・凶・吉・大吉のいずれかが発動\n最初の弾は飛翔の風を当てると移動"
+        },
+        {
+          "moveName": "スカイサーペント",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "相手とy座標が合うと弾が直角に曲がる"
+        },
+        {
+          "moveName": "コバルトスプレッド",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "祈願「商売繁盛守り」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "秘術「グレイソーマタージ」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "神籤「乱れおみくじ連続引き」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "開海「海が割れる日」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "奇跡「白昼の客星」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "秘術「忘却の祭儀」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "奇跡「白昼の明るすぎる星」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "開海「モーゼの奇跡」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打＋磨耗",
+          "notes": ""
+        },
+        {
+          "moveName": "秘法「九字刺し」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        }
+      ]
+    },
+    "チルノ": {
+      "pageId": 70,
+      "url": "https://w.atwiki.jp/bulletaction/pages/70.html",
+      "specialCount": 12,
+      "spellCount": 11,
+      "specials": [
+        {
+          "moveName": "アイシクルシュート",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "フロストピラーズ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "相手が上に来ると発動する罠を設置"
+        },
+        {
+          "moveName": "冷凍光線",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "フリーズタッチミー",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "アイシクルライズ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "アイシクルソード",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "真夏のスノーマン",
+          "usage": "地上",
+          "attackAttribute": "打＋射",
+          "notes": "ホールド可能（打撃攻撃延長）\n転がしている間は打撃\n氷塊飛ばしは射撃\n氷塊は身代わり判定を持つ"
+        },
+        {
+          "moveName": "アイスチャージ",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "アイスキック",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "リトルアイスバーグ",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "アイシクルボム",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": "相手と一定距離まで接近すると破裂する特殊弾"
+        },
+        {
+          "moveName": "フローズン冷凍法",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "最初の射撃攻撃はガード不能\n射撃が当たると演出に移行し追加ダメージ"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "氷符「アイシクルマシンガン」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "氷符「フェアリースピン」",
+          "cost": "2",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "氷塊「コールドスプリンクラー」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "弾をばら撒きながら進む特殊弾"
+        },
+        {
+          "moveName": "冷体「スーパーアイスキック」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "氷符「ソードフリーザー」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "凍符「フリーズアトモスフェア」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "チルノの居た位置に時間差で攻撃判定が発生する特殊モード"
+        },
+        {
+          "moveName": "冷符「瞬間冷凍ビーム」",
+          "cost": "3",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "霜符「フロストコラムス」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "吹氷「アイストルネード」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "凍符「パーフェクトフリーズ」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "氷塊「グレートクラッシャー」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        }
+      ]
+    },
+    "美鈴": {
+      "pageId": 71,
+      "url": "https://w.atwiki.jp/bulletaction/pages/71.html",
+      "specialCount": 11,
+      "spellCount": 10,
+      "specials": [
+        {
+          "moveName": "芳波",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "水形太極拳",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（待機時間延長）\n待機中に相殺強度Bの弾を相殺した回数に比例して持続時間・ヒット数上昇"
+        },
+        {
+          "moveName": "彩雨",
+          "usage": "地上／空中",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "紅砲",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "紅寸剄",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "C版はガード不能"
+        },
+        {
+          "moveName": "螺光歩",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "烈虹拳",
+          "usage": "地上",
+          "attackAttribute": "射＋打",
+          "notes": "最初の連打パンチは射撃\n最後の裏拳は打撃"
+        },
+        {
+          "moveName": "降華蹴",
+          "usage": "地上(*1)",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "黄震脚",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "ホールド可能（攻撃範囲拡大）"
+        },
+        {
+          "moveName": "地龍波",
+          "usage": "地上",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "天龍脚",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "彩符「彩光風鈴」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "虹符「烈虹真拳」",
+          "cost": "2",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": "方向キーorで移動可能"
+        },
+        {
+          "moveName": "気符「星脈弾」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "撃符「大鵬拳」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "気符「地龍天龍脚」",
+          "cost": "3",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "極彩「彩光乱舞」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "彩華「虹色太極拳」",
+          "cost": "4",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "星気「星脈地転弾」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "熾撃「大鵬墜撃拳」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "華符「彩光蓮華掌」",
+          "cost": "5",
+          "usage": "地上",
+          "attackAttribute": "打撃",
+          "notes": ""
+        }
+      ]
+    },
+    "諏訪子": {
+      "pageId": 73,
+      "url": "https://w.atwiki.jp/bulletaction/pages/73.html",
+      "specialCount": 10,
+      "spellCount": 10,
+      "specials": [
+        {
+          "moveName": "大地の湖",
+          "usage": "〇",
+          "attackAttribute": "打撃",
+          "notes": "使用後は他の地中技を出せる(*1)"
+        },
+        {
+          "moveName": "古代翡翠",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": "使用後は空中へ"
+        },
+        {
+          "moveName": "蛙石神",
+          "usage": "〇",
+          "attackAttribute": "打撃",
+          "notes": "使用後は地上へ"
+        },
+        {
+          "moveName": "大蝦蟇神",
+          "usage": "〇",
+          "attackAttribute": "打＋射",
+          "notes": "内側は打撃、外側は射撃"
+        },
+        {
+          "moveName": "古の鉄輪",
+          "usage": "〇",
+          "attackAttribute": "打撃",
+          "notes": ""
+        },
+        {
+          "moveName": "手長足長さん",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "古の間欠泉",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": "空中使用と地中使用で性質変化\n地中使用時は空中へ\n空中版のみホールド可能（射出待機）"
+        },
+        {
+          "moveName": "水蛙神",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": "弾は相手に接近すると爆発する"
+        },
+        {
+          "moveName": "雨を呼ぶ雨蛙",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": "ホールド可能（弾数増加）"
+        },
+        {
+          "moveName": "土着神の祟り",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": "ヒットすると呪い効果を一定時間付着\nホールド可能（弾数増加、持続時間延長）"
+        }
+      ],
+      "spells": [
+        {
+          "moveName": "源符「諏訪清水」",
+          "cost": "2",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "神具「洩矢の鉄の輪」",
+          "cost": "2",
+          "usage": "〇",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "土着神「洩矢神」",
+          "cost": "3",
+          "usage": "〇",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "開宴「二拝二拍一拝」",
+          "cost": "3",
+          "usage": "〇",
+          "attackAttribute": "射＋特射",
+          "notes": ""
+        },
+        {
+          "moveName": "土着神「ケロちゃん風雨に負けず」",
+          "cost": "3",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "源符「厭い川の翡翠」",
+          "cost": "4",
+          "usage": "〇",
+          "attackAttribute": "打＋磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "蛙狩「蛙は口ゆえ蛇に呑まるる」",
+          "cost": "4",
+          "usage": "〇",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "土着神「手長足長さま」",
+          "cost": "4",
+          "usage": "〇",
+          "attackAttribute": "射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "土着神「宝永四年の赤蛙」",
+          "cost": "4",
+          "usage": "〇",
+          "attackAttribute": "磨耗射撃",
+          "notes": ""
+        },
+        {
+          "moveName": "祟り神「赤口（ミシャグチ）さま」",
+          "cost": "5",
+          "usage": "〇",
+          "attackAttribute": "磨耗射撃",
+          "notes": "ガード不能\nヒットすると演出へ"
+        }
+      ]
+    }
+  },
+  "errors": {}
+}
