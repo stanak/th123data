@@ -520,17 +520,20 @@ body.notes-overlay-open {
   text-align: left;
 }
 
-.special-notes-table .adv-plus {
+.special-notes-table .adv-plus,
+.data-table td.adv-plus {
   color: #6eb5ff;
   font-weight: 600;
 }
 
-.special-notes-table .adv-minus {
+.special-notes-table .adv-minus,
+.data-table td.adv-minus {
   color: #ff7a7a;
   font-weight: 600;
 }
 
-.special-notes-table .adv-neutral {
+.special-notes-table .adv-neutral,
+.data-table td.adv-neutral {
   color: var(--muted);
 }
 

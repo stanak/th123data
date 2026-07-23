@@ -5,6 +5,7 @@ import { characterLabel, characterSortIndex } from './characters';
 import { createNotesTrigger } from './notesOverlay';
 import { createSpecialNotesTrigger } from './specialNotesOverlay';
 import { specialNotesSummary } from './specialNotes';
+import { advantageDisplayClass } from './advantageDisplay';
 
 export interface TableColumn {
   key: string;
@@ -642,6 +643,18 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
   return cols;
 }
 
+function setStandardCellContent(td: HTMLTableCellElement, col: TableColumn, row: IndexRow): void {
+  if (col.key.startsWith('adv')) {
+    const raw = col.get(row);
+    td.textContent = raw;
+    const numeric = col.sortValue?.(row);
+    const cls = advantageDisplayClass(raw, typeof numeric === 'number' ? numeric : null);
+    if (cls) td.classList.add(cls);
+    return;
+  }
+  td.textContent = col.get(row);
+}
+
 export function sortRows(
   rows: IndexRow[],
   column: string | null,
@@ -747,7 +760,7 @@ export function renderDataTable(
       if ((col.key === 'stateName' || col.key === 'segment' || col.key === 'position' || col.key === 'lv') && row.isParentSummary) {
         const td = document.createElement('td');
         if (!renderVariantColumnCell(td, col.key, row, col, container, rerender)) {
-          td.textContent = col.get(row);
+          setStandardCellContent(td, col, row);
         }
         tr.appendChild(td);
         continue;
@@ -802,7 +815,7 @@ export function renderDataTable(
           const trigger = createSpecialNotesTrigger(specialContent, specialTitle);
           if (trigger) td.appendChild(trigger);
         } else {
-          td.textContent = col.get(row);
+          setStandardCellContent(td, col, row);
         }
       }
       tr.appendChild(td);

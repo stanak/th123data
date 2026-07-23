@@ -1,4 +1,5 @@
 import { t } from './i18n';
+import { advantageDisplayClass } from './advantageDisplay';
 
 export interface SpecialNotesTable {
   title?: string;
@@ -20,13 +21,6 @@ function formatCellValue(value: unknown): string {
   if (Array.isArray(value)) return value.map(String).join('、');
   if (typeof value === 'object') return JSON.stringify(value);
   return String(value);
-}
-
-function advantageClass(raw: string): string {
-  if (raw.startsWith('+')) return 'adv-plus';
-  if (raw.startsWith('-')) return 'adv-minus';
-  if (raw.startsWith('±')) return 'adv-neutral';
-  return '';
 }
 
 function collectColumnKeys(rows: Record<string, unknown>[]): string[] {
@@ -112,7 +106,7 @@ function buildSpecialNotesTable(rows: Record<string, unknown>[]): HTMLTableEleme
       const raw = formatCellValue(row[key]);
       td.textContent = raw;
       if (isAdvantageColumn(key)) {
-        const cls = advantageClass(raw);
+        const cls = advantageDisplayClass(raw);
         if (cls) td.classList.add(cls);
       }
       tr.appendChild(td);
@@ -125,7 +119,7 @@ function buildSpecialNotesTable(rows: Record<string, unknown>[]): HTMLTableEleme
         const raw = formatCellValue(nested[subKey]);
         td.textContent = raw;
         if (isAdvantageColumn(key, subKey)) {
-          const cls = advantageClass(raw);
+          const cls = advantageDisplayClass(raw);
           if (cls) td.classList.add(cls);
         }
         tr.appendChild(td);
