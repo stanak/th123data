@@ -25,6 +25,7 @@ export interface DisplayRow extends IndexRow {
   isVariantPlaceholder?: boolean;
   segmentCollapse?: VariantCollapseControl;
   stateCollapse?: VariantCollapseControl;
+  lvCollapse?: VariantCollapseControl;
 }
 
 interface VariantCollapseControl {
@@ -34,7 +35,8 @@ interface VariantCollapseControl {
   moveKey: string;
 }
 
-type MoveCollapseState = { segment: boolean; state: boolean };
+type MoveCollapseState = { segment: boolean; state: boolean; lv: boolean };
+type CollapseDim = 'segment' | 'state' | 'lv';
 
 function rowHasParentSummary(row: IndexRow): row is IndexRow & {
   parentStats: Record<string, unknown>;
@@ -131,7 +133,67 @@ function writeMoveCollapseState(container: HTMLElement, state: Record<string, Mo
 }
 
 function defaultMoveCollapseState(): MoveCollapseState {
-  return { segment: false, state: false };
+  return { segment: false, state: false, lv: false };
+}
+
+function parseLvDisplay(lv: string): number[] {
+  const normalized = lv.replace(/～/g, '~');
+  if (normalized.includes('~')) {
+    const [start, end] = normalized.split('~').map(Number);
+    if (Number.isNaN(start) || Number.isNaN(end)) return [];
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }
+  const n = Number(normalized);
+  return Number.isNaN(n) ? [] : [n];
+}
+
+function lvSortKey(lv: string): number {
+  const nums = parseLvDisplay(lv);
+  return nums.length ? nums[0] : Number.MAX_SAFE_INTEGER;
+}
+
+function formatLvSummary(lvs: string[]): string {
+  const nums = [...new Set(lvs.flatMap(parseLvDisplay))].sort((a, b) => a - b);
+  if (!nums.length) {
+    if (!lvs.length) return '';
+    if (lvs.length === 1) return lvs[0];
+    if (lvs.length <= 3) return lvs.join('・');
+    return `${lvs.slice(0, 2).join('・')}…`;
+  }
+  if (nums.length === 1) return String(nums[0]);
+  let end = 0;
+  while (end + 1 < nums.length && nums[end + 1] === nums[end] + 1) end++;
+  if (end === nums.length - 1) return `${nums[0]}~${nums[nums.length - 1]}`;
+  if (lvs.length <= 3) return lvs.join('・');
+  return `${lvs.slice(0, 2).join('・')}…`;
+}
+
+function lvVariantGroupKey(row: IndexRow): string {
+  return [
+    row.command ?? '',
+    row.segment ?? '',
+    row.position ?? '',
+    row.stateName ?? '',
+  ].join('\0');
+}
+
+function collectLvCollapseHiddenIds(dataRows: DisplayRow[], expandedLv: boolean): Set<string> {
+  if (expandedLv) return new Set();
+  const hidden = new Set<string>();
+  const groups = new Map<string, DisplayRow[]>();
+  for (const row of dataRows) {
+    if (!row.lv) continue;
+    const key = lvVariantGroupKey(row);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(row);
+  }
+  for (const group of groups.values()) {
+    const distinct = new Set(group.map((r) => r.lv));
+    if (distinct.size <= 1) continue;
+    const sorted = [...group].sort((a, b) => lvSortKey(a.lv!) - lvSortKey(b.lv!));
+    for (let i = 1; i < sorted.length; i++) hidden.add(sorted[i].id);
+  }
+  return hidden;
 }
 
 function formatSegmentSummary(segments: string[]): string {
@@ -151,15 +213,24 @@ function formatStateSummary(states: string[]): string {
   return `${states.slice(0, 2).join('・')}…`;
 }
 
-function emptyParsed(): IndexRow['parsed'] {
+function previewCollapsedRow(
+  dataRows: DisplayRow[],
+  segmentRows: DisplayRow[],
+  stateRows: DisplayRow[],
+  hiddenIds: Set<string>,
+): DisplayRow {
+  const hidden = dataRows.filter((r) => hiddenIds.has(r.id));
+  return hidden[0] ?? segmentRows[0] ?? stateRows[0] ?? dataRows[0];
+}
+
+function clearedVariantFields(
+  preview: DisplayRow,
+  expanded: MoveCollapseState,
+): Pick<DisplayRow, 'segment' | 'stateName' | 'lv'> {
   return {
-    startup: null,
-    total: null,
-    active: null,
-    blackout: null,
-    cancelUpper: null,
-    cancelMove: null,
-    advantage: { seig: null, goG: null, tsujo: null, ch: null, min: null, max: null, raws: {} },
+    segment: expanded.segment ? preview.segment : null,
+    stateName: expanded.state ? preview.stateName : null,
+    lv: expanded.lv ? preview.lv : null,
   };
 }
 
@@ -167,6 +238,7 @@ function applyVariantCollapse(block: DisplayRow[], expanded: MoveCollapseState, 
   const dataRows = block.filter((r) => !r.isParentSummary && !r.isVariantPlaceholder);
   const segmentRows = dataRows.filter((r) => r.segment);
   const stateRows = dataRows.filter((r) => r.stateName);
+  const lvValues = [...new Set(dataRows.filter((r) => r.lv).map((r) => r.lv!))];
 
   const hiddenIds = new Set<string>();
   if (!expanded.segment) {
@@ -175,7 +247,9 @@ function applyVariantCollapse(block: DisplayRow[], expanded: MoveCollapseState, 
   if (!expanded.state) {
     for (const row of stateRows) hiddenIds.add(row.id);
   }
+  for (const id of collectLvCollapseHiddenIds(dataRows, expanded.lv)) hiddenIds.add(id);
 
+  const lvHiddenCount = collectLvCollapseHiddenIds(dataRows, false).size;
   const segmentControl: VariantCollapseControl | undefined = segmentRows.length
     ? {
         collapsed: !expanded.segment,
@@ -192,16 +266,25 @@ function applyVariantCollapse(block: DisplayRow[], expanded: MoveCollapseState, 
         moveKey,
       }
     : undefined;
+  const lvControl: VariantCollapseControl | undefined = lvHiddenCount
+    ? {
+        collapsed: !expanded.lv,
+        summary: formatLvSummary(lvValues),
+        hiddenCount: expanded.lv ? 0 : lvHiddenCount,
+        moveKey,
+      }
+    : undefined;
+
+  const collapseControls = { segmentCollapse: segmentControl, stateCollapse: stateControl, lvCollapse: lvControl };
 
   if (!hiddenIds.size) {
-    if (!segmentControl && !stateControl) return block;
+    if (!segmentControl && !stateControl && !lvControl) return block;
     return block.map((row, idx) => {
       const firstDataIdx = block.findIndex((r) => !r.isParentSummary);
       if (idx !== firstDataIdx || row.isParentSummary) return row;
       return {
         ...row,
-        segmentCollapse: segmentControl,
-        stateCollapse: stateControl,
+        ...collapseControls,
       };
     });
   }
@@ -209,34 +292,44 @@ function applyVariantCollapse(block: DisplayRow[], expanded: MoveCollapseState, 
   const visible = block.filter((r) => r.isParentSummary || !hiddenIds.has(r.id));
 
   if (!visible.some((r) => !r.isParentSummary)) {
-    const base = dataRows[0] ?? block[0];
+    const parentRow = block.find((r) => r.isParentSummary);
+    if (parentRow) {
+      return [{
+        ...parentRow,
+        ...collapseControls,
+        showMoveName: true,
+        moveRowSpan: 1,
+      }];
+    }
+
+    const preview = previewCollapsedRow(dataRows, segmentRows, stateRows, hiddenIds);
     return [{
-      ...base,
+      ...preview,
+      ...clearedVariantFields(preview, expanded),
       id: `collapse-${moveKey}`,
       isVariantPlaceholder: true,
       isParentSummary: false,
       showMoveName: true,
       moveRowSpan: 1,
-      segment: null,
-      position: null,
-      stateName: null,
-      command: null,
-      lv: null,
-      stats: {},
-      parsed: emptyParsed(),
-      segmentCollapse: segmentControl,
-      stateCollapse: stateControl,
+      ...collapseControls,
     }];
   }
 
   let attached = false;
+  const dataVisible = visible.filter((r) => !r.isParentSummary);
   return visible.map((row) => {
-    if (attached || row.isParentSummary) return row;
+    if (row.isParentSummary) {
+      if (dataVisible.length === 0) {
+        return { ...row, ...collapseControls, showMoveName: true };
+      }
+      return { ...row, showMoveName: true };
+    }
+    if (attached) return { ...row, showMoveName: false };
     attached = true;
     return {
       ...row,
-      segmentCollapse: segmentControl,
-      stateCollapse: stateControl,
+      ...collapseControls,
+      showMoveName: dataVisible.length === visible.length,
     };
   });
 }
@@ -252,7 +345,7 @@ function prepareCollapsedDisplayRows(rows: IndexRow[], container: HTMLElement): 
     let j = i;
     while (j < prepared.length && moveBlockKey(prepared[j]) === key) j++;
     const block = prepared.slice(i, j);
-    const expanded = collapseState[key] ?? defaultMoveCollapseState();
+    const expanded = { ...defaultMoveCollapseState(), ...collapseState[key] };
     out.push(...applyVariantCollapse(block, expanded, key));
     i = j;
   }
@@ -275,7 +368,7 @@ function prepareCollapsedDisplayRows(rows: IndexRow[], container: HTMLElement): 
 
 function createVariantToggle(
   control: VariantCollapseControl,
-  dim: 'segment' | 'state',
+  dim: CollapseDim,
   container: HTMLElement,
   rerender: () => void,
 ): HTMLButtonElement {
@@ -289,7 +382,7 @@ function createVariantToggle(
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     const state = readMoveCollapseState(container);
-    const current = state[control.moveKey] ?? defaultMoveCollapseState();
+    const current = { ...defaultMoveCollapseState(), ...state[control.moveKey] };
     state[control.moveKey] = {
       ...current,
       [dim]: !current[dim],
@@ -298,6 +391,28 @@ function createVariantToggle(
     rerender();
   });
   return btn;
+}
+
+function appendVariantToggleCell(
+  td: HTMLTableCellElement,
+  colKey: string,
+  row: DisplayRow,
+  container: HTMLElement,
+  rerender: () => void,
+): boolean {
+  if (colKey === 'segment' && row.segmentCollapse) {
+    td.appendChild(createVariantToggle(row.segmentCollapse, 'segment', container, rerender));
+    return true;
+  }
+  if (colKey === 'stateName' && row.stateCollapse) {
+    td.appendChild(createVariantToggle(row.stateCollapse, 'state', container, rerender));
+    return true;
+  }
+  if (colKey === 'lv' && row.lvCollapse) {
+    td.appendChild(createVariantToggle(row.lvCollapse, 'lv', container, rerender));
+    return true;
+  }
+  return false;
 }
 
 export function prepareDisplayRows(rows: IndexRow[]): DisplayRow[] {
@@ -553,13 +668,14 @@ export function renderDataTable(
     const tr = document.createElement('tr');
     tr.dataset.id = row.id;
     if (row.isParentSummary) tr.classList.add('move-parent-row');
-    if (row.isVariantPlaceholder) tr.classList.add('variant-placeholder-row');
+    if (row.isVariantPlaceholder) tr.classList.add('variant-collapsed-row');
     for (const col of columns) {
       if (col.key === 'moveName' && !row.showMoveName) {
         continue;
       }
-      if ((col.key === 'stateName' || col.key === 'segment' || col.key === 'position') && row.isParentSummary) {
+      if ((col.key === 'stateName' || col.key === 'segment' || col.key === 'position' || col.key === 'lv') && row.isParentSummary) {
         const td = document.createElement('td');
+        appendVariantToggleCell(td, col.key, row, container, rerender);
         tr.appendChild(td);
         continue;
       }
@@ -570,10 +686,8 @@ export function renderDataTable(
       }
 
       const extra = options.getExtraCell?.(row, col);
-      if (col.key === 'segment' && row.segmentCollapse) {
-        td.appendChild(createVariantToggle(row.segmentCollapse, 'segment', container, rerender));
-      } else if (col.key === 'stateName' && row.stateCollapse) {
-        td.appendChild(createVariantToggle(row.stateCollapse, 'state', container, rerender));
+      if (appendVariantToggleCell(td, col.key, row, container, rerender)) {
+        // toggle only
       } else if (extra instanceof HTMLElement) {
         td.appendChild(extra);
       } else if (extra != null) {

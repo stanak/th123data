@@ -43,7 +43,12 @@ async function main() {
 
   function onSort(key: string) {
     if (state.sortColumn === key) {
-      state.sortAsc = !state.sortAsc;
+      if (state.sortAsc) {
+        state.sortAsc = false;
+      } else {
+        state.sortColumn = null;
+        state.sortAsc = true;
+      }
     } else {
       state.sortColumn = key;
       state.sortAsc = true;
