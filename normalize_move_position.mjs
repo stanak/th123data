@@ -6,7 +6,7 @@ import { normalizePositionLabel } from './variant_buckets.mjs';
 
 const SKIP_CATEGORIES = new Set(['射撃技']);
 
-const COMPOUND_MOVE_NAME = /^(妖鬼|地霊)-[密疎]$/;
+const COMPOUND_MOVE_NAME = /^(妖鬼|地霊)-[密疎]$|^六震-相$/;
 
 /** @returns {{ baseName: string, position: string|null, stateFromName: string|null, changed: boolean }} */
 export function parseMoveNamePosition(name) {
@@ -18,7 +18,8 @@ export function parseMoveNamePosition(name) {
   const trimmedTrailing = s !== name.trim();
 
   if (COMPOUND_MOVE_NAME.test(s)) {
-    return { baseName: s, position: null, stateFromName: null, changed: trimmedTrailing };
+    const baseName = /^六震-相$/.test(s) ? '六震-相-' : s;
+    return { baseName, position: null, stateFromName: null, changed: true };
   }
 
   let position = null;

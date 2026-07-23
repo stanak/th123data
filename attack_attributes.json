@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T17:36:45.342Z",
+  "generatedAt": "2026-07-23T23:30:31.318Z",
   "source": "https://w.atwiki.jp/bulletaction/pages",
   "characters": {
     "空": {
@@ -2397,11 +2397,11 @@
           "notes": ""
         },
         {
-          "moveName": "奇跡「白昼の明るすぎる星」",
+          "moveName": "客星の明るすぎる夜",
           "cost": "4",
           "usage": "地上",
           "attackAttribute": "磨耗射撃",
-          "notes": ""
+          "notes": "Wiki技表では奇跡「白昼の明るすぎる星」表記"
         },
         {
           "moveName": "開海「モーゼの奇跡」",

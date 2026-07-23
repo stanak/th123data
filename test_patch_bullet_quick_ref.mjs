@@ -26,15 +26,21 @@ assert.equal(cFront['グレイズ耐久数'], '1回');
 
 const suika = structuredClone(frame.characters['萃香']);
 patchCharacterBulletQuickRef(suika, '萃香', quickRef);
-const ja = suika['通常技'].rows.find((r) => r['技名'] === 'JA');
-assert.equal(ja['ヒット数'], '1');
+const suikaJa = suika['通常技'].rows.find((r) => r['技名'] === 'JA');
+assert.equal(suikaJa['ヒット数'], undefined);
 const missing = suika['スペルカード'].rows.find((r) => r['技名'] === 'ミッシングパープルパワー');
 const missingA = missing['状態'].find((s) => s['技名'] === 'A');
 assert.equal(missingA['ヒット数'], '1');
 assert.ok(missingA['射撃備考']?.includes('特別射撃属性'));
+const missingJa = missing['状態'].find((s) => s['技名'] === 'JA');
+assert.equal(missingJa['ヒット数'], '1');
 
 const alice = structuredClone(frame.characters['アリス']);
 patchCharacterBulletQuickRef(alice, 'アリス', quickRef);
+const alice6A = alice['通常技'].rows.find((r) => r['技名'] === '6A');
+const alice2A = alice['通常技'].rows.find((r) => r['技名'] === '2A');
+assert.equal(alice6A['射撃備考'], undefined);
+assert.equal(alice2A['射撃備考'], undefined);
 const mirai = alice['スペルカード'].rows.find((r) => r['技名'] === '未来文楽');
 const miraiA = mirai['状態'].find((s) => s['技名'] === 'A');
 assert.equal(miraiA['ヒット数'], '5');

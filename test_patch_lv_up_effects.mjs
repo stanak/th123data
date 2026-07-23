@@ -21,7 +21,8 @@ assert.equal(wave.Lv['2']['追加効果'], sanaeEffects['波起こし']['2']);
 
 assert.equal(normalizeWikiMoveName('人形火葬'), '人形火操');
 assert.equal(normalizeWikiMoveName('鳳紋蝶の槍'), '鳳蝶紋の槍');
-assert.equal(normalizeWikiMoveName('非想の威光'), '緋想の威光');
+assert.equal(normalizeWikiMoveName('非想の威光'), '非想の威光');
+assert.equal(normalizeWikiMoveName('六震-相'), '六震-相-');
 
 const aliceFire = data.characters['アリス']['必殺技'].rows.find((r) => r['技名'] === '人形火操');
 assert.equal(aliceFire.Lv['2']['追加効果'], lvUp.characters['アリス'].moves['人形火葬']['2']);

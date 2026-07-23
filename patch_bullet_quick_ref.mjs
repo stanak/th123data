@@ -31,6 +31,29 @@ function rowNameKeys(name) {
   return keys;
 }
 
+function groupMoveLookupKeys(groupName) {
+  const keys = new Set();
+  const norm = normalizeGroupLabel(groupName);
+  if (!norm) return keys;
+  keys.add(normalizeLookupKey(norm));
+  keys.add(normalizeLookupKey(norm.replace(/\s+/g, '')));
+  return keys;
+}
+
+function rowMatchesGroup(row, groupName) {
+  const rowKey = normalizeLookupKey(row?.['技名']);
+  return groupMoveLookupKeys(groupName).has(rowKey);
+}
+
+function isGroupScopedEntry(groupName, char) {
+  for (const category of PATCH_CATEGORIES) {
+    const rows = char[category]?.rows;
+    if (!rows) continue;
+    if (rows.some((row) => rowMatchesGroup(row, groupName))) return true;
+  }
+  return false;
+}
+
 function findStateChild(row, wikiSub) {
   if (!Array.isArray(row?.['状態'])) return null;
   return row['状態'].find((st) => subNameMatches(wikiSub, st['技名'])) ?? null;
@@ -86,49 +109,55 @@ export function patchCharacterBulletQuickRef(char, characterName, quickRefData) 
     const subNorm = normalizeGroupLabel(wikiEntry.sub);
     const wikiSub = subNorm === groupNorm ? null : subNorm;
     const isPartRow = wikiSub === '前半部分' || wikiSub === '後半部分';
+    const groupScoped = isGroupScopedEntry(wikiEntry.group, char);
     let hit = false;
 
     for (const category of PATCH_CATEGORIES) {
       const rows = char[category]?.rows;
       if (!rows) continue;
 
-      for (const targetName of targets) {
-        const keys = rowNameKeys(targetName);
-        for (const row of rows) {
-          const rowKey = normalizeLookupKey(row['技名']);
-          if (!keys.has(rowKey)) continue;
+      if (!groupScoped) {
+        for (const targetName of targets) {
+          const keys = rowNameKeys(targetName);
+          for (const row of rows) {
+            const rowKey = normalizeLookupKey(row['技名']);
+            if (!keys.has(rowKey)) continue;
 
-          if (isPartRow && Array.isArray(row['状態'])) {
-            const child = findStateChild(row, wikiSub);
-            if (child) {
-              applyBulletQuickFields(child, wikiEntry);
+            if (isPartRow && Array.isArray(row['状態'])) {
+              const child = findStateChild(row, wikiSub);
+              if (child) {
+                applyBulletQuickFields(child, wikiEntry);
+                patched++;
+                hit = true;
+              }
+              continue;
+            }
+
+            if (patchRowDirect(row, wikiEntry, null)) {
               patched++;
               hit = true;
             }
-            continue;
-          }
-
-          if (patchRowDirect(row, wikiEntry, null)) {
-            patched++;
-            hit = true;
           }
         }
       }
 
       for (const row of rows) {
-        const groupKey = normalizeLookupKey(wikiEntry.group);
-        const rowKey = normalizeLookupKey(row['技名']);
-        if (groupKey && rowKey === groupKey) {
+        if (groupScoped && !rowMatchesGroup(row, wikiEntry.group)) continue;
+
+        if (rowMatchesGroup(row, wikiEntry.group)) {
           if (patchRowDirect(row, wikiEntry, wikiSub)) {
             patched++;
             hit = true;
           }
         }
-        const nested = new Set();
-        walkNestedStates(row, wikiEntry.group, wikiSub, wikiEntry, nested);
-        if (nested.size) {
-          patched += nested.size;
-          hit = true;
+
+        if (!groupScoped || rowMatchesGroup(row, wikiEntry.group)) {
+          const nested = new Set();
+          walkNestedStates(row, wikiEntry.group, wikiSub, wikiEntry, nested);
+          if (nested.size) {
+            patched += nested.size;
+            hit = true;
+          }
         }
       }
     }

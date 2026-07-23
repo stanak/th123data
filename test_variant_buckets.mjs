@@ -25,11 +25,17 @@ assert.deepEqual(parseMoveNamePosition('妖鬼-疎-'), {
   stateFromName: null,
   changed: true,
 });
+assert.deepEqual(parseMoveNamePosition('六震-相-'), {
+  baseName: '六震-相-',
+  position: null,
+  stateFromName: null,
+  changed: true,
+});
 assert.deepEqual(parseMoveNamePosition('妖鬼-密'), {
   baseName: '妖鬼-密',
   position: null,
   stateFromName: null,
-  changed: false,
+  changed: true,
 });
 
 console.log('test_variant_buckets: ok');

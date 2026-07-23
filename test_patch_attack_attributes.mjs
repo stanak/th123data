@@ -15,7 +15,12 @@ const { patched, unmatched } = patchCharacterAttackAttributes(kuu, '空', attr);
 assert.ok(patched > 0);
 assert.equal(unmatched.length, 0);
 assert.equal(kuu['必殺技'].rows.find((r) => r['技名'] === 'グラウンドメルト')['攻撃属性'], '射撃');
-assert.equal(kuu['スペルカード'].rows.find((r) => r['技名'] === '地獄の人口太陽')['攻撃属性'], '磨耗射撃');
+assert.equal(kuu['スペルカード'].rows.find((r) => r['技名'] === '地獄の人工太陽')['攻撃属性'], '磨耗射撃');
+
+const sanae = structuredClone(frame.characters['早苗']);
+patchCharacterAttackAttributes(sanae, '早苗', attr);
+const kyaku = sanae['スペルカード'].rows.find((r) => r['技名'] === '客星の明るすぎる夜');
+assert.equal(kyaku['攻撃属性'], '磨耗射撃');
 
 const reisen = structuredClone(frame.characters['鈴仙']);
 const r2 = patchCharacterAttackAttributes(reisen, '鈴仙', attr);

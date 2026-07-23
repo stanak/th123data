@@ -30,6 +30,11 @@ const WIKI_INPUT_ALIASES = {
   始動攻撃: '始動',
 };
 
+/** Wiki 早見表のグループ名 → frame_data 技名 */
+const WIKI_GROUP_ALIASES = {
+  物質と反物質の境界: '物質と反物質の宇宙',
+};
+
 function wikiInputAliasKey(input) {
   return String(input ?? '').replace(/\s+/g, '').trim();
 }
@@ -158,7 +163,10 @@ export function expandWikiBulletTargets(groupName, subName) {
   if (groupDirect) targets.add(groupDirect);
 
   if (group && group !== sub && !/系射撃/.test(group)) {
-    targets.add(group.replace(/\s+/g, ''));
+    const compact = group.replace(/\s+/g, '');
+    targets.add(compact);
+    const alias = WIKI_GROUP_ALIASES[compact];
+    if (alias) targets.add(alias);
   }
   if (sub && sub !== group) {
     targets.add(sub);

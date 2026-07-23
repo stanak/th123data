@@ -11,6 +11,7 @@ import { patchCharacterLvUpEffects } from './patch_lv_up_effects.mjs';
 import { patchCharacterBulletQuickRef } from './patch_bullet_quick_ref.mjs';
 import { patchCharacterAttackAttributes } from './patch_attack_attributes.mjs';
 import { patchSuwakoMoveNames } from './patch_suwako_move_names.mjs';
+import { patchTenshiMoveNames } from './patch_tenshi_move_names.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CHAR_DIR = path.join(__dirname, 'chars');
@@ -35,8 +36,11 @@ for (const name of CHARACTER_ORDER) {
   }
   const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
   characters[name] = patchSuwakoMoveNames(
-    patchYoumuZujouAdvantage(
-      patchYoumuMoveNames(patchYoumuSpellStates(flattenCharacter(raw), name), name),
+    patchTenshiMoveNames(
+      patchYoumuZujouAdvantage(
+        patchYoumuMoveNames(patchYoumuSpellStates(flattenCharacter(raw), name), name),
+        name,
+      ),
       name,
     ),
     name,
