@@ -79,7 +79,7 @@ async function main() {
       state.hiddenColumns = nextHidden;
       writeHiddenColumns(nextHidden);
       renderColumnPickerPanel();
-      renderMain();
+      render('push');
     }, { compact: true }));
   }
 
@@ -101,7 +101,7 @@ async function main() {
   function onMoveClick(moveName: string) {
     state.mode = 'compare';
     state.moveName = moveName;
-    state.partialMove = false;
+    state.freeQuery = '';
     state.categories = new Set(['通常技', '射撃技', '必殺技', 'スペルカード']);
     render('push');
   }

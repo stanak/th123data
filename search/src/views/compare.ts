@@ -1,6 +1,7 @@
 import type { AppState, IndexRow, SearchIndex } from '../types';
 import {
   applyConditions,
+  filterByFreeText,
   filterByMoveName,
 } from '../query';
 import { t } from '../i18n';
@@ -12,7 +13,8 @@ export function getCompareRows(index: SearchIndex, state: AppState): IndexRow[] 
   let rows = index.rows.filter(
     (r) => state.categories.has(r.category) && state.characters.has(r.character),
   );
-  rows = filterByMoveName(rows, state.moveName, state.partialMove);
+  rows = filterByMoveName(rows, state.moveName, false);
+  rows = filterByFreeText(rows, state.freeQuery);
   const columnOptions = columnOptionsFromCategories(state.categories);
   rows = sortRows(rows, state.sortColumn, state.sortAsc, columnOptions);
 
@@ -68,7 +70,7 @@ export function renderCompareView(
   header.className = 'view-header';
   const title = document.createElement('h2');
   title.textContent = state.moveName.trim()
-    ? t('compareTitleNamed', { move: state.moveName }) + (state.partialMove ? t('partialSuffix') : '')
+    ? t('compareTitleNamed', { move: state.moveName })
     : t('compareTitle');
   header.appendChild(title);
   const count = document.createElement('span');
@@ -107,7 +109,8 @@ export function getFilterRows(index: SearchIndex, state: AppState): IndexRow[] {
   let rows = index.rows.filter(
     (r) => state.categories.has(r.category) && state.characters.has(r.character),
   );
-  rows = filterByMoveName(rows, state.moveName, state.partialMove);
+  rows = filterByMoveName(rows, state.moveName, false);
+  rows = filterByFreeText(rows, state.freeQuery);
   rows = applyConditions(rows, state.conditions);
   const columnOptions = columnOptionsFromCategories(state.categories);
   return sortRows(rows, state.sortColumn, state.sortAsc, columnOptions);

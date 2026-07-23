@@ -128,6 +128,55 @@ export function applyConditions(rows: IndexRow[], conditions: Condition[]): Inde
   return rows.filter((row) => conditions.every((c) => matchCondition(row, c)));
 }
 
+export function fullMoveLabel(r: IndexRow): string {
+  const parts = [r.moveName];
+  if (r.segment) parts.push(/^\d+$/.test(r.segment) ? `${r.segment}段目` : r.segment);
+  if (r.position) parts.push(r.position);
+  if (r.stateName) parts.push(r.stateName);
+  return parts.join('-');
+}
+
+function flattenStatsText(stats: Record<string, unknown>): string[] {
+  const parts: string[] = [];
+  for (const value of Object.values(stats)) {
+    if (value != null && typeof value === 'object' && !Array.isArray(value)) {
+      parts.push(...flattenStatsText(value as Record<string, unknown>));
+    } else if (value != null && value !== '') {
+      parts.push(String(value));
+    }
+  }
+  return parts;
+}
+
+export function rowSearchText(row: IndexRow): string {
+  return [
+    row.character,
+    row.category,
+    row.moveName,
+    fullMoveLabel(row),
+    row.segment,
+    row.position,
+    row.stateName,
+    row.command,
+    row.lv,
+    ...flattenStatsText(row.stats),
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .toLowerCase();
+}
+
+/** Space-separated terms are ANDed. */
+export function filterByFreeText(rows: IndexRow[], query: string): IndexRow[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return rows;
+  const terms = q.split(/\s+/).filter(Boolean);
+  return rows.filter((row) => {
+    const text = rowSearchText(row);
+    return terms.every((term) => text.includes(term));
+  });
+}
+
 export function filterByMoveName(
   rows: IndexRow[],
   moveName: string,
@@ -136,19 +185,11 @@ export function filterByMoveName(
   const q = moveName.trim();
   if (!q) return rows;
 
-  const fullName = (r: IndexRow) => {
-    const parts = [r.moveName];
-    if (r.segment) parts.push(/^\d+$/.test(r.segment) ? `${r.segment}段目` : r.segment);
-    if (r.position) parts.push(r.position);
-    if (r.stateName) parts.push(r.stateName);
-    return parts.join('-');
-  };
-
   if (partial) {
     return rows.filter(
       (r) =>
         r.moveName.includes(q) ||
-        fullName(r).includes(q) ||
+        fullMoveLabel(r).includes(q) ||
         (r.segment?.includes(q) ?? false) ||
         (r.position?.includes(q) ?? false) ||
         (r.stateName?.includes(q) ?? false),
@@ -156,7 +197,7 @@ export function filterByMoveName(
   }
 
   return rows.filter((r) => {
-    if (fullName(r) === q) return true;
+    if (fullMoveLabel(r) === q) return true;
     if (!rowHasVariantLabel(r) && r.moveName === q) return true;
     if (rowHasVariantLabel(r) && r.moveName === q) return true;
     return false;

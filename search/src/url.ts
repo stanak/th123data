@@ -1,6 +1,6 @@
 import type { AppState } from './types';
 import { createDefaultState, readSidebarCollapsed } from './types';
-import { readHiddenColumns } from './columnVisibility';
+import { ALL_COLUMN_DEFS, readHiddenColumns } from './columnVisibility';
 import type { Locale } from './i18n';
 import { detectLocale } from './i18n';
 import { sortCharacters } from './characters';
@@ -25,6 +25,29 @@ function parseConditions(p: URLSearchParams): AppState['conditions'] {
   return conditions;
 }
 
+function parseHiddenColumns(p: URLSearchParams): Set<string> | null {
+  if (!p.has('hide')) return null;
+  const hide = p.get('hide') ?? '';
+  if (!hide) return new Set();
+  const valid = new Set(ALL_COLUMN_DEFS.map((d) => d.key));
+  return new Set(hide.split(',').filter((k) => valid.has(k)));
+}
+
+function parseSearchFields(
+  p: URLSearchParams,
+  mode: AppState['mode'],
+): Pick<AppState, 'freeQuery' | 'moveName'> {
+  const moveParam = p.get('move') ?? '';
+  const qParam = p.get('q') ?? '';
+
+  if (mode === 'compare') {
+    return { moveName: moveParam, freeQuery: qParam };
+  }
+
+  // Legacy URLs used move= for sidebar search in filter/character modes.
+  return { moveName: '', freeQuery: qParam || moveParam };
+}
+
 export function stateFromUrl(characters: string[]): AppState {
   const orderedCharacters = sortCharacters(characters);
   const defaults = createDefaultState(orderedCharacters);
@@ -33,16 +56,21 @@ export function stateFromUrl(characters: string[]): AppState {
     return { ...defaults, locale: detectLocale() };
   }
 
-  const mode = p.get('mode');
+  const modeRaw = p.get('mode');
+  const mode =
+    modeRaw === 'compare' || modeRaw === 'filter' || modeRaw === 'character'
+      ? modeRaw
+      : defaults.mode;
   const charsStr = p.get('chars');
   const catStr = p.get('cat');
+  const search = parseSearchFields(p, mode);
 
   return {
-    mode:
-      mode === 'compare' || mode === 'filter' || mode === 'character' ? mode : defaults.mode,
+    mode,
     locale: (p.get('lang') === 'en' ? 'en' : 'ja') as Locale,
-    moveName: p.get('move') ?? '',
-    partialMove: p.get('partial') === '1',
+    freeQuery: search.freeQuery,
+    moveName: search.moveName,
+    partialMove: false,
     categories: catStr ? new Set(catStr.split(',').filter(Boolean)) : new Set(defaults.categories),
     characters: charsStr
       ? new Set(sortCharacters(charsStr.split(',').filter(Boolean)))
@@ -54,7 +82,7 @@ export function stateFromUrl(characters: string[]): AppState {
     sortColumn: p.get('sort'),
     sortAsc: p.get('asc') !== '0',
     sidebarCollapsed: readSidebarCollapsed(),
-    hiddenColumns: readHiddenColumns(),
+    hiddenColumns: parseHiddenColumns(p) ?? readHiddenColumns(),
   };
 }
 
@@ -63,8 +91,8 @@ export function stateToUrl(state: AppState, characters: string[]): string {
   const defaults = createDefaultState(orderedCharacters);
   const isHome =
     state.mode === defaults.mode &&
+    state.freeQuery === '' &&
     state.moveName === '' &&
-    !state.partialMove &&
     setsEqual(state.categories, defaults.categories) &&
     setsEqual(state.characters, defaults.characters) &&
     state.selectedCharacter === defaults.selectedCharacter &&
@@ -72,6 +100,7 @@ export function stateToUrl(state: AppState, characters: string[]): string {
     state.conditions.length === 0 &&
     !state.showMissingCompare &&
     state.sortColumn === null &&
+    state.hiddenColumns.size === 0 &&
     state.locale === defaults.locale;
 
   const p = new URLSearchParams();
@@ -82,8 +111,12 @@ export function stateToUrl(state: AppState, characters: string[]): string {
   }
 
   p.set('mode', state.mode);
-  if (state.moveName) p.set('move', state.moveName);
-  if (state.partialMove) p.set('partial', '1');
+  if (state.mode === 'compare') {
+    if (state.moveName) p.set('move', state.moveName);
+    if (state.freeQuery) p.set('q', state.freeQuery);
+  } else if (state.freeQuery) {
+    p.set('q', state.freeQuery);
+  }
   if (state.categories.size) p.set('cat', [...state.categories].join(','));
   if (state.mode !== 'character' && state.characters.size) {
     p.set('chars', sortCharacters(state.characters).join(','));
@@ -94,6 +127,9 @@ export function stateToUrl(state: AppState, characters: string[]): string {
   if (state.sortColumn) {
     p.set('sort', state.sortColumn);
     p.set('asc', state.sortAsc ? '1' : '0');
+  }
+  if (state.hiddenColumns.size) {
+    p.set('hide', [...state.hiddenColumns].sort().join(','));
   }
   for (const [i, c] of state.conditions.entries()) {
     p.set(`c${i}f`, c.field);

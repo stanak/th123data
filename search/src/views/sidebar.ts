@@ -35,7 +35,7 @@ export function renderSidebar(
   title.addEventListener('click', handlers.onHome);
   root.appendChild(title);
 
-  root.appendChild(moveNameField(state, handlers));
+  root.appendChild(freeQueryField(state, handlers));
 
   const modeGroup = document.createElement('div');
   modeGroup.className = 'field-group';
@@ -124,7 +124,7 @@ function columnVisibilityPanel(state: AppState, handlers: SidebarHandlers): HTML
   details.appendChild(buildColumnPicker(state.hiddenColumns, (nextHidden) => {
     state.hiddenColumns = nextHidden;
     writeHiddenColumns(nextHidden);
-    handlers.onChange('replace');
+    handlers.onChange('push');
   }));
   return details;
 }
@@ -245,10 +245,10 @@ function categoryCheckboxes(index: SearchIndex, state: AppState, handlers: Sideb
   return g;
 }
 
-function moveNameField(state: AppState, handlers: SidebarHandlers): HTMLElement {
+function freeQueryField(state: AppState, handlers: SidebarHandlers): HTMLElement {
   const g = document.createElement('div');
   g.className = 'field-group search-group';
-  g.appendChild(label(t('moveName')));
+  g.appendChild(label(t('freeQuery')));
 
   const row = document.createElement('div');
   row.className = 'search-row';
@@ -256,17 +256,17 @@ function moveNameField(state: AppState, handlers: SidebarHandlers): HTMLElement 
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'text-input';
-  input.placeholder = t('moveNamePlaceholder');
-  input.value = state.moveName;
+  input.placeholder = t('freeQueryPlaceholder');
+  input.value = state.freeQuery;
 
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
   clearBtn.className = 'clear-btn';
   clearBtn.textContent = t('clear');
-  clearBtn.disabled = !state.moveName;
+  clearBtn.disabled = !state.freeQuery;
 
   input.addEventListener('input', () => {
-    state.moveName = input.value;
+    state.freeQuery = input.value;
     clearBtn.disabled = !input.value;
     handlers.onChange('replace', { skipSidebar: true });
   });
@@ -274,7 +274,7 @@ function moveNameField(state: AppState, handlers: SidebarHandlers): HTMLElement 
     handlers.onChange('push');
   });
   clearBtn.addEventListener('click', () => {
-    state.moveName = '';
+    state.freeQuery = '';
     input.value = '';
     clearBtn.disabled = true;
     input.focus();
@@ -284,10 +284,6 @@ function moveNameField(state: AppState, handlers: SidebarHandlers): HTMLElement 
   row.appendChild(input);
   row.appendChild(clearBtn);
   g.appendChild(row);
-  g.appendChild(checkboxField(t('partialMatch'), state.partialMove, (v) => {
-    state.partialMove = v;
-    handlers.onChange('push');
-  }));
   return g;
 }
 

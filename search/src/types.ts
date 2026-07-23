@@ -59,6 +59,9 @@ import { readHiddenColumns } from './columnVisibility';
 export interface AppState {
   mode: AppMode;
   locale: Locale;
+  /** Sidebar free-text search (URL: q). */
+  freeQuery: string;
+  /** Exact move name for compare mode (URL: move). Set via move link click. */
   moveName: string;
   partialMove: boolean;
   categories: Set<string>;
@@ -90,6 +93,7 @@ export function createDefaultState(characters: string[]): AppState {
   return {
     mode: 'character',
     locale: 'ja',
+    freeQuery: '',
     moveName: '',
     partialMove: false,
     categories: new Set(['通常技']),
@@ -108,6 +112,7 @@ export function createDefaultState(characters: string[]): AppState {
 export function applyState(target: AppState, source: AppState): void {
   target.mode = source.mode;
   target.locale = source.locale;
+  target.freeQuery = source.freeQuery;
   target.moveName = source.moveName;
   target.partialMove = source.partialMove;
   target.categories = new Set(source.categories);
