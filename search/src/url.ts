@@ -1,5 +1,5 @@
 import type { AppState } from './types';
-import { createDefaultState } from './types';
+import { createDefaultState, readSidebarCollapsed } from './types';
 import type { Locale } from './i18n';
 import { detectLocale } from './i18n';
 import { sortCharacters } from './characters';
@@ -52,6 +52,7 @@ export function stateFromUrl(characters: string[]): AppState {
     showMissingCompare: p.get('missing') === '1',
     sortColumn: p.get('sort'),
     sortAsc: p.get('asc') !== '0',
+    sidebarCollapsed: readSidebarCollapsed(),
   };
 }
 

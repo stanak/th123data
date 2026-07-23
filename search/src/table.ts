@@ -117,6 +117,32 @@ function rowsHaveSpecialNotes(rows: IndexRow[]): boolean {
   });
 }
 
+function rowsHaveBulletStats(rows: IndexRow[]): boolean {
+  return rows.some((r) => {
+    const s = getStat(r, '相殺強度');
+    const n = getStat(r, '射撃備考');
+    return (s != null && s !== '') || (n != null && n !== '');
+  });
+}
+
+function bulletStatColumn(key: string, label: string, path: string): TableColumn {
+  return {
+    key,
+    label,
+    get: (r) => String(getStat(r, path) ?? ''),
+    sortValue: (r) => String(getStat(r, path) ?? ''),
+  };
+}
+
+function bulletColumns(): TableColumn[] {
+  return [
+    bulletStatColumn('sousaiStrength', t('colSousaiStrength'), '相殺強度'),
+    bulletStatColumn('sousaiCount', t('colSousaiCount'), '相殺回数'),
+    bulletStatColumn('grazeDurability', t('colGrazeDurability'), 'グレイズ耐久数'),
+    bulletStatColumn('bulletNotes', t('colBulletNotes'), '射撃備考'),
+  ];
+}
+
 function formatSegmentDisplay(segment: string | null): string {
   if (!segment) return '';
   return /^\d+$/.test(segment) ? `${segment}段目` : segment;
@@ -549,6 +575,7 @@ export function columnOptionsFromCategories(categories: Set<string>): ColumnOpti
 export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): TableColumn[] {
   const hasVariants = rows ? rowsHaveVariants(rows) : false;
   const hasSpecialNotes = rows ? rowsHaveSpecialNotes(rows) : false;
+  const hasBulletStats = rows ? rowsHaveBulletStats(rows) : false;
   const cols: TableColumn[] = [
     { key: 'character', label: t('colCharacter'), get: (r) => characterLabel(r.character, getLocale()), sortValue: (r) => characterSortIndex(r.character) },
     {
@@ -623,6 +650,13 @@ export function getCompareColumns(options?: ColumnOptions, rows?: IndexRow[]): T
       get: (r) => displayCellValue('攻撃分類', String(getStat(r, '攻撃分類') ?? '')),
       sortValue: (r) => String(getStat(r, '攻撃分類') ?? ''),
     },
+  );
+
+  if (hasBulletStats) {
+    cols.push(...bulletColumns());
+  }
+
+  cols.push(
     {
       key: 'notes',
       label: t('colNotes'),
@@ -650,6 +684,11 @@ function setStandardCellContent(td: HTMLTableCellElement, col: TableColumn, row:
     const numeric = col.sortValue?.(row);
     const cls = advantageDisplayClass(raw, typeof numeric === 'number' ? numeric : null);
     if (cls) td.classList.add(cls);
+    return;
+  }
+  if (col.key === 'sousaiCount' || col.key === 'grazeDurability') {
+    td.classList.add('bullet-stat-cell');
+    td.textContent = col.get(row);
     return;
   }
   td.textContent = col.get(row);
@@ -813,6 +852,16 @@ export function renderDataTable(
             row.command,
           ].filter(Boolean).join(' — ');
           const trigger = createSpecialNotesTrigger(specialContent, specialTitle);
+          if (trigger) td.appendChild(trigger);
+        } else if (col.key === 'bulletNotes') {
+          td.classList.add('notes-cell');
+          const notesText = col.get(row);
+          const notesTitle = [
+            characterLabel(row.character, getLocale()),
+            row.moveName,
+            t('colBulletNotes'),
+          ].filter(Boolean).join(' — ');
+          const trigger = createNotesTrigger(notesText, notesTitle);
           if (trigger) td.appendChild(trigger);
         } else {
           setStandardCellContent(td, col, row);

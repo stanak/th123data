@@ -1,5 +1,5 @@
 import type { SearchIndex } from './types';
-import { createDefaultState, applyDefaultState, applyState } from './types';
+import { createDefaultState, applyDefaultState, applyState, writeSidebarCollapsed } from './types';
 import { stateFromUrl, updateHistory, type HistoryMode } from './url';
 import { initLocale, setLocale, t, detectLocale, type Locale } from './i18n';
 import { renderSidebar } from './views/sidebar';
@@ -22,6 +22,19 @@ async function main() {
   sidebarEl.className = 'sidebar';
   const mainEl = document.createElement('main');
   mainEl.className = 'main';
+
+  const mainToolbar = document.createElement('div');
+  mainToolbar.className = 'main-toolbar';
+  const sidebarToggle = document.createElement('button');
+  sidebarToggle.type = 'button';
+  sidebarToggle.className = 'sidebar-toggle';
+  mainToolbar.appendChild(sidebarToggle);
+
+  const viewHost = document.createElement('div');
+  viewHost.className = 'main-view';
+  mainEl.appendChild(mainToolbar);
+  mainEl.appendChild(viewHost);
+
   app.appendChild(sidebarEl);
   app.appendChild(mainEl);
 
@@ -32,6 +45,19 @@ async function main() {
   const state = createDefaultState(characters);
   applyState(state, stateFromUrl(characters));
   setLocale(state.locale);
+
+  function applySidebarLayout() {
+    app!.classList.toggle('sidebar-collapsed', state.sidebarCollapsed);
+    sidebarToggle.textContent = state.sidebarCollapsed ? '☰' : '◀';
+    sidebarToggle.title = state.sidebarCollapsed ? t('sidebarShow') : t('sidebarHide');
+    sidebarToggle.setAttribute('aria-label', sidebarToggle.title);
+  }
+
+  sidebarToggle.addEventListener('click', () => {
+    state.sidebarCollapsed = !state.sidebarCollapsed;
+    writeSidebarCollapsed(state.sidebarCollapsed);
+    applySidebarLayout();
+  });
 
   function onMoveClick(moveName: string) {
     state.mode = 'compare';
@@ -73,11 +99,11 @@ async function main() {
 
   function renderMain() {
     if (state.mode === 'compare') {
-      renderCompareView(mainEl, index, state, onSort, onMoveClick);
+      renderCompareView(viewHost, index, state, onSort, onMoveClick);
     } else if (state.mode === 'filter') {
-      renderFilterView(mainEl, index, state, onSort, onMoveClick);
+      renderFilterView(viewHost, index, state, onSort, onMoveClick);
     } else {
-      renderCharacterView(mainEl, index, state, (cat) => {
+      renderCharacterView(viewHost, index, state, (cat) => {
         state.characterCategory = cat;
         render('push');
       }, onSort, onMoveClick);
@@ -89,6 +115,7 @@ async function main() {
     options?: { skipSidebar?: boolean },
   ) {
     updateHistory(state, history, characters);
+    applySidebarLayout();
     if (!options?.skipSidebar) {
       renderSidebar(sidebarEl, index, state, {
         onChange: (h = 'push', opts) => render(h, opts),

@@ -31,6 +31,18 @@ body {
   overflow: hidden;
 }
 
+#app.sidebar-collapsed {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+
+#app.sidebar-collapsed .sidebar {
+  overflow: hidden;
+  padding: 0;
+  border-right: none;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 @media (max-width: 900px) {
   #app {
     grid-template-columns: 1fr;
@@ -85,9 +97,47 @@ body {
 }
 
 .main {
-  padding: 1rem 1.25rem;
-  overflow: auto;
+  padding: 0;
+  overflow: hidden;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.main-view {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem 1.25rem;
+  min-width: 0;
+}
+
+.sidebar-toggle {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  border-radius: var(--radius);
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .field-group {
@@ -383,6 +433,13 @@ body {
   max-width: 220px;
   font-size: 0.78rem;
   color: var(--muted);
+  vertical-align: top;
+}
+
+.bullet-stat-cell {
+  max-width: 140px;
+  font-size: 0.78rem;
+  white-space: pre-line;
   vertical-align: top;
 }
 

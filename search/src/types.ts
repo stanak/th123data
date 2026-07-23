@@ -68,9 +68,20 @@ export interface AppState {
   showMissingCompare: boolean;
   sortColumn: string | null;
   sortAsc: boolean;
+  sidebarCollapsed: boolean;
 }
 
 export const DEFAULT_CATEGORIES = ['通常技', '射撃技', '必殺技', 'スペルカード'];
+
+const SIDEBAR_STORAGE_KEY = 'th123data-sidebar';
+
+export function readSidebarCollapsed(): boolean {
+  return localStorage.getItem(SIDEBAR_STORAGE_KEY) === '1';
+}
+
+export function writeSidebarCollapsed(collapsed: boolean): void {
+  localStorage.setItem(SIDEBAR_STORAGE_KEY, collapsed ? '1' : '0');
+}
 
 export function createDefaultState(characters: string[]): AppState {
   const ordered = sortCharacters(characters);
@@ -87,6 +98,7 @@ export function createDefaultState(characters: string[]): AppState {
     showMissingCompare: false,
     sortColumn: null,
     sortAsc: true,
+    sidebarCollapsed: readSidebarCollapsed(),
   };
 }
 
@@ -103,6 +115,7 @@ export function applyState(target: AppState, source: AppState): void {
   target.showMissingCompare = source.showMissingCompare;
   target.sortColumn = source.sortColumn;
   target.sortAsc = source.sortAsc;
+  target.sidebarCollapsed = source.sidebarCollapsed;
 }
 
 export function applyDefaultState(state: AppState, characters: string[]): void {
