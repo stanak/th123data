@@ -1,5 +1,21 @@
 import type { Condition, IndexRow } from './types';
 import { type AdvantageKey } from './i18n';
+import {
+  parseFrameValue,
+  firstFrameListToken,
+  FRAME_LIST_FIELD_PATHS,
+} from './frameParse';
+
+const FRAME_LIST_FIELDS = new Set<string>(FRAME_LIST_FIELD_PATHS);
+
+const FRAME_PARSED_KEY: Partial<Record<string, keyof IndexRow['parsed']>> = {
+  '動作.発生': 'startup',
+  '動作.全体': 'total',
+  '動作.持続': 'active',
+  '動作.暗転': 'blackout',
+  'キャンセル.上位': 'cancelUpper',
+  'キャンセル.移動': 'cancelMove',
+};
 
 const ADVANTAGE_PARSED_KEY: Record<AdvantageKey, 'seig' | 'goG' | 'tsujo' | 'ch'> = {
   '正G': 'seig',
@@ -35,12 +51,12 @@ export function getStat(row: IndexRow, path: string): unknown {
 }
 
 export function getNumeric(row: IndexRow, path: string): number | null {
-  if (path === '動作.発生') return row.parsed.startup;
-  if (path === '動作.全体') return row.parsed.total;
-  if (path === '動作.持続') return row.parsed.active;
-  if (path === '動作.暗転') return row.parsed.blackout;
-  if (path === 'キャンセル.上位') return row.parsed.cancelUpper;
-  if (path === 'キャンセル.移動') return row.parsed.cancelMove;
+  const parsedKey = FRAME_PARSED_KEY[path];
+  if (parsedKey) {
+    const indexed = row.parsed[parsedKey];
+    if (typeof indexed === 'number') return indexed;
+    return parseFrameValue(getStat(row, path));
+  }
   if (path === '有利差.min') return row.parsed.advantage.min;
   if (path === '有利差.max') return row.parsed.advantage.max;
   if (path.startsWith('有利差.')) {
@@ -58,9 +74,14 @@ export function getNumeric(row: IndexRow, path: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function conditionText(row: IndexRow, field: string): string {
+  if (FRAME_LIST_FIELDS.has(field)) return firstFrameListToken(getStat(row, field));
+  return String(getStat(row, field) ?? '');
+}
+
 function matchCondition(row: IndexRow, cond: Condition): boolean {
   const { field, op, value } = cond;
-  const strVal = String(getStat(row, field) ?? '');
+  const strVal = conditionText(row, field);
   const numVal = getNumeric(row, field);
 
   if (field === '有利差.*') {

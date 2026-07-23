@@ -12,26 +12,15 @@ import {
   segmentSortKey,
   VARIANT_BUCKETS,
 } from './variant_buckets.mjs';
+import { parseFrameValue } from './frame_parse.mjs';
+
+export { parseFrameValue } from './frame_parse.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRAME_DATA = path.join(__dirname, 'frame_data.json');
 const OUT = path.join(__dirname, 'search', 'public', 'search_index.json');
 
 const CATEGORIES = ['通常技', '射撃技', '必殺技', 'スペルカード'];
-
-/** @returns {number | null} */
-export function parseFrameValue(raw) {
-  if (raw == null || raw === '' || raw === '-' || raw === '〃') return null;
-  const s = String(raw).trim();
-  if (!s || s === 'down' || s.includes('有利') || s.includes('…')) return null;
-  const range = s.match(/^([+-]?[\d.]+)(?:\[([+-]?[\d.]+)\])?$/);
-  if (range) return Number(range[1]);
-  const pm = s.match(/^±(\d+)$/);
-  if (pm) return 0;
-  const num = s.match(/^([+-]?\d+(?:\.\d+)?)/);
-  if (num) return Number(num[1]);
-  return null;
-}
 
 /** @returns {{ min: number|null, max: number|null, raw: string|null, values: number[] }} */
 export function parseAdvantageField(raw) {
@@ -207,6 +196,24 @@ function collectNestedLeaves(lvTree) {
   return leaves;
 }
 
+function indexStateRows(rows, ctx, row) {
+  const states = row['状態'];
+  if (!Array.isArray(states) || !states.length) return;
+  const moveName = String(row['技名'] ?? '');
+  const parentStats = extractParentStats(row);
+  for (const state of states) {
+    const classified = classifyVariantLabel(state['技名']);
+    const variant = classified
+      ? {
+          segment: classified.bucket === '段' ? classified.key : null,
+          position: classified.bucket === '位置' ? classified.key : null,
+          stateName: classified.bucket === '状態' ? classified.key : null,
+        }
+      : { segment: null, position: null, stateName: String(state['技名'] ?? '') || null };
+    pushIndexRow(rows, ctx, row, state, moveName, variant, parentStats);
+  }
+}
+
 function indexNestedMoveRow(rows, ctx, row) {
   const moveName = String(row['技名'] ?? '');
   const parentStats = extractParentStats(row);
@@ -284,24 +291,15 @@ function buildIndex() {
       if (!section?.rows) continue;
       for (const row of section.rows) {
         if (isNestedMoveRow(row)) {
-          indexNestedMoveRow(rows, ctx, row);
+          if (Array.isArray(row['状態']) && row['状態'].length) {
+            indexStateRows(rows, ctx, row);
+          } else {
+            indexNestedMoveRow(rows, ctx, row);
+          }
           continue;
         }
-        const states = row['状態'];
-        if (Array.isArray(states) && states.length) {
-          const moveName = String(row['技名'] ?? '');
-          const parentStats = extractParentStats(row);
-          for (const state of states) {
-            const classified = classifyVariantLabel(state['技名']);
-            const variant = classified
-              ? {
-                  segment: classified.bucket === '段' ? classified.key : null,
-                  position: classified.bucket === '位置' ? classified.key : null,
-                  stateName: classified.bucket === '状態' ? classified.key : null,
-                }
-              : { segment: null, position: null, stateName: String(state['技名'] ?? '') || null };
-            pushIndexRow(rows, ctx, row, state, moveName, variant, parentStats);
-          }
+        if (Array.isArray(row['状態']) && row['状態'].length) {
+          indexStateRows(rows, ctx, row);
           continue;
         }
         const moveName = row['技名'] ?? row['行動の種類'] ?? '';

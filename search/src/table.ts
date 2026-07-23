@@ -170,7 +170,15 @@ function writeMoveCollapseState(container: HTMLElement, state: Record<string, Mo
 }
 
 function defaultMoveCollapseState(): MoveCollapseState {
-  return { segment: false, state: false, lv: false };
+  return { segment: false, state: true, lv: false };
+}
+
+function isSpellStateOnlyBlock(dataRows: DisplayRow[]): boolean {
+  return (
+    dataRows.length > 0 &&
+    dataRows[0].category === 'スペルカード' &&
+    dataRows.every((r) => r.stateName && !r.segment && !r.position)
+  );
 }
 
 function parseLvDisplay(lv: string): number[] {
@@ -265,12 +273,13 @@ function applyVariantCollapse(block: DisplayRow[], expanded: MoveCollapseState, 
   const segmentRows = dataRows.filter((r) => r.segment);
   const stateRows = dataRows.filter((r) => r.stateName);
   const lvValues = [...new Set(dataRows.filter((r) => r.lv).map((r) => r.lv!))];
+  const spellStateOnly = isSpellStateOnlyBlock(dataRows);
 
   const hiddenIds = new Set<string>();
   if (!expanded.segment) {
     for (const row of segmentRows) hiddenIds.add(row.id);
   }
-  if (!expanded.state) {
+  if (!expanded.state && !spellStateOnly) {
     for (const row of stateRows) hiddenIds.add(row.id);
   }
   for (const id of collectLvCollapseHiddenIds(dataRows, expanded.lv)) hiddenIds.add(id);
@@ -284,7 +293,7 @@ function applyVariantCollapse(block: DisplayRow[], expanded: MoveCollapseState, 
         moveKey,
       }
     : undefined;
-  const stateControl: VariantCollapseControl | undefined = stateRows.length
+  const stateControl: VariantCollapseControl | undefined = stateRows.length && !spellStateOnly
     ? {
         collapsed: !expanded.state,
         summary: formatStateSummary([...new Set(stateRows.map((r) => r.stateName!))]),

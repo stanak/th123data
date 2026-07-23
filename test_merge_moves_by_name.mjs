@@ -38,4 +38,25 @@ assert.equal(seishi['Lv']['2']['214C']['状態']['Cフィニッシュ']['動作'
 assert.equal(meishu['Lv']['0']['']['位置']['地上']['動作']['発生'], '27');
 assert.equal(meishu['Lv']['0']['']['位置']['空中']['動作']['発生'], '27');
 
+const gengetsu = mergeMovesByName([
+  {
+    技名: '弦月斬',
+    コマンド: '623B',
+    Lv: '0',
+    動作: { 発生: '13', 全体: '70' },
+    攻撃Lv: '大',
+    攻撃分類: '上段',
+  },
+  {
+    技名: '弦月斬',
+    コマンド: '623C',
+    Lv: '0',
+    状態: [{ 技名: '1段目', 動作: { 発生: '10', 全体: '96' } }],
+  },
+]);
+const mergedGengetsu = gengetsu.find((r) => r['技名'] === '弦月斬');
+assert.equal(mergedGengetsu['動作'], undefined);
+assert.equal(mergedGengetsu['Lv']['0']['623B']['_']['動作']['発生'], '13');
+assert.equal(mergedGengetsu['Lv']['0']['623C']['段']['1']['動作']['発生'], '10');
+
 console.log('test_merge_moves_by_name: ok');
