@@ -13,6 +13,7 @@ assert.deepEqual(parseSpecialMoveName('B版心抄斬-突進'), {
   variant: 'B',
   hold: false,
   stateLabel: '突進',
+  dualPositions: null,
   changed: true,
 });
 assert.deepEqual(parseSpecialMoveName('C版生死流転斬（1段目）').baseName, '生死流転斬');
@@ -103,8 +104,8 @@ assert.ok(jyoushi['Lv']['1']['214C']['状態']['設置']);
 
 const meishu = reimu['スペルカード'].rows.find((r) => r['技名'] === '明珠暗投');
 assert.ok(meishu);
-assert.ok(meishu['Lv']['']['']['位置']['地上']);
-assert.ok(meishu['Lv']['']['']['位置']['空中']);
+assert.ok(meishu['状態']?.some((s) => s['技名'] === '地上'));
+assert.ok(meishu['状態']?.some((s) => s['技名'] === '空中'));
 assert.ok(!reimu['スペルカード'].rows.some((r) => r['技名']?.includes('版')));
 
 const suwako = flattenCharacter(
@@ -113,17 +114,64 @@ const suwako = flattenCharacter(
 const suwakoShooting = suwako['射撃技'].rows;
 const suwakoH6b = suwakoShooting.find((r) => r['技名'] === 'H6B');
 assert.ok(suwakoH6b, 'H6B move');
-assert.ok(suwakoH6b['Lv']['']['']['状態']['1段階']);
-assert.ok(suwakoH6b['Lv']['']['']['状態']['2段階']);
+assert.deepEqual(suwakoH6b['状態'].map((s) => s['技名']), ['1段階', '2段階']);
 const suwakoHj2b = suwakoShooting.find((r) => r['技名'] === 'HJ2B');
 assert.ok(suwakoHj2b);
-assert.ok(suwakoHj2b['Lv']['']['']['状態']['1段階']);
-assert.ok(suwakoHj2b['Lv']['']['']['状態']['2段階']);
+assert.deepEqual(suwakoHj2b['状態'].map((s) => s['技名']), ['1段階', '2段階']);
 assert.ok(!suwakoShooting.some((r) => r['技名']?.includes('ホールド6B系')));
 
 assert.equal(parseSpecialMoveName('立ちしゃがみ共通BC共通土着神の祟り').baseName, '土着神の祟り');
 assert.equal(parseSpecialMoveName('立ちしゃがみ共通BC共通土着神の祟り').stateLabel, null);
 assert.equal(parseSpecialMoveName('立ちしゃがみ共通BC共通土着神の祟り').variant, 'BC');
+
+assert.deepEqual(parseSpecialMoveName('地上空中C版キマイラの翼'), {
+  baseName: 'キマイラの翼',
+  variant: 'C',
+  hold: false,
+  stateLabel: null,
+  dualPositions: ['地上', '空中'],
+  changed: true,
+});
+assert.deepEqual(parseSpecialMoveName('地上空中B版幻想狂想穴'), {
+  baseName: '幻想狂想穴',
+  variant: 'B',
+  hold: false,
+  stateLabel: null,
+  dualPositions: ['地上', '空中'],
+  changed: true,
+});
+assert.deepEqual(parseSpecialMoveName('空中B版キマイラの翼'), {
+  baseName: 'キマイラの翼',
+  variant: 'B',
+  hold: false,
+  stateLabel: '空中',
+  dualPositions: null,
+  changed: true,
+});
+
+const yukari421 = normalizeSpecialMoveRows([
+  { 技名: '地上B版キマイラの翼', コマンド: '421', Lv: '1~4', 動作: { 全体: '55' } },
+  { 技名: '空中B版キマイラの翼', コマンド: '421', Lv: '1~4', 動作: { 全体: '59(10)' } },
+  { 技名: '地上空中C版キマイラの翼', コマンド: '421', Lv: '1~4', 動作: { 全体: '29F' } },
+]);
+assert.equal(yukari421.length, 2);
+const chimera = yukari421.find((r) => r['コマンド'] === '421B');
+assert.equal(chimera['技名'], 'キマイラの翼');
+assert.deepEqual(chimera['状態'].map((s) => s['技名']), ['地上', '空中']);
+const chimeraC = yukari421.find((r) => r['コマンド'] === '421C');
+assert.equal(chimeraC['技名'], 'キマイラの翼');
+assert.deepEqual(chimeraC['状態'].map((s) => s['技名']), ['地上', '空中']);
+
+const yukariKyoso = normalizeSpecialMoveRows([
+  { 技名: '地上空中B版幻想狂想穴', コマンド: '421', Lv: '0~4', 動作: { 全体: '104' } },
+  { 技名: '地上空中C版幻想狂想穴', コマンド: '421', Lv: '0', 動作: { 全体: '100' } },
+]);
+assert.equal(yukariKyoso.length, 2);
+const kyosoB = yukariKyoso.find((r) => r['コマンド'] === '421B');
+assert.equal(kyosoB['技名'], '幻想狂想穴');
+assert.deepEqual(kyosoB['状態'].map((s) => s['技名']), ['地上', '空中']);
+const kyosoC = yukariKyoso.find((r) => r['コマンド'] === '421C');
+assert.equal(kyosoC['技名'], '幻想狂想穴');
 
 const tsuchijin = suwako['必殺技'].rows.find((r) => r['技名'] === '土着神の祟り');
 assert.ok(tsuchijin, '土着神の祟り');

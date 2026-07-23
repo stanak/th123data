@@ -42,7 +42,7 @@ function parseHold6BMoveName(name) {
 
 export function parseSpecialMoveName(name) {
   if (typeof name !== 'string' || !name) {
-    return { baseName: name, variant: null, hold: false, stateLabel: null, changed: false };
+    return { baseName: name, variant: null, hold: false, stateLabel: null, dualPositions: null, changed: false };
   }
 
   const hold6b = parseHold6BMoveName(name);
@@ -63,12 +63,19 @@ export function parseSpecialMoveName(name) {
     changed = true;
   }
 
+  let dualPositions = null;
+
   if (s.startsWith('地上空中共通')) {
     s = s.slice('地上空中共通'.length);
     changed = true;
   } else if (s.startsWith('立ちしゃがみ共通')) {
     // 立ち・しゃがみで差がないため位置にしない（地上空中共通と同様）
     s = s.slice('立ちしゃがみ共通'.length);
+    changed = true;
+  } else if (s.startsWith('地上空中')) {
+    // 地上版・空中版の両方がある（地上空中共通=差なしとは別）
+    dualPositions = ['地上', '空中'];
+    s = s.slice('地上空中'.length);
     changed = true;
   } else if (s.startsWith('地上版')) {
     stateParts.push('地上');
@@ -125,7 +132,8 @@ export function parseSpecialMoveName(name) {
     variant,
     hold,
     stateLabel: stateParts.length ? stateParts.at(-1) : null,
-    changed: changed || !!variant || !!stateParts.length || hold,
+    dualPositions,
+    changed: changed || !!variant || !!stateParts.length || hold || !!dualPositions,
   };
 }
 
@@ -194,6 +202,12 @@ function applyVariantsToExistingStates(row, parsed) {
   });
 }
 
+function stateLabelsFor(parsed) {
+  if (parsed.dualPositions?.length) return parsed.dualPositions;
+  if (parsed.stateLabel) return [parsed.stateLabel];
+  return [null];
+}
+
 function expandFlatRow(row, parsed) {
   if (parsed.namedHoldMove) {
     const copy = structuredClone(row);
@@ -202,13 +216,15 @@ function expandFlatRow(row, parsed) {
     return [copy];
   }
 
-  return variantKeys(parsed.variant, parsed.hold).flatMap((variantKey) => {
-    const copy = structuredClone(row);
-    copy['技名'] = parsed.baseName;
-    copy['コマンド'] = suffixCommand(copy['コマンド'], variantKey, parsed.hold);
-    if (parsed.stateLabel) copy._stateLabel = parsed.stateLabel;
-    return [copy];
-  });
+  return variantKeys(parsed.variant, parsed.hold).flatMap((variantKey) =>
+    stateLabelsFor(parsed).flatMap((stateLabel) => {
+      const copy = structuredClone(row);
+      copy['技名'] = parsed.baseName;
+      copy['コマンド'] = suffixCommand(copy['コマンド'], variantKey, parsed.hold);
+      if (stateLabel) copy._stateLabel = stateLabel;
+      return [copy];
+    }),
+  );
 }
 
 function preprocessRows(rows) {

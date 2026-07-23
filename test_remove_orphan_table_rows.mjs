@@ -24,6 +24,25 @@ assert.equal(
   false,
 );
 
+assert.equal(
+  isOrphanTableRow({
+    コマンド: '623',
+    Lv1: { '300F': '420F' },
+    Lv2: { '360F': '480F' },
+    虎勁: { B版: 'C版' },
+  }),
+  true,
+);
+
+assert.equal(
+  isOrphanTableRow({
+    正G: { '-2': '-4' },
+    相手キャラ: { '妖夢、萃香': '空、衣玖' },
+    誤G: { '+5': '+4' },
+  }),
+  true,
+);
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'frame_data.json'), 'utf8'));
 

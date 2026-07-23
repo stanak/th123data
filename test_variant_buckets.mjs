@@ -19,5 +19,17 @@ assert.deepEqual(parseMoveNamePosition('夢想封印（空中版）-直進弾'),
   stateFromName: '直進弾',
   changed: true,
 });
+assert.deepEqual(parseMoveNamePosition('妖鬼-疎-'), {
+  baseName: '妖鬼-疎',
+  position: null,
+  stateFromName: null,
+  changed: true,
+});
+assert.deepEqual(parseMoveNamePosition('妖鬼-密'), {
+  baseName: '妖鬼-密',
+  position: null,
+  stateFromName: null,
+  changed: false,
+});
 
 console.log('test_variant_buckets: ok');

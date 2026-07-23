@@ -6,16 +6,24 @@ import { normalizePositionLabel } from './variant_buckets.mjs';
 
 const SKIP_CATEGORIES = new Set(['射撃技']);
 
+const COMPOUND_MOVE_NAME = /^(妖鬼|地霊)-[密疎]$/;
+
 /** @returns {{ baseName: string, position: string|null, stateFromName: string|null, changed: boolean }} */
 export function parseMoveNamePosition(name) {
   if (typeof name !== 'string' || !name) {
     return { baseName: name, position: null, stateFromName: null, changed: false };
   }
 
-  let s = name.trim();
+  let s = name.trim().replace(/-+$/, '');
+  const trimmedTrailing = s !== name.trim();
+
+  if (COMPOUND_MOVE_NAME.test(s)) {
+    return { baseName: s, position: null, stateFromName: null, changed: trimmedTrailing };
+  }
+
   let position = null;
   let stateFromName = null;
-  let changed = false;
+  let changed = trimmedTrailing;
 
   const paren = s.match(/[（(](地上版|空中版|地中版|立ち版|しゃがみ版)[）)]/);
   if (paren) {
