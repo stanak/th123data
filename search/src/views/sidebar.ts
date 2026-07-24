@@ -5,11 +5,10 @@ import { buildColumnPicker, writeHiddenColumns } from '../columnVisibility';
 import {
   t,
   categoryLabel,
-  fieldPathLabel,
   getLocale,
   type Locale,
-  ADVANTAGE_CONDITION_FIELDS,
 } from '../i18n';
+import { CONDITION_FIELD_DEFS, conditionFieldLabel } from '../conditionFields';
 import { characterLabel, sortCharacters } from '../characters';
 
 const REPO_URL = 'https://github.com/stanak/th123data';
@@ -297,15 +296,10 @@ function customCondition(state: AppState, handlers: SidebarHandlers): HTMLElemen
   const row = document.createElement('div');
   row.className = 'condition-row';
   const field = document.createElement('select');
-  for (const f of [
-    ...ADVANTAGE_CONDITION_FIELDS,
-    '動作.発生', '動作.全体', '動作.持続', '動作.暗転',
-    'キャンセル.上位', 'キャンセル.移動',
-    '技名', '状態', 'コマンド', '攻撃Lv',
-  ]) {
+  for (const { field: f } of CONDITION_FIELD_DEFS) {
     const opt = document.createElement('option');
     opt.value = f;
-    opt.textContent = fieldPathLabel(f);
+    opt.textContent = conditionFieldLabel(f);
     field.appendChild(opt);
   }
   const op = document.createElement('select');
@@ -339,7 +333,7 @@ function customCondition(state: AppState, handlers: SidebarHandlers): HTMLElemen
     list.className = 'condition-list';
     state.conditions.forEach((c, i) => {
       const li = document.createElement('li');
-      li.textContent = `${fieldPathLabel(c.field)} ${c.op} ${c.value}`;
+      li.textContent = `${conditionFieldLabel(c.field)} ${c.op} ${c.value}`;
       const rm = document.createElement('button');
       rm.type = 'button';
       rm.className = 'link-btn';

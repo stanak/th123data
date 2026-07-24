@@ -1,5 +1,7 @@
 import type { Condition, IndexRow } from './types';
-import { type AdvantageKey } from './i18n';
+import { type AdvantageKey, categoryLabel, displayCellValue } from './i18n';
+import { characterLabel } from './characters';
+import { specialNotesSummary } from './specialNotes';
 import {
   parseFrameValue,
   firstFrameListToken,
@@ -42,8 +44,15 @@ export function getStat(row: IndexRow, path: string): unknown {
   if (path === '受身不能') return row.stats['受身不能'];
   if (path === '攻撃Lv') return row.stats['攻撃Lv'];
   if (path === '攻撃分類') return row.stats['攻撃分類'];
+  if (path === '攻撃属性') return row.stats['攻撃属性'];
   if (path === '備考') return row.stats['備考'];
   if (path === '特記事項') return row.stats['特記事項'];
+  if (path === '追加効果') return row.stats['追加効果'];
+  if (path === 'ヒット数') return row.stats['ヒット数'];
+  if (path === '相殺強度') return row.stats['相殺強度'];
+  if (path === '相殺回数') return row.stats['相殺回数'];
+  if (path === 'グレイズ耐久数') return row.stats['グレイズ耐久数'];
+  if (path === '射撃備考') return row.stats['射撃備考'];
   if (path.startsWith('有利差.')) {
     const key = path.slice('有利差.'.length);
     return row.parsed.advantage.raws[key] ?? null;
@@ -76,6 +85,7 @@ export function getNumeric(row: IndexRow, path: string): number | null {
 }
 
 function conditionText(row: IndexRow, field: string): string {
+  if (field === '特記事項') return specialNotesSummary(getStat(row, field));
   if (FRAME_LIST_FIELDS.has(field)) return firstFrameListToken(getStat(row, field));
   return String(getStat(row, field) ?? '');
 }
@@ -148,17 +158,32 @@ function flattenStatsText(stats: Record<string, unknown>): string[] {
   return parts;
 }
 
+function segmentSearchText(segment: string | null): string {
+  if (!segment) return '';
+  return /^\d+$/.test(segment) ? `${segment}段目 ${segment}` : segment;
+}
+
 export function rowSearchText(row: IndexRow): string {
+  const attackLv = String(getStat(row, '攻撃Lv') ?? '');
+  const attackClass = String(getStat(row, '攻撃分類') ?? '');
   return [
     row.character,
+    characterLabel(row.character, 'ja'),
+    characterLabel(row.character, 'en'),
     row.category,
+    categoryLabel(row.category),
     row.moveName,
     fullMoveLabel(row),
-    row.segment,
+    segmentSearchText(row.segment),
     row.position,
     row.stateName,
     row.command,
     row.lv,
+    attackLv,
+    displayCellValue('攻撃Lv', attackLv),
+    attackClass,
+    displayCellValue('攻撃分類', attackClass),
+    specialNotesSummary(getStat(row, '特記事項')),
     ...flattenStatsText(row.stats),
   ]
     .filter(Boolean)
@@ -166,7 +191,7 @@ export function rowSearchText(row: IndexRow): string {
     .toLowerCase();
 }
 
-/** Space-separated terms are ANDed. */
+/** Space-separated terms are ANDed; each term matches as a substring (部分一致). */
 export function filterByFreeText(rows: IndexRow[], query: string): IndexRow[] {
   const q = query.trim().toLowerCase();
   if (!q) return rows;
