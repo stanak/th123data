@@ -81,7 +81,10 @@ export const DEFAULT_CATEGORIES = ['通常技', '射撃技', '必殺技', 'ス�
 const SIDEBAR_STORAGE_KEY = 'th123data-sidebar';
 
 export function readSidebarCollapsed(): boolean {
-  return localStorage.getItem(SIDEBAR_STORAGE_KEY) === '1';
+  const saved = localStorage.getItem(SIDEBAR_STORAGE_KEY);
+  if (saved === '1') return true;
+  if (saved === '0') return false;
+  return typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches;
 }
 
 export function writeSidebarCollapsed(collapsed: boolean): void {

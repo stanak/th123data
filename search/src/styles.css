@@ -47,17 +47,74 @@ body {
   #app {
     grid-template-columns: 1fr;
     height: auto;
-    min-height: 100vh;
+    min-height: 100dvh;
     overflow: visible;
   }
+
+  #app.sidebar-collapsed .sidebar {
+    display: none;
+  }
+
   .sidebar {
     border-right: none;
     border-bottom: 1px solid var(--border);
     max-height: none;
     position: static;
+    top: auto;
   }
+
   .main {
     overflow: visible;
+    min-height: 0;
+  }
+
+  .main-toolbar {
+    position: static;
+    top: auto;
+    z-index: auto;
+  }
+
+  .main-view {
+    overflow: visible;
+    flex: none;
+    padding: 0.75rem;
+  }
+
+  .data-table thead th {
+    position: static;
+    top: auto;
+    z-index: auto;
+    box-shadow: none;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .toolbar-column-panel {
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    top: auto;
+    bottom: 0.75rem;
+    width: auto;
+    max-height: min(60vh, 420px);
+  }
+
+  .view-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .view-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .char-grid {
+    max-height: none;
   }
 }
 
