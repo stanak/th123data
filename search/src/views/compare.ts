@@ -69,23 +69,13 @@ export function renderCompareView(
   const header = document.createElement('div');
   header.className = 'view-header';
   const title = document.createElement('h2');
-  title.textContent = state.moveName.trim()
-    ? t('compareTitleNamed', { move: state.moveName })
-    : t('compareTitle');
+  title.textContent = t('compareTitleNamed', { move: state.moveName });
   header.appendChild(title);
   const count = document.createElement('span');
   count.className = 'result-count';
   count.textContent = t('resultCount', { count: rows.length });
   header.appendChild(count);
   container.appendChild(header);
-
-  if (!state.moveName.trim()) {
-    const hint = document.createElement('p');
-    hint.className = 'hint-msg';
-    hint.textContent = t('compareHint');
-    container.appendChild(hint);
-    return;
-  }
 
   const columnOptions = columnOptionsFromCategories(state.categories);
   const tableHost = document.createElement('div');

@@ -1,4 +1,4 @@
-import type { AppState, AppMode, SearchIndex } from '../types';
+import type { AppState, SearchIndex } from '../types';
 import { DEFAULT_CATEGORIES } from '../types';
 import type { HistoryMode } from '../url';
 import { buildColumnPicker, writeHiddenColumns } from '../columnVisibility';
@@ -44,14 +44,17 @@ export function renderSidebar(
   modeBtns.className = 'mode-toggle';
   for (const [mode, key] of [
     ['character', 'modeCharacter'],
-    ['compare', 'modeCompare'],
     ['filter', 'modeFilter'],
-  ] as [AppMode, 'modeCharacter' | 'modeCompare' | 'modeFilter'][]) {
+  ] as const) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'mode-btn' + (state.mode === mode ? ' active' : '');
     btn.textContent = t(key);
     btn.addEventListener('click', () => {
+      if (state.mode === 'compare') {
+        state.moveName = '';
+        state.showMissingCompare = false;
+      }
       state.mode = mode;
       handlers.onChange();
     });

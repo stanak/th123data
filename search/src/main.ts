@@ -141,6 +141,9 @@ async function main() {
   }
 
   function renderMain() {
+    if (state.mode === 'compare' && !state.moveName.trim()) {
+      state.mode = 'character';
+    }
     if (state.mode === 'compare') {
       renderCompareView(viewHost, index, state, onSort, onMoveClick);
     } else if (state.mode === 'filter') {

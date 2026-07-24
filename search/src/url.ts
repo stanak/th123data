@@ -57,10 +57,14 @@ export function stateFromUrl(characters: string[]): AppState {
   }
 
   const modeRaw = p.get('mode');
-  const mode =
+  const moveParam = p.get('move') ?? '';
+  let mode =
     modeRaw === 'compare' || modeRaw === 'filter' || modeRaw === 'character'
       ? modeRaw
       : defaults.mode;
+  if (mode === 'compare' && !moveParam) {
+    mode = defaults.mode;
+  }
   const charsStr = p.get('chars');
   const catStr = p.get('cat');
   const search = parseSearchFields(p, mode);
