@@ -44,7 +44,8 @@ body {
 }
 
 @media (max-width: 900px) {
-  #app {
+  #app,
+  #app.sidebar-collapsed {
     grid-template-columns: 1fr;
     height: auto;
     min-height: 100dvh;
@@ -53,6 +54,8 @@ body {
 
   #app.sidebar-collapsed .sidebar {
     display: none;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .sidebar {
